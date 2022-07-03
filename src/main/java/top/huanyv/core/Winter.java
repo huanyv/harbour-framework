@@ -37,7 +37,7 @@ public class Winter {
     private Context context;
 
     /**
-     * 请求处理封装对象
+     * 请求处理器容器
      */
     private Map<String, Map<RequestMethod, ServletHandler>> requestHandlers = new HashMap<>();
 
@@ -69,12 +69,7 @@ public class Winter {
     }
 
     public void setCtx(String ctx) {
-        this.webappPath = new File(ClassUtil.getClassPath() + "templates");
-        if (this.webappPath.exists()) {
-            this.context = tomcat.addWebapp(ctx, this.webappPath.getAbsolutePath());
-        } else {
-            this.context = tomcat.addContext(ctx, null);
-        }
+        this.context = tomcat.addContext(ctx, null);
     }
 
     /**
@@ -105,7 +100,7 @@ public class Winter {
     }
 
     /**
-     * 请求注册到请求处理器中
+     * 请求 注册到 处理器容器中
      */
     public void request(String pattern, ServletHandler servletHandler, RequestMethod method) {
         Map<RequestMethod, ServletHandler> handler = null;
