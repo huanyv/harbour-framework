@@ -1,5 +1,6 @@
 package top.huanyv.core;
 
+import cn.hutool.core.util.ClassUtil;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
@@ -11,6 +12,7 @@ import top.huanyv.servlet.*;
 import top.huanyv.utils.StringUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -39,6 +41,10 @@ public class Winter {
      */
     private Map<String, Map<RequestMethod, ServletHandler>> requestHandlers = new HashMap<>();
 
+    /**
+     * web的根目录
+     */
+    private File webappPath;
 
     private Winter() { }
 
@@ -59,11 +65,16 @@ public class Winter {
         connector.setURIEncoding(StandardCharsets.UTF_8.name());
         this.tomcat.getService().addConnector(connector);
 
-        this.context = tomcat.addContext(ctx, null);
+        setCtx(ctx);
     }
 
     public void setCtx(String ctx) {
-        this.context = tomcat.addContext(ctx, null);
+        this.webappPath = new File(ClassUtil.getClassPath() + "templates");
+        if (this.webappPath.exists()) {
+            this.context = tomcat.addWebapp(ctx, this.webappPath.getAbsolutePath());
+        } else {
+            this.context = tomcat.addContext(ctx, null);
+        }
     }
 
     /**
@@ -139,7 +150,10 @@ public class Winter {
             wrapper.addMapping(pattern);
         }
 
-        System.out.println(this.requestHandlers);
+        // =======服务启动前初始化=======
+        this.context.setResponseCharacterEncoding(StandardCharsets.UTF_8.name());
+        this.context.setRequestCharacterEncoding(StandardCharsets.UTF_8.name());
+        // ===========================
 
         String banner = "__        ___       _            \n" +
                 "\\ \\      / (_)_ __ | |_ ___ _ __ \n" +
