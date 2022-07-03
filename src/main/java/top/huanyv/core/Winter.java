@@ -19,6 +19,9 @@ import java.util.UUID;
 
 public class Winter {
 
+    /**
+     * 单例
+     */
     private static Winter winter = new Winter();
 
     private final Tomcat tomcat = new Tomcat();
