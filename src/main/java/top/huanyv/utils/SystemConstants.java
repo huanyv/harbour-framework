@@ -11,4 +11,6 @@ public class SystemConstants {
 
     public static final String RESPONSE_HTML_PREFIX = "html:";
 
+    public static final String RESPONSE_TH_PREFIX = "th:";
+
 }

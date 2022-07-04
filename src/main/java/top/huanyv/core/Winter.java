@@ -1,24 +1,20 @@
 package top.huanyv.core;
 
-import cn.hutool.core.util.ClassUtil;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import sun.net.TelnetInputStream;
 import top.huanyv.enums.RequestMethod;
 import top.huanyv.interfaces.ServletHandler;
 import top.huanyv.servlet.*;
-import top.huanyv.utils.StringUtil;
+import top.huanyv.view.StaticResourceHandler;
+import top.huanyv.view.TemplateEngineInstance;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class Winter {
 
@@ -35,16 +31,6 @@ public class Winter {
      * 上下文对象
      */
     private Context context;
-
-    /**
-     * 请求处理器容器
-     */
-    private Map<String, Map<RequestMethod, ServletHandler>> requestHandlers = new HashMap<>();
-
-    /**
-     * web的根目录
-     */
-    private File webappPath;
 
     private Winter() { }
 
@@ -103,12 +89,8 @@ public class Winter {
      * 请求 注册到 处理器容器中
      */
     public void request(String pattern, ServletHandler servletHandler, RequestMethod method) {
-        Map<RequestMethod, ServletHandler> handler = null;
-        if (this.requestHandlers.containsKey(pattern)) {
-            handler = requestHandlers.get(pattern);
-        } else {
-            handler = new HashMap<>();
-        }
+        RequestHandlerRegistry registry = RequestHandlerRegistry.single();
+        Map<RequestMethod, ServletHandler> handler = registry.getHandler(pattern);
 
         if (RequestMethod.GET.equals(method)) {
             handler.put(RequestMethod.GET, servletHandler);
@@ -124,7 +106,7 @@ public class Winter {
             handler.put(RequestMethod.PUT, servletHandler);
             handler.put(RequestMethod.DELETE, servletHandler);
         }
-        this.requestHandlers.put(pattern, handler);
+        registry.register(pattern, handler);
     }
 
 
@@ -134,20 +116,17 @@ public class Winter {
     public void start() {
 
         // 请求注册到tomcat容器中
-        for (Map.Entry<String, Map<RequestMethod, ServletHandler>> entry : this.requestHandlers.entrySet()) {
-            String pattern = entry.getKey();
-            Map<RequestMethod, ServletHandler> handlerMap = entry.getValue();
-            WinterServlet servlet = new WinterServlet();
-            servlet.setRequestHandler(handlerMap);
+        WinterServlet servlet = new WinterServlet();
+        Wrapper dispatcher = this.tomcat.addServlet(this.context, "dispatcher", servlet);
+        dispatcher.addMapping("/");
 
-            String uuid = StringUtil.getUUID();
-            Wrapper wrapper = this.tomcat.addServlet(context, uuid, servlet);
-            wrapper.addMapping(pattern);
-        }
 
         // =======服务启动前初始化=======
         this.context.setResponseCharacterEncoding(StandardCharsets.UTF_8.name());
         this.context.setRequestCharacterEncoding(StandardCharsets.UTF_8.name());
+
+        TemplateEngineInstance.single().init("templates/", ".html");
+        StaticResourceHandler.single().init("static");
         // ===========================
 
         String banner = "__        ___       _            \n" +
