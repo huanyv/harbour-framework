@@ -15,19 +15,22 @@ public class MainTest {
         Winter app = Winter.getInstance();
         app.init(8090, "/this");
         app.get("/admin", (req, resp) -> {
-            return "html:<h1>Hello Winter!!!! GET</h1>";
+            resp.html("<h1>admin req get</h1>");
         });
 
         app.post("/admin", (req, resp) -> {
-            return "html:<h1>Hello Winter!!!! POST</h1>";
+            resp.html("<h1>admin post</h1>");
         });
 
         app.request("/hello", (req, resp) -> {
-            return "<h1>Hello</h1>";
+            resp.html("<h1>helloooooooo</h1>");
+            System.out.println("req.body() = " + req.body());
         });
 
         app.request("/admin/{id}/{name}", (req, resp) -> {
-            return "html:<h1>success</h1>";
+            resp.html("<h1>path</h1>");
+            System.out.println("req.pathVar(\"id\") = " + req.pathVar("id"));
+            System.out.println("req.pathVar(\"name\") = " + req.pathVar("name"));
         });
 
         app.filter("/hello", (req, resp, chain) -> {
@@ -38,6 +41,14 @@ public class MainTest {
         app.filter("/admin", (req, resp, chain) -> {
             System.out.println("admin, filter");
             chain.doFilter(req, resp);
+        });
+
+        app.post("/upload", (req, resp) -> {
+            req.uploadFile(new File("C:\\Users\\admin\\Desktop\\新建文件夹"));
+        });
+
+        app.get("/down", (req, resp) -> {
+            resp.downloadFile(new File("C:\\Users\\admin\\Desktop\\新建文件夹\\myblogadmin.zip"));
         });
 
         app.start();

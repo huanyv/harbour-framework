@@ -93,6 +93,10 @@ public class RequestMapping {
         }
     }
 
+    public String getPathVar(String name) {
+        return pathVariables.get(name);
+    }
+
     public String getUrlPattern() {
         return urlPattern;
     }

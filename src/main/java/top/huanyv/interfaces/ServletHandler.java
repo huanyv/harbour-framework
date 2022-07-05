@@ -1,10 +1,11 @@
 package top.huanyv.interfaces;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import top.huanyv.core.HttpRequest;
+import top.huanyv.core.HttpResponse;
+
 import java.io.IOException;
 
 @FunctionalInterface
 public interface ServletHandler {
-    String handle(HttpServletRequest req, HttpServletResponse resp) throws IOException;
+    void handle(HttpRequest req, HttpResponse resp) throws IOException;
 }

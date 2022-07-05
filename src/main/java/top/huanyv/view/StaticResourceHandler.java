@@ -31,6 +31,7 @@ public class StaticResourceHandler {
         CONTENT_TYPES.put(".js", "text/javascript");
         CONTENT_TYPES.put(".jpg", "image/jpeg");
         CONTENT_TYPES.put(".png", "image/png");
+        CONTENT_TYPES.put(".git", "image/git");
         CONTENT_TYPES.put(".ico", "image/x-icon");
     }
 

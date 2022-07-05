@@ -11,13 +11,14 @@ import top.huanyv.enums.RequestMethod;
 import top.huanyv.interfaces.FilterHandler;
 import top.huanyv.interfaces.ServletHandler;
 import top.huanyv.servlet.*;
+import top.huanyv.utils.ResourceUtil;
 import top.huanyv.utils.StringUtil;
+import top.huanyv.utils.SystemConstants;
 import top.huanyv.view.StaticResourceHandler;
 import top.huanyv.view.TemplateEngineInstance;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.regex.Pattern;
+import java.util.Properties;
 
 public class Winter {
 
@@ -35,10 +36,16 @@ public class Winter {
      */
     private Context context;
 
+    RequestHandlerRegistry registry = RequestHandlerRegistry.single();
+
     private Winter() { }
 
     public static Winter getInstance() {
         return winter;
+    }
+
+    public Context getContext() {
+        return context;
     }
 
     /**
@@ -78,6 +85,12 @@ public class Winter {
     public void post(String pattern, ServletHandler servletHandler) {
         request(pattern, servletHandler, RequestMethod.POST);
     }
+    public void put(String pattern, ServletHandler servletHandler) {
+        request(pattern, servletHandler, RequestMethod.PUT);
+    }
+    public void delete(String pattern, ServletHandler servletHandler) {
+        request(pattern, servletHandler, RequestMethod.DELETE);
+    }
 
     /**
      * 所有请求
@@ -95,7 +108,6 @@ public class Winter {
      * 请求 注册到 处理器容器中
      */
     public void request(String pattern, ServletHandler servletHandler, RequestMethod method) {
-        RequestHandlerRegistry registry = RequestHandlerRegistry.single();
         registry.register(pattern, method, servletHandler);
     }
 
@@ -133,11 +145,16 @@ public class Winter {
         dispatcher.addMapping("/");
 
         // =======服务启动前初始化=======
-        this.context.setResponseCharacterEncoding(StandardCharsets.UTF_8.name());
-        this.context.setRequestCharacterEncoding(StandardCharsets.UTF_8.name());
+        Properties properties = ResourceUtil.getProperties(SystemConstants.SYSTEM_CONFIG_FILE);
+        String servletEncoding = properties.getProperty(SystemConstants.CONFIG_KEY_SERVLET_ENCODING, StandardCharsets.UTF_8.name());
+        this.context.setResponseCharacterEncoding(servletEncoding);
+        this.context.setRequestCharacterEncoding(servletEncoding);
 
-        TemplateEngineInstance.single().init("templates", ".html");
-        StaticResourceHandler.single().init("static");
+        String thymeleafSuffix = properties.getProperty(SystemConstants.CONFIG_KEY_THYMELEAF_SUFFIX, SystemConstants.DEFAULT_THYMELEAF_SUFFIX);
+        String thymeleafPrefix = properties.getProperty(SystemConstants.CONFIG_KEY_THYMELEAF_PREFIX, SystemConstants.DEFAULT_THYMELEAF_PREFIX);
+        String staticPrefix = properties.getProperty(SystemConstants.CONFIG_KEY_STATIC_PREFIX, SystemConstants.DEFAULT_STATIC_PREFIX);
+        TemplateEngineInstance.single().init(thymeleafPrefix, thymeleafSuffix);
+        StaticResourceHandler.single().init(staticPrefix);
         // ===========================
 
         String banner = "__        ___       _            \n" +

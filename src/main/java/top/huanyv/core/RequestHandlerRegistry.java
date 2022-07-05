@@ -119,8 +119,7 @@ public class RequestHandlerRegistry {
         // 判断处理器是否存在
         if (servletHandler != null) {
             // 处理请求
-            String responseInfo = servletHandler.handle(req, resp);
-            WebUtil.responseHandle(req, resp, responseInfo);
+            servletHandler.handle(new HttpRequest(req, resp), new HttpResponse(req, resp));
             return 200;
         } else {
             // 这个请求方式没有注册
