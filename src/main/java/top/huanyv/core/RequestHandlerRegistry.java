@@ -19,19 +19,20 @@ import java.util.Map;
  */
 public class RequestHandlerRegistry {
 
+    // 单例
     private RequestHandlerRegistry() {}
-
     private static class SingletonHolder {
         private static final RequestHandlerRegistry INSTANCE = new RequestHandlerRegistry();
     }
-
     // 提供单例对象
     public static RequestHandlerRegistry single() {
         return SingletonHolder.INSTANCE;
     }
 
 
-    // 注册容器
+    /**
+     * 注册容器，所有的请求都会注册到这个容器中
+     */
     private List<RequestMapping> registry = new ArrayList<>();
 
     public List<RequestMapping> getRegistry() {
@@ -83,6 +84,7 @@ public class RequestHandlerRegistry {
                 return mapping;
             }
         }
+        // 不存在，新建一个,添加进去
         RequestMapping mapping = new RequestMapping();
         mapping.setUrlPattern(urlPattern);
         mapping.setHandler(new HashMap<>());
@@ -100,23 +102,28 @@ public class RequestHandlerRegistry {
     public int handle(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String uri = WebUtil.getRequestURI(req);
 
+        // 这个请求没有注册
         if (!containsRequest(uri)) {
             return 404;
         }
 
         RequestMethod requestMethod = RequestMethod.valueOf(req.getMethod().toUpperCase());
+        // 获取当前uri的对应请求处理器映射
         RequestMapping mapping = getMapping(uri);
+        // 获取当前请求方式的处理
         ServletHandler servletHandler = mapping.getRequestHandler(requestMethod);
 
         // 设置pathVar
         mapping.parsePathVars(uri);
-        System.out.println(mapping);
 
+        // 判断处理器是否存在
         if (servletHandler != null) {
+            // 处理请求
             String responseInfo = servletHandler.handle(req, resp);
             WebUtil.responseHandle(req, resp, responseInfo);
             return 200;
         } else {
+            // 这个请求方式没有注册
             return 405;
         }
     }

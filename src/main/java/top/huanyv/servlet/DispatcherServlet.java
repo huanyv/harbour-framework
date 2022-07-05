@@ -21,7 +21,7 @@ import java.util.Map;
  * 请求分发器
  * 所有请求都会到这个servlet
  */
-public class WinterServlet extends HttpServlet {
+public class DispatcherServlet extends HttpServlet {
 
     /**
      * 请求注册容器
@@ -43,17 +43,22 @@ public class WinterServlet extends HttpServlet {
             return;
         }
 
+        // 处理请求
         int status = registry.handle(req, resp);
         if (status == 404){
-            resp.setStatus(404);
-            resp.getWriter().println("<h1>404</h1>");
+            resp.sendError(404,"resources not found.");
         } else if (status == 405) {
-            resp.setStatus(405);
-            resp.getWriter().println("<h1>405</h1>");
+            resp.sendError(405, "request method not exists.");
         }
 
     }
 
+    /**
+     * 静态资源处理
+     * @param uri 请求uri，为static下的文件路径
+     * @param resp 响应对象
+     * @return 是否存在静态资源
+     */
     public boolean staticHandle(String uri, HttpServletResponse resp) throws IOException {
         StaticResourceHandler resourceHandler = StaticResourceHandler.single();
         // 判断是否有这个静态资源

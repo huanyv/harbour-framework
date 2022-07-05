@@ -13,7 +13,7 @@ public class MainTest {
     @Test
     public void test() {
         Winter app = Winter.getInstance();
-        app.init(8090);
+        app.init(8090, "/this");
         app.get("/admin", (req, resp) -> {
             return "html:<h1>Hello Winter!!!! GET</h1>";
         });
@@ -28,6 +28,16 @@ public class MainTest {
 
         app.request("/admin/{id}/{name}", (req, resp) -> {
             return "html:<h1>success</h1>";
+        });
+
+        app.filter("/hello", (req, resp, chain) -> {
+            System.out.println("hello test");
+            chain.doFilter(req, resp);
+        });
+
+        app.filter("/admin", (req, resp, chain) -> {
+            System.out.println("admin, filter");
+            chain.doFilter(req, resp);
         });
 
         app.start();

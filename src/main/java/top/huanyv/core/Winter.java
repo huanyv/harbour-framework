@@ -5,13 +5,19 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.tomcat.util.descriptor.web.FilterDef;
+import org.apache.tomcat.util.descriptor.web.FilterMap;
 import top.huanyv.enums.RequestMethod;
+import top.huanyv.interfaces.FilterHandler;
 import top.huanyv.interfaces.ServletHandler;
 import top.huanyv.servlet.*;
+import top.huanyv.utils.StringUtil;
 import top.huanyv.view.StaticResourceHandler;
 import top.huanyv.view.TemplateEngineInstance;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
 public class Winter {
 
@@ -93,6 +99,28 @@ public class Winter {
         registry.register(pattern, method, servletHandler);
     }
 
+    /**
+     * 添加filter过滤器
+     * @param urlPattern
+     * @param filterHandler
+     */
+    public void filter(String urlPattern, FilterHandler filterHandler) {
+        GlobalFilter globalFilter = new GlobalFilter();
+        globalFilter.setFilterHandler(filterHandler);
+
+        String uuid = StringUtil.getUUID();
+
+        FilterDef filterDef = new FilterDef();
+        filterDef.setFilter(globalFilter);
+        filterDef.setFilterName(uuid);
+        this.context.addFilterDef(filterDef);
+
+        FilterMap filterMap = new FilterMap();
+        filterMap.setFilterName(uuid);
+        filterMap.addURLPattern(urlPattern);
+        this.context.addFilterMap(filterMap);
+    }
+
 
     /**
      * 服务启动
@@ -100,10 +128,9 @@ public class Winter {
     public void start() {
 
         // 请求注册到tomcat容器中
-        WinterServlet servlet = new WinterServlet();
+        DispatcherServlet servlet = new DispatcherServlet();
         Wrapper dispatcher = this.tomcat.addServlet(this.context, "dispatcher", servlet);
         dispatcher.addMapping("/");
-
 
         // =======服务启动前初始化=======
         this.context.setResponseCharacterEncoding(StandardCharsets.UTF_8.name());

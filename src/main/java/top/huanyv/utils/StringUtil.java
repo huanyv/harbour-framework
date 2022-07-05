@@ -61,6 +61,20 @@ public class StringUtil {
         return result.toString();
     }
 
+    public static String removePrefix(String str, String prefix) {
+        if (str.startsWith(prefix)) {
+            str = str.substring(prefix.length());
+        }
+        return str;
+    }
+
+    public static String addPrefix(String str, String prefix) {
+        if (!str.startsWith(prefix)) {
+            str = prefix + str;
+        }
+        return str;
+    }
+
     /**
      * 判断是否有文本（字符串非NULL值，并且不能是全空格）
      */

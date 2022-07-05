@@ -11,13 +11,12 @@ import java.nio.charset.StandardCharsets;
 
 public class TemplateEngineInstance {
 
+    // 单例
     private TemplateEngineInstance() {
     }
-
     private static class SingletonHolder {
         private static final TemplateEngineInstance INSTANCE = new TemplateEngineInstance();
     }
-
     public static TemplateEngineInstance single() {
         return SingletonHolder.INSTANCE;
     }
@@ -25,13 +24,14 @@ public class TemplateEngineInstance {
     private TemplateEngine templateEngine;
     private ClassLoaderTemplateResolver templateResolver;
 
+    // 视图前缀
     private String prefix;
+    // 视图后缀
     private String suffix;
 
     public void init(String prefix, String suffix) {
         init(prefix, suffix, StandardCharsets.UTF_8.name());
     }
-
     public void init(String prefix, String suffix, String encoding) {
         if (prefix.endsWith("/")) {
             this.prefix = prefix;
@@ -52,6 +52,12 @@ public class TemplateEngineInstance {
         templateEngine.setTemplateResolver(templateResolver);
     }
 
+    /**
+     * 视图转发
+     * @param templateName 视图名
+     * @param req 请求对象
+     * @param resp 响应对象
+     */
     public void process(String templateName, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         // 1.设置响应体内容类型和字符集
         resp.setContentType("text/html");

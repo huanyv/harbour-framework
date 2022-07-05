@@ -35,7 +35,7 @@ public class RequestMapping {
     private Map<RequestMethod, ServletHandler> handler;
 
     /**
-     * 通过请求方法，获取具体的处理器
+     * 通过请求方法，获取具体的处理器，如果不存在返回null
      * @param method 请求方式
      * @return 具体处理器
      */
