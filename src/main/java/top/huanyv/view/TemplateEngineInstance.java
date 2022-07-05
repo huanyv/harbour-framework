@@ -4,7 +4,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -34,7 +33,11 @@ public class TemplateEngineInstance {
     }
 
     public void init(String prefix, String suffix, String encoding) {
-        this.prefix = prefix;
+        if (prefix.endsWith("/")) {
+            this.prefix = prefix;
+        } else {
+            this.prefix = prefix + "/";
+        }
         this.suffix = suffix;
 
         templateResolver = new ClassLoaderTemplateResolver(ClassLoader.getSystemClassLoader());

@@ -3,7 +3,6 @@ package top.huanyv.view;
 import top.huanyv.utils.WebUtil;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +20,7 @@ public class StaticResourceHandler {
         return SingletonHolder.INSTANCE;
     }
 
+    // 资源后缀对应的contentType
     public static final Map<String, String> CONTENT_TYPES = new HashMap<>();
 
     static {
@@ -35,13 +35,25 @@ public class StaticResourceHandler {
 
     private String prefix;
 
-    private String uri;
-
+    /**
+     * 设置静态资源前缀
+     * @param prefix 前缀
+     */
     public void init(String prefix) {
         this.prefix = prefix;
     }
 
+    /**
+     * 是否有这个静态资源，如果是 "/" 和 没有后缀，会直接返回false
+     * @param name 静态资源名，一般直接用请求地址
+     */
     public boolean hasResource(String name) {
+        if (name.equals("/")) {
+            return false;
+        }
+        if (!WebUtil.hasExtension(name)) {
+            return false;
+        }
         InputStream inputStream = ClassLoader.getSystemResourceAsStream(this.prefix + name);
         if (inputStream != null) {
             return true;
@@ -49,9 +61,14 @@ public class StaticResourceHandler {
         return false;
     }
 
-
+    /**
+     * 跳转到静态资源
+     * @param uri 请求地址，就是静态资源名，自动拼接上前缀
+     */
     public void process(String uri, HttpServletResponse resp) throws IOException {
+        // 获取资源后缀
         String extension = WebUtil.getExtension(uri);
+        // 设置响应头
         String contentType = CONTENT_TYPES.get(extension);
         resp.setContentType(contentType);
 

@@ -5,16 +5,13 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
-import sun.net.TelnetInputStream;
 import top.huanyv.enums.RequestMethod;
 import top.huanyv.interfaces.ServletHandler;
 import top.huanyv.servlet.*;
 import top.huanyv.view.StaticResourceHandler;
 import top.huanyv.view.TemplateEngineInstance;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 public class Winter {
 
@@ -82,7 +79,10 @@ public class Winter {
      * @param servletHandler 请求处理器
      */
     public void request(String pattern, ServletHandler servletHandler) {
-        request(pattern, servletHandler, null);
+        request(pattern, servletHandler, RequestMethod.GET);
+        request(pattern, servletHandler, RequestMethod.POST);
+        request(pattern, servletHandler, RequestMethod.PUT);
+        request(pattern, servletHandler, RequestMethod.DELETE);
     }
 
     /**
@@ -90,23 +90,7 @@ public class Winter {
      */
     public void request(String pattern, ServletHandler servletHandler, RequestMethod method) {
         RequestHandlerRegistry registry = RequestHandlerRegistry.single();
-        Map<RequestMethod, ServletHandler> handler = registry.getHandler(pattern);
-
-        if (RequestMethod.GET.equals(method)) {
-            handler.put(RequestMethod.GET, servletHandler);
-        } else if(RequestMethod.POST.equals(method)) {
-            handler.put(RequestMethod.POST, servletHandler);
-        } else if(RequestMethod.PUT.equals(method)) {
-            handler.put(RequestMethod.PUT, servletHandler);
-        } else if(RequestMethod.DELETE.equals(method)) {
-            handler.put(RequestMethod.DELETE, servletHandler);
-        } else {
-            handler.put(RequestMethod.GET, servletHandler);
-            handler.put(RequestMethod.POST, servletHandler);
-            handler.put(RequestMethod.PUT, servletHandler);
-            handler.put(RequestMethod.DELETE, servletHandler);
-        }
-        registry.register(pattern, handler);
+        registry.register(pattern, method, servletHandler);
     }
 
 
@@ -125,7 +109,7 @@ public class Winter {
         this.context.setResponseCharacterEncoding(StandardCharsets.UTF_8.name());
         this.context.setRequestCharacterEncoding(StandardCharsets.UTF_8.name());
 
-        TemplateEngineInstance.single().init("templates/", ".html");
+        TemplateEngineInstance.single().init("templates", ".html");
         StaticResourceHandler.single().init("static");
         // ===========================
 

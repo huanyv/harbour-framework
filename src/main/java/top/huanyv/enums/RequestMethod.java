@@ -16,7 +16,4 @@ public enum RequestMethod {
         return method;
     }
 
-
-
-
 }
