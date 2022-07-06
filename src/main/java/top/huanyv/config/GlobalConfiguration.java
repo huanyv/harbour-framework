@@ -5,7 +5,6 @@ import top.huanyv.annotation.Configuration;
 import top.huanyv.utils.ResourceUtil;
 import top.huanyv.utils.SystemConstants;
 
-import java.sql.PreparedStatement;
 import java.util.Properties;
 import java.util.Set;
 

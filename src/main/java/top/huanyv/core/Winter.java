@@ -10,7 +10,6 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import top.huanyv.annotation.Configuration;
-import top.huanyv.config.GlobalConfiguration;
 import top.huanyv.config.WebConfiguration;
 import top.huanyv.enums.RequestMethod;
 import top.huanyv.interfaces.FilterHandler;
@@ -141,6 +140,21 @@ public class Winter {
     public void start() {
 
 
+        // =======服务启动前初始化=======
+        this.context.setResponseCharacterEncoding(StandardCharsets.UTF_8.name());
+        this.context.setRequestCharacterEncoding(StandardCharsets.UTF_8.name());
+
+        TemplateEngineInstance.single().init("templates", ".html");
+        StaticResourceHandler.single().init("static");
+        // ===========================
+
+
+        // 请求注册到tomcat容器中
+        DispatcherServlet servlet = new DispatcherServlet();
+        Wrapper dispatcher = this.tomcat.addServlet(this.context, "dispatcher", servlet);
+        dispatcher.addMapping("/");
+
+        // filter过滤器添加
         this.filterRegistry.toContext(this.context);
 
         String banner = "__        ___       _            \n" +
