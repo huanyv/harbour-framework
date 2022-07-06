@@ -1,5 +1,7 @@
 package top.huanyv.view;
 
+import cn.hutool.core.io.IoUtil;
+import top.huanyv.utils.SystemConstants;
 import top.huanyv.utils.WebUtil;
 
 import javax.servlet.ServletOutputStream;
@@ -49,7 +51,7 @@ public class StaticResourceHandler {
      * @param name 静态资源名，一般直接用请求地址
      */
     public boolean hasResource(String name) {
-        if (name.equals("/")) {
+        if (name.equals(SystemConstants.PATH_SEPARATOR)) {
             return false;
         }
         if (!WebUtil.hasExtension(name)) {
@@ -76,15 +78,16 @@ public class StaticResourceHandler {
         InputStream inputStream = ClassLoader.getSystemResourceAsStream(this.prefix + uri);
         ServletOutputStream outputStream = resp.getOutputStream();
 
-        int len = 0;
-        byte[] buffer = new byte[4096];
-        while ((len = inputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, len);
-        }
-
-        outputStream.flush();
-        inputStream.close();
-        outputStream.close();
+//        int len = 0;
+//        byte[] buffer = new byte[4096];
+//        while ((len = inputStream.read(buffer)) != -1) {
+//            outputStream.write(buffer, 0, len);
+//        }
+//
+//        outputStream.flush();
+//        inputStream.close();
+//        outputStream.close();
+        IoUtil.copy(inputStream, outputStream);
     }
 
 }

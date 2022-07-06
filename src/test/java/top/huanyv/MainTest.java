@@ -1,6 +1,7 @@
 package top.huanyv;
 
 import jdk.nashorn.internal.ir.ReturnNode;
+import org.apache.tomcat.util.json.JSONParser;
 import org.junit.Test;
 import top.huanyv.core.RequestHandlerRegistry;
 import top.huanyv.core.Winter;
@@ -50,7 +51,11 @@ public class MainTest {
             resp.file(new File("C:\\Users\\admin\\Desktop\\新建文件夹\\myblogadmin.zip"));
         });
 
-        app.init(8090, "/this");
+        app.get("/json", (req, resp) -> {
+            resp.json(Arrays.asList("asasas","sasa","sasa"));
+        });
+
+        app.init(8090, "/test");
 
         app.start();
     }
@@ -61,6 +66,8 @@ public class MainTest {
         String[] paths = str.split("/");
         System.out.println("Arrays.toString(paths) = " + Arrays.toString(paths));
         System.out.println(compareUrl("/admin/1/zhangsan", "/admin/{id}/{name}"));
+
+
 
     }
 

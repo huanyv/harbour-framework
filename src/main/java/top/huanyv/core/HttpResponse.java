@@ -1,7 +1,8 @@
 package top.huanyv.core;
 
 
-import org.apache.commons.io.IOUtils;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.json.JSONUtil;
 import sun.misc.BASE64Encoder;
 import top.huanyv.view.TemplateEngineInstance;
 
@@ -39,10 +40,6 @@ public class HttpResponse {
         servletResponse.sendRedirect(location);
     }
 
-    public void view(String name) throws IOException {
-        templateEngineInstance.process(name, servletRequest, servletResponse);
-    }
-
     public void html(String content) throws IOException {
         write(content, "text/html");
     }
@@ -51,8 +48,9 @@ public class HttpResponse {
         write(content, "text/plain");
     }
 
-    public void json(String content) throws IOException {
-        write(content, "application/json");
+    public void json(Object content) throws IOException {
+        String json = JSONUtil.toJsonStr(content);
+        write(json, "application/json");
     }
 
     public void xml(String content) throws IOException {
@@ -75,7 +73,7 @@ public class HttpResponse {
         }
         ServletOutputStream outputStream = servletResponse.getOutputStream();
         FileInputStream inputStream = new FileInputStream(file);
-        IOUtils.copy(inputStream,outputStream);
+        IoUtil.copy(inputStream, outputStream);
     }
 
 

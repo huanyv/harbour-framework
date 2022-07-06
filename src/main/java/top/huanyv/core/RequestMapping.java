@@ -2,6 +2,7 @@ package top.huanyv.core;
 
 import top.huanyv.enums.RequestMethod;
 import top.huanyv.interfaces.ServletHandler;
+import top.huanyv.utils.SystemConstants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,14 +60,14 @@ public class RequestMapping {
      */
     public boolean compareUrl(String url) {
         // 模糊地址
-        String[] arr1 = this.urlPattern.split("/");
+        String[] arr1 = this.urlPattern.split(SystemConstants.PATH_SEPARATOR);
         // 精确地址
-        String[] arr2 = url.split("/");
+        String[] arr2 = url.split(SystemConstants.PATH_SEPARATOR);
         if (arr1.length != arr2.length) {
             return false;
         }
         for (int i = 0; i < arr1.length; i++) {
-            if (arr1[i].matches("\\{[0-9a-zA-Z]+\\}")) {
+            if (arr1[i].matches(SystemConstants.REQUEST_URI_REGULAR)) {
                 continue;
             }
             if (!arr1[i].equals(arr2[i])) {
@@ -83,11 +84,11 @@ public class RequestMapping {
     public void parsePathVars(String url) {
         this.pathVariables = new HashMap<>();
         // 模糊地址
-        String[] arr1 = this.urlPattern.split("/");
+        String[] arr1 = this.urlPattern.split(SystemConstants.PATH_SEPARATOR);
         // 精确地址
-        String[] arr2 = url.split("/");
+        String[] arr2 = url.split(SystemConstants.PATH_SEPARATOR);
         for (int i = 0; i < arr1.length; i++) {
-            if (arr1[i].matches("\\{[0-9a-zA-Z]+\\}")) {
+            if (arr1[i].matches(SystemConstants.REQUEST_URI_REGULAR)) {
                 this.pathVariables.put(arr1[i].substring(1, arr1[i].length() - 1), arr2[i]);
             }
         }

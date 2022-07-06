@@ -2,10 +2,11 @@ package top.huanyv.core;
 
 import org.apache.catalina.Context;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import top.huanyv.enums.RequestMethod;
 import top.huanyv.utils.WebUtil;
+import top.huanyv.view.TemplateEngineInstance;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -22,14 +23,14 @@ public class HttpRequest {
     private final String uri;
     private final RequestHandlerRegistry registry;
 
-    private Context context;
+    private final TemplateEngineInstance templateEngineInstance;
 
     public HttpRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         this.servletRequest = servletRequest;
         this.servletResponse = servletResponse;
         this.uri = WebUtil.getRequestURI(servletRequest);
         this.registry = RequestHandlerRegistry.single();
-        this.context = Winter.use().getContext();
+        templateEngineInstance  = TemplateEngineInstance.single();
     }
 
     /**
@@ -39,19 +40,28 @@ public class HttpRequest {
         return servletRequest;
     }
 
-
+    /**
+     * 请求转发
+     * @param path 转发地址
+     */
     public void forward(String path) throws ServletException, IOException {
         servletRequest.getRequestDispatcher(path).forward(servletRequest, servletResponse);
+    }
+
+    /**
+     * 转发视图
+     * @param name 视图名
+     */
+    public void view(String name) throws IOException {
+        templateEngineInstance.process(name, servletRequest, servletResponse);
     }
 
     /**
      * 获取请求体
      */
     public String body() throws IOException {
-        String encoding = this.context.getRequestCharacterEncoding();
-        servletRequest.setCharacterEncoding(encoding);
         String method = servletRequest.getMethod();
-        if ("GET".equalsIgnoreCase(method)) {
+        if (RequestMethod.GET.name().equalsIgnoreCase(method)) {
             return servletRequest.getQueryString();
         }
         ServletInputStream inputStream = servletRequest.getInputStream();
@@ -66,7 +76,7 @@ public class HttpRequest {
         outputStream.close();
         inputStream.close();
 
-        return new String(outputStream.toByteArray(), Charset.forName(encoding));
+        return new String(outputStream.toByteArray(), Charset.forName(servletRequest.getCharacterEncoding()));
     }
 
     public String pathVar(String name) {
@@ -77,7 +87,8 @@ public class HttpRequest {
      * 文件上传
      * @param file 上传路径
      */
-    public void uploadFile(File file) {
+    public Map<String, String> uploadFile(File file) {
+        Map<String, String> param = new HashMap<>();
         // 判断是否是文件
         if(ServletFileUpload.isMultipartContent(servletRequest)) {
             ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());//工厂
@@ -85,7 +96,7 @@ public class HttpRequest {
                 List<FileItem> fileItems = servletFileUpload.parseRequest(servletRequest);//获取多段数据集合
                 for (FileItem fileItem:fileItems) {
                     if(fileItem.isFormField()) { //不是文件
-
+                        param.put(fileItem.getFieldName(), fileItem.getString(servletRequest.getCharacterEncoding()));
                     }else { //是文件
                         fileItem.write(new File(file.getAbsolutePath() + File.separator + fileItem.getName()));
                     }
@@ -94,10 +105,8 @@ public class HttpRequest {
                 e.printStackTrace();
             }
         }
-
+        return param;
     }
-
-
 
 
     // 原生方法

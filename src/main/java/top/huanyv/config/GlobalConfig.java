@@ -12,7 +12,7 @@ import java.util.Set;
  * @author admin
  * @date 2022/7/6 9:05
  */
-public class GlobalConfiguration {
+public class GlobalConfig {
 
     public static final String DEFAULT_GLOBAL_ENCODING = "UTF-8";
     public static final String DEFAULT_SERVER_PORT = "8080";
@@ -36,15 +36,9 @@ public class GlobalConfiguration {
         public static final Properties PROPERTIES = ResourceUtil.getProperties(SystemConstants.SYSTEM_CONFIG_FILE);
     }
 
-    public static String getStringConfig(String key, String defaultValue) {
+    public static String getConfig(String key, String defaultValue) {
         return GlobalProperties.PROPERTIES.getProperty(key, defaultValue);
     }
-
-    public static int getIntConfig(String key, String defaultValue) {
-        String value = GlobalProperties.PROPERTIES.getProperty(key, defaultValue);
-        return Integer.parseInt(value);
-    }
-
 
     public static WebConfiguration getWebConfigClass() {
         WebConfiguration webConfiguration = null;

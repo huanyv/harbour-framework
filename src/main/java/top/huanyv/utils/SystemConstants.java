@@ -1,27 +1,22 @@
 package top.huanyv.utils;
 
 public class SystemConstants {
-    public static final String RESPONSE_FORWARD_PREFIX = "forward:";
 
-    public static final String RESPONSE_REDIRECT_PREFIX = "redirect:";
-
-    public static final String RESPONSE_JSON_PREFIX = "json:";
-
-    public static final String RESPONSE_TEXT_PREFIX = "text:";
-
-    public static final String RESPONSE_HTML_PREFIX = "html:";
-
-    public static final String RESPONSE_TH_PREFIX = "th:";
 
     public static final String SYSTEM_CONFIG_FILE = "app.properties";
 
-    public static final String DEFAULT_SERVLET_ENCODING = "UTF-8";
-    public static final String DEFAULT_THYMELEAF_PREFIX = "templates";
-    public static final String DEFAULT_THYMELEAF_SUFFIX = ".html";
-    public static final String DEFAULT_STATIC_PREFIX = "static";
+    public static final String DISPATCHER_SERVLET_URL_PATTERN = "/";
+    public static final String DISPATCHER_SERVLET_NAME = "dispatcher";
 
-    public static final String CONFIG_KEY_SERVLET_ENCODING = "servlet.encoding";
-    public static final String CONFIG_KEY_THYMELEAF_PREFIX = "web.thymeleaf.prefix";
-    public static final String CONFIG_KEY_THYMELEAF_SUFFIX = "web.thymeleaf.suffix";
-    public static final String CONFIG_KEY_STATIC_PREFIX = "web.static.prefix";
+    public static final String PATH_SEPARATOR = "/";
+    public static final String REQUEST_URI_REGULAR = "\\{[0-9a-zA-Z]+\\}";
+
+
+    public static final String BANNER_FILE_NAME = "banner.txt";
+    public static final String DEFAULT_BANNER = "__        ___       _            \n" +
+                                        "\\ \\      / (_)_ __ | |_ ___ _ __ \n" +
+                                        " \\ \\ /\\ / /| | '_ \\| __/ _ \\ '__|\n" +
+                                        "  \\ V  V / | | | | | ||  __/ |   \n" +
+                                        "   \\_/\\_/  |_|_| |_|\\__\\___|_|   ";
+
 }

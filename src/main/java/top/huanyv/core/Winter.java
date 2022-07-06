@@ -32,14 +32,14 @@ public class Winter {
      * 单例
      */
     private Winter() { }
-
     private static class SingleHolder {
         private static final Winter INSTANCE = new Winter();
     }
-
     public static Winter use() {
         return SingleHolder.INSTANCE;
     }
+
+    private WebConfiguration webConfig = new WebConfiguration() { };
 
     /**
      * web容器， 单例
@@ -50,11 +50,28 @@ public class Winter {
      */
     private Context context;
 
+
+    private boolean initFlag = false;
+
+    /**
+     * 请求注册器
+     */
     private RequestHandlerRegistry requestRegistry = RequestHandlerRegistry.single();
+    /**
+     * 过滤器注册器
+     */
     private FilterHandlerRegistry filterRegistry = FilterHandlerRegistry.single();
 
     public Context getContext() {
         return context;
+    }
+
+    /**
+     * 设置配置类
+     * @param webConfig 配置类
+     */
+    public void setConfig(WebConfiguration webConfig) {
+        this.webConfig = webConfig;
     }
 
     /**
@@ -73,8 +90,13 @@ public class Winter {
         connector.setURIEncoding(uriEncoding);
         this.tomcat.getService().addConnector(connector);
         setCtx(ctx);
+        this.initFlag = true;
     }
 
+    /**
+     * 设置context-path
+     * @param ctx context-path
+     */
     public void setCtx(String ctx) {
         this.context = tomcat.addContext(ctx, null);
     }
@@ -139,36 +161,47 @@ public class Winter {
      */
     public void start() {
 
-
         // =======服务启动前初始化=======
-        this.context.setResponseCharacterEncoding(StandardCharsets.UTF_8.name());
-        this.context.setRequestCharacterEncoding(StandardCharsets.UTF_8.name());
+        String encoding = webConfig.getGlobalEncoding();
+        String thPrefix = webConfig.getThymeleafPrefix();
+        String thSuffix = webConfig.getThymeleafSuffix();
+        String staticPrefix = webConfig.getStaticPrefix();
+        int serverPort = webConfig.getServerPort();
+        String contextPath = webConfig.getServerContext();
 
-        TemplateEngineInstance.single().init("templates", ".html");
-        StaticResourceHandler.single().init("static");
+
+        if (!initFlag) {
+            init(serverPort, contextPath, encoding);
+        }
+
+        this.context.setResponseCharacterEncoding(encoding);
+        this.context.setRequestCharacterEncoding(encoding);
+
+        TemplateEngineInstance.single().init(thPrefix, thSuffix);
+        StaticResourceHandler.single().init(staticPrefix);
         // ===========================
 
 
         // 请求注册到tomcat容器中
         DispatcherServlet servlet = new DispatcherServlet();
-        Wrapper dispatcher = this.tomcat.addServlet(this.context, "dispatcher", servlet);
-        dispatcher.addMapping("/");
+        Wrapper dispatcher = this.tomcat.addServlet(this.context, SystemConstants.DISPATCHER_SERVLET_NAME, servlet);
+        dispatcher.addMapping(SystemConstants.DISPATCHER_SERVLET_URL_PATTERN);
 
         // filter过滤器添加
         this.filterRegistry.toContext(this.context);
 
-        String banner = "__        ___       _            \n" +
-                "\\ \\      / (_)_ __ | |_ ___ _ __ \n" +
-                " \\ \\ /\\ / /| | '_ \\| __/ _ \\ '__|\n" +
-                "  \\ V  V / | | | | | ||  __/ |   \n" +
-                "   \\_/\\_/  |_|_| |_|\\__\\___|_|   ";
-
+        String banner = webConfig.getBanner();
         System.out.println(banner);
 
         try {
             this.tomcat.start();
         } catch (LifecycleException e) {
             e.printStackTrace();
+            try {
+                this.tomcat.stop();
+            } catch (LifecycleException lifecycleException) {
+                lifecycleException.printStackTrace();
+            }
         }
         this.tomcat.getServer().await();
     }

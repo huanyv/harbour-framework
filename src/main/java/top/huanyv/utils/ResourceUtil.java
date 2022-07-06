@@ -1,6 +1,5 @@
 package top.huanyv.utils;
 
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -16,7 +15,7 @@ public class ResourceUtil {
      * @param contentType 响应Content Type
      */
     public static void responseResource(String name, HttpServletResponse resp, String contentType) throws IOException {
-        name = StringUtil.removePrefix(name,"/");
+        name = StringUtil.removePrefix(name, SystemConstants.PATH_SEPARATOR);
         resp.setContentType(contentType);
         InputStream inputStream = ClassLoader.getSystemResourceAsStream(name);
         ServletOutputStream outputStream = resp.getOutputStream();
