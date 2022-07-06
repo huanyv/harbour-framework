@@ -12,8 +12,7 @@ import java.util.Arrays;
 public class MainTest {
     @Test
     public void test() {
-        Winter app = Winter.getInstance();
-        app.init(8090, "/this");
+        Winter app = Winter.use();
         app.get("/admin", (req, resp) -> {
             resp.html("<h1>admin req get</h1>");
         });
@@ -35,12 +34,12 @@ public class MainTest {
 
         app.filter("/hello", (req, resp, chain) -> {
             System.out.println("hello test");
-            chain.doFilter(req, resp);
+            chain.doFilter(req.getOriginal(), resp.getOriginal());
         });
 
-        app.filter("/admin", (req, resp, chain) -> {
+        app.filter("/hello", (req, resp, chain) -> {
             System.out.println("admin, filter");
-            chain.doFilter(req, resp);
+            chain.doFilter(req.getOriginal(), resp.getOriginal());
         });
 
         app.post("/upload", (req, resp) -> {
@@ -48,8 +47,10 @@ public class MainTest {
         });
 
         app.get("/down", (req, resp) -> {
-            resp.downloadFile(new File("C:\\Users\\admin\\Desktop\\新建文件夹\\myblogadmin.zip"));
+            resp.file(new File("C:\\Users\\admin\\Desktop\\新建文件夹\\myblogadmin.zip"));
         });
+
+        app.init(8090, "/this");
 
         app.start();
     }

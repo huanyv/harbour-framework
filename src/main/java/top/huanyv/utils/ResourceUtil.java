@@ -1,10 +1,8 @@
 package top.huanyv.utils;
 
-import sun.swing.plaf.synth.DefaultSynthStyle;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -76,12 +74,13 @@ public class ResourceUtil {
     public static Properties getProperties(String fileName) {
         InputStream inputStream = ClassLoader.getSystemResourceAsStream(fileName);
         Properties properties = new Properties();
-        try {
-            properties.load(inputStream);
-            return properties;
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (inputStream != null) {
+            try {
+                properties.load(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return properties;
     }
 }

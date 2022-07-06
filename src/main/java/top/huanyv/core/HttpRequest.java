@@ -1,5 +1,6 @@
 package top.huanyv.core;
 
+import org.apache.catalina.Context;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -21,11 +22,14 @@ public class HttpRequest {
     private final String uri;
     private final RequestHandlerRegistry registry;
 
+    private Context context;
+
     public HttpRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         this.servletRequest = servletRequest;
         this.servletResponse = servletResponse;
-        uri = WebUtil.getRequestURI(servletRequest);
-        registry = RequestHandlerRegistry.single();
+        this.uri = WebUtil.getRequestURI(servletRequest);
+        this.registry = RequestHandlerRegistry.single();
+        this.context = Winter.use().getContext();
     }
 
     /**
@@ -44,7 +48,7 @@ public class HttpRequest {
      * 获取请求体
      */
     public String body() throws IOException {
-        String encoding = Winter.getInstance().getContext().getRequestCharacterEncoding();
+        String encoding = this.context.getRequestCharacterEncoding();
         servletRequest.setCharacterEncoding(encoding);
         String method = servletRequest.getMethod();
         if ("GET".equalsIgnoreCase(method)) {
@@ -57,6 +61,11 @@ public class HttpRequest {
         while ((len = inputStream.read(buffer)) != -1) {
             outputStream.write(buffer, 0 ,len);
         }
+
+        outputStream.flush();
+        outputStream.close();
+        inputStream.close();
+
         return new String(outputStream.toByteArray(), Charset.forName(encoding));
     }
 
@@ -74,12 +83,10 @@ public class HttpRequest {
             ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());//工厂
             try {
                 List<FileItem> fileItems = servletFileUpload.parseRequest(servletRequest);//获取多段数据集合
-                System.out.println(fileItems);
                 for (FileItem fileItem:fileItems) {
                     if(fileItem.isFormField()) { //不是文件
 
                     }else { //是文件
-                        System.out.println("文件名：" + fileItem.getName());
                         fileItem.write(new File(file.getAbsolutePath() + File.separator + fileItem.getName()));
                     }
                 }

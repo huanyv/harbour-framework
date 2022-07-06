@@ -1,6 +1,8 @@
 package top.huanyv.servlet;
 
 
+import top.huanyv.core.HttpRequest;
+import top.huanyv.core.HttpResponse;
 import top.huanyv.interfaces.FilterHandler;
 
 import javax.servlet.*;
@@ -31,7 +33,7 @@ public class GlobalFilter implements Filter {
         if (response instanceof HttpServletResponse) {
             resp = (HttpServletResponse) response;
         }
-        filterHandler.handle(req, resp, chain);
+        filterHandler.handle(new HttpRequest(req, resp), new HttpResponse(req, resp), chain);
     }
 
     @Override

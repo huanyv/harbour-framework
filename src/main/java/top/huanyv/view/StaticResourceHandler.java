@@ -1,6 +1,5 @@
 package top.huanyv.view;
 
-import cn.hutool.core.io.resource.ResourceUtil;
 import top.huanyv.utils.WebUtil;
 
 import javax.servlet.ServletOutputStream;

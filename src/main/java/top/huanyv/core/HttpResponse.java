@@ -64,7 +64,7 @@ public class HttpResponse {
         servletResponse.getWriter().println(content);
     }
 
-    public void downloadFile(File file) throws IOException {
+    public void file(File file) throws IOException {
         String fileName = file.getName();
         if(servletRequest.getHeaders("User-Agent").equals("FireFox")) { // 如果是火狐浏览器
             servletResponse.setHeader("Content-Disposition", "attachment; filename==?UTF-8?B?"
