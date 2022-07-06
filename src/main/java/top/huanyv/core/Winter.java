@@ -1,30 +1,20 @@
 package top.huanyv.core;
 
-import cn.hutool.core.lang.ClassScanner;
-import cn.hutool.core.util.ClassUtil;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
-import org.apache.tomcat.util.descriptor.web.FilterDef;
-import org.apache.tomcat.util.descriptor.web.FilterMap;
-import top.huanyv.annotation.Configuration;
 import top.huanyv.config.WebConfiguration;
 import top.huanyv.enums.RequestMethod;
 import top.huanyv.interfaces.FilterHandler;
 import top.huanyv.interfaces.ServletHandler;
 import top.huanyv.servlet.*;
-import top.huanyv.utils.ResourceUtil;
-import top.huanyv.utils.StringUtil;
 import top.huanyv.utils.SystemConstants;
 import top.huanyv.view.StaticResourceHandler;
 import top.huanyv.view.TemplateEngineInstance;
 
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
-import java.util.Properties;
-import java.util.Set;
 
 public class Winter {
 

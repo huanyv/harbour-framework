@@ -78,15 +78,6 @@ public class StaticResourceHandler {
         InputStream inputStream = ClassLoader.getSystemResourceAsStream(this.prefix + uri);
         ServletOutputStream outputStream = resp.getOutputStream();
 
-//        int len = 0;
-//        byte[] buffer = new byte[4096];
-//        while ((len = inputStream.read(buffer)) != -1) {
-//            outputStream.write(buffer, 0, len);
-//        }
-//
-//        outputStream.flush();
-//        inputStream.close();
-//        outputStream.close();
         IoUtil.copy(inputStream, outputStream);
     }
 

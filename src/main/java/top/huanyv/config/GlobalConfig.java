@@ -1,12 +1,9 @@
 package top.huanyv.config;
 
-import cn.hutool.core.lang.ClassScanner;
-import top.huanyv.annotation.Configuration;
 import top.huanyv.utils.ResourceUtil;
 import top.huanyv.utils.SystemConstants;
 
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * @author admin
@@ -39,27 +36,5 @@ public class GlobalConfig {
     public static String getConfig(String key, String defaultValue) {
         return GlobalProperties.PROPERTIES.getProperty(key, defaultValue);
     }
-
-    public static WebConfiguration getWebConfigClass() {
-        WebConfiguration webConfiguration = null;
-        Set<Class<?>> classes = ClassScanner.scanPackageBySuper("top.huanyv", WebConfiguration.class);
-        System.out.println(classes.size());
-        if (classes.size() == 1) {
-            webConfiguration = new WebConfiguration() {};
-        } else {
-            for (Class<?> aClass : classes) {
-                try {
-                    Configuration annotation = aClass.getAnnotation(Configuration.class);
-                    if (annotation != null) {
-                        webConfiguration = (WebConfiguration) aClass.newInstance();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return webConfiguration;
-    }
-
 
 }

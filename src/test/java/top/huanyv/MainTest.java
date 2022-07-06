@@ -5,6 +5,7 @@ import org.apache.tomcat.util.json.JSONParser;
 import org.junit.Test;
 import top.huanyv.core.RequestHandlerRegistry;
 import top.huanyv.core.Winter;
+import top.huanyv.core.WinterApplication;
 
 import java.io.File;
 import java.net.URL;
@@ -86,6 +87,11 @@ public class MainTest {
             }
         }
         return true;
+    }
+
+
+    public static void main(String[] args) {
+        WinterApplication.run(MainTest.class, args);
     }
 }
 
