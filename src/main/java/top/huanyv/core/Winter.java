@@ -88,7 +88,7 @@ public class Winter {
      * @param ctx context-path
      */
     public void setCtx(String ctx) {
-        this.context = tomcat.addContext(ctx, null);
+        this.context = tomcat.addContext(ctx, System.getProperty("java.io.tmpdir"));
     }
 
     /**
@@ -147,6 +147,15 @@ public class Winter {
     }
 
     /**
+     * 添加一个视图跳转
+     * @param urlPattern 地址
+     * @param templateName 视图名称
+     */
+    public void addView(String urlPattern, String templateName) {
+        request(urlPattern, (req, resp) -> req.view(templateName));
+    }
+
+    /**
      * 服务启动
      */
     public void start() {
@@ -181,10 +190,13 @@ public class Winter {
         this.filterRegistry.toContext(this.context);
 
         String banner = webConfig.getBanner();
+        System.out.println();
         System.out.println(banner);
+        System.out.println();
 
         try {
             this.tomcat.start();
+            this.tomcat.getServer().await();
         } catch (LifecycleException e) {
             e.printStackTrace();
             try {
@@ -193,7 +205,6 @@ public class Winter {
                 lifecycleException.printStackTrace();
             }
         }
-        this.tomcat.getServer().await();
     }
 
 
