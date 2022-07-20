@@ -6,6 +6,7 @@ import top.huanyv.anno.Component;
 import top.huanyv.anno.Qualifier;
 import top.huanyv.anno.Value;
 import top.huanyv.utils.ClassUtil;
+import top.huanyv.utils.StringUtil;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -32,8 +33,7 @@ public class AnnotationConfigApplicationContext implements BeanFactory{
        //根据原材料创建bean
        createBean(beanDefinitions);
        //自动装载
-       autowiredBean();
-//       autowiredBean(beanDefinitions);
+       autowiredBean(beanDefinitions);
    }
 
     /**
@@ -45,25 +45,15 @@ public class AnnotationConfigApplicationContext implements BeanFactory{
    private Set<BeanDefinition> findBeanDefinitions(String basePack){
        //获取basePack包下所有的class类
        Set<Class<?>> classes = ClassUtil.getClasses(basePack);
-       Iterator<Class<?>> iterator = classes.iterator();
        Set<BeanDefinition> beanDefinitions = new HashSet<>();
-       //遍历所有的class类
-       while (iterator.hasNext()){
-           //遍历这些类，找到添加了Component注解的类
-           Class<?> aClass = iterator.next();
-           Component component = aClass.getAnnotation(Component.class);
-           //如果使用了Component注解，那么可能存在注解value值不为空
-           if (component != null){
-               String beanName;
-               if (component.value() != null && !"".equals(component.value())){
-                   beanName = component.value();
-               }else {
-                   //获取类名首字母小写
-                   String className = aClass.getName().replaceAll(aClass.getPackage().getName() + ".", "");
-                   beanName = className.substring(0, 1).toLowerCase()+className.substring(1);
+       for (Class<?> clazz : classes) {
+           Component component = clazz.getAnnotation(Component.class);
+           if (component != null) {
+               String beanName = component.value();
+               if (!StringUtil.hasText(beanName)) {
+                   beanName = StringUtil.firstLetterLower(clazz.getSimpleName());
                }
-               //封装成BeanDefinition对象
-                beanDefinitions.add(new BeanDefinition(beanName, aClass));
+               beanDefinitions.add(new BeanDefinition(beanName, clazz));
            }
        }
        return beanDefinitions;
@@ -118,23 +108,22 @@ public class AnnotationConfigApplicationContext implements BeanFactory{
                 }
                 beanMap.put(beanName, object);
 
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
+            } catch (InstantiationException | IllegalAccessException
+                    | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void autowiredBean(){
-        for (Map.Entry<String, Object> bean : this.beanMap.entrySet()) {
-            String beanName = bean.getKey();
-            Object beanInstance = bean.getValue();
-            Field[] fields = beanInstance.getClass().getDeclaredFields();
+    /**
+     * 自动装配填充
+     * @param beanDefinitions bean定义
+     */
+    private void autowiredBean(Set<BeanDefinition> beanDefinitions){
+        for (BeanDefinition beanDefinition : beanDefinitions) {
+            String beanName = beanDefinition.getBeanName();
+            Class beanClass = beanDefinition.getBeanClass();
+            Field[] fields = beanClass.getDeclaredFields();
             for (Field field : fields) {
                 Object val = null;
                 // 注入
@@ -147,62 +136,12 @@ public class AnnotationConfigApplicationContext implements BeanFactory{
                     }
                 }
                 try {
+                    Object bean = getBean(beanName);
                     field.setAccessible(true);
-                    field.set(beanInstance, val);
+                    field.set(bean, val);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
-            }
-        }
-    }
-
-    /**
-     * 自动装配填充
-     * @param beanDefinitions
-     */
-    private void autowiredBean(Set<BeanDefinition> beanDefinitions){
-        Iterator<BeanDefinition> iterator = beanDefinitions.iterator();
-        while (iterator.hasNext()){
-            BeanDefinition beanDefinition = iterator.next();
-            String beanName = beanDefinition.getBeanName();
-            Class clazz = beanDefinition.getBeanClass();
-            //遍历clazz类所有的字段属性，寻找使用了Autowired与Qualifier注解的属性，并填充属性值
-            Field[] declaredFields = clazz.getDeclaredFields();
-            for (Field field : declaredFields) {
-                //判断是否使用了Autowired与Qualifier注解
-                Autowired autowired = field.getAnnotation(Autowired.class);
-                if (autowired != null){
-                    try {
-                        Qualifier qualifier = field.getAnnotation(Qualifier.class);
-                        Object val = null;
-                        if (qualifier != null){
-                            //beanName
-                            String name = qualifier.value();
-                            //从Bean容器中获取bean对象
-                            val = beanMap.get(name);
-
-                        }else {
-//                            val = beanMap.get(field.getName());
-                            val = getBean(field.getType());
-                        }
-                        //属性名称
-                        String fieldName = field.getName();
-                        //方法名称
-                        String methodName = "set"+fieldName.substring(0,1).toUpperCase()+fieldName.substring(1);
-                        Object object = beanMap.get(beanName);
-                        Method method = clazz.getMethod(methodName, field.getType());
-                        //进行属性填充
-                        method.invoke(object,val);
-
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-
             }
         }
     }
@@ -213,7 +152,7 @@ public class AnnotationConfigApplicationContext implements BeanFactory{
      * @return bean实例
      */
     @Override
-    public Object getBean(String beanName){
+    public Object getBean(String beanName) {
         return beanMap.get(beanName);
     }
 
@@ -231,6 +170,10 @@ public class AnnotationConfigApplicationContext implements BeanFactory{
     @Override
     public boolean containsBean(String name) {
         return this.beanMap.containsKey(name);
+    }
+
+    public <T> void register(String beanName, T t) {
+        this.beanMap.put(beanName, t);
     }
 
     public String[] getBeanDefinitionNames(){
