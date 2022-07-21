@@ -1,13 +1,8 @@
 package top.huanyv.core.other;
 
-import top.huanyv.anno.Component;
-import top.huanyv.core.AnnotationConfigApplicationContext;
-import top.huanyv.core.BeanDefinition;
-import top.huanyv.core.BeanFactory;
-import top.huanyv.core.processRegisterBean;
-import top.huanyv.core.service.UserService;
-
-import java.util.List;
+import top.huanyv.ioc.anno.Component;
+import top.huanyv.ioc.core.AnnotationConfigApplicationContext;
+import top.huanyv.ioc.core.processRegisterBean;
 
 /**
  * @author admin

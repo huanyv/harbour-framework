@@ -1,21 +1,17 @@
-package top.huanyv.core;
+package top.huanyv.ioc.core;
 
 
-import top.huanyv.anno.Autowired;
-import top.huanyv.anno.Component;
-import top.huanyv.anno.Qualifier;
-import top.huanyv.anno.Value;
-import top.huanyv.utils.ClassUtil;
+import top.huanyv.ioc.anno.Autowired;
+import top.huanyv.ioc.anno.Component;
+import top.huanyv.ioc.anno.Qualifier;
+import top.huanyv.ioc.utils.ClassUtil;
 import top.huanyv.utils.StringUtil;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class AnnotationConfigApplicationContext implements BeanFactory{
 

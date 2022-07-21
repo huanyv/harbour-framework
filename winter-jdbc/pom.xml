@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>top.huanyv</groupId>
-    <artifactId>winter-ioc</artifactId>
+    <artifactId>winter-jdbc</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -22,8 +22,20 @@
         </dependency>
         <dependency>
             <groupId>top.huanyv</groupId>
-            <artifactId>java-utils</artifactId>
+            <artifactId>winter-ioc</artifactId>
             <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-dbutils</groupId>
+            <artifactId>commons-dbutils</artifactId>
+            <version>1.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.2.8</version>
         </dependency>
     </dependencies>
 

@@ -4,8 +4,7 @@ package top.huanyv.core;
 import org.junit.Test;
 import top.huanyv.core.dao.UserDao;
 import top.huanyv.core.service.UserService;
-
-import java.util.Arrays;
+import top.huanyv.ioc.core.AnnotationConfigApplicationContext;
 
 
 public class ApplicationContextTest {

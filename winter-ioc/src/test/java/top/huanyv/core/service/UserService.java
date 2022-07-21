@@ -1,7 +1,7 @@
 package top.huanyv.core.service;
 
-import top.huanyv.anno.Autowired;
-import top.huanyv.anno.Component;
+import top.huanyv.ioc.anno.Autowired;
+import top.huanyv.ioc.anno.Component;
 import top.huanyv.core.dao.UserDao;
 
 /**

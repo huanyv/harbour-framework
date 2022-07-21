@@ -1,4 +1,4 @@
-package top.huanyv.anno;
+package top.huanyv.ioc.anno;
 
 import java.lang.annotation.*;
 

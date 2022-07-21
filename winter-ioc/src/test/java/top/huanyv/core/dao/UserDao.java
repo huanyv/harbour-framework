@@ -1,6 +1,6 @@
 package top.huanyv.core.dao;
 
-import top.huanyv.anno.Component;
+import top.huanyv.ioc.anno.Component;
 
 /**
  * @author admin

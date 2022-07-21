@@ -1,4 +1,4 @@
-package top.huanyv.core;
+package top.huanyv.ioc.core;
 
 
 public class BeanDefinition {
