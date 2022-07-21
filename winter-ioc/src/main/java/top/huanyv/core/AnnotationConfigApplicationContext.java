@@ -9,11 +9,13 @@ import top.huanyv.utils.ClassUtil;
 import top.huanyv.utils.StringUtil;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class AnnotationConfigApplicationContext implements BeanFactory{
 
@@ -32,6 +34,15 @@ public class AnnotationConfigApplicationContext implements BeanFactory{
        Set<BeanDefinition> beanDefinitions = findBeanDefinitions(basePack);
        //根据原材料创建bean
        createBean(beanDefinitions);
+
+       for (Map.Entry<String, Object> beanEntry : this.beanMap.entrySet()) {
+           Object bean = beanEntry.getValue();
+           if (bean instanceof processRegisterBean) {
+               processRegisterBean registerBean = (processRegisterBean) bean;
+               registerBean.registerBean(this);
+           }
+       }
+
        //自动装载
        autowiredBean(beanDefinitions);
    }
@@ -64,52 +75,16 @@ public class AnnotationConfigApplicationContext implements BeanFactory{
      * @param beanDefinitions
      */
     private void createBean(Set<BeanDefinition> beanDefinitions){
-        Iterator<BeanDefinition> iterator = beanDefinitions.iterator();
-        //遍历beanDefinitions集合
-        while (iterator.hasNext()){
-            //获取BeanDefinition
-            BeanDefinition beanDefinition = iterator.next();
-            Class clazz = beanDefinition.getBeanClass();
+        for (BeanDefinition beanDefinition : beanDefinitions) {
             String beanName = beanDefinition.getBeanName();
-
+            Class beanClass = beanDefinition.getBeanClass();
             try {
-                //通过反射实例化对象
-                Object object = clazz.newInstance();
-                //遍历object对象所有的属性，寻找使用Value注解的属性并填充属性值
-                Field[] fields = clazz.getDeclaredFields();
-                for (Field declaredField : fields) {
-                    //判断是否使用Value注解，使用则给属性进行填充值
-                    Value valueAnnotation = declaredField.getAnnotation(Value.class);
-                    if(valueAnnotation!=null){
-                        String value = valueAnnotation.value();
-                        String fieldName = declaredField.getName();
-                        String methodName = "set"+fieldName.substring(0, 1).toUpperCase()+fieldName.substring(1);
-
-                        Method method = clazz.getMethod(methodName,declaredField.getType());
-                        //完成数据类型转换
-                        Object val = null;
-                        switch (declaredField.getType().getName()){
-                            case "int":
-                                val = Integer.parseInt(value);
-                                break;
-                            case "java.lang.Integer":
-                                val = Integer.parseInt(value);
-                                break;
-                            case "java.lang.String":
-                                val = value;
-                                break;
-                            case "java.lang.Float":
-                                val = Float.parseFloat(value);
-                                break;
-                        }
-                        //给属性进行填充值
-                        method.invoke(object, val);
-                    }
-                }
-                beanMap.put(beanName, object);
-
-            } catch (InstantiationException | IllegalAccessException
-                    | InvocationTargetException | NoSuchMethodException e) {
+                Constructor constructor = beanClass.getConstructor();
+                constructor.setAccessible(true);
+                Object beanInstance = constructor.newInstance();
+                this.beanMap.put(beanName, beanInstance);
+            } catch (NoSuchMethodException | IllegalAccessException
+                    | InstantiationException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
@@ -177,11 +152,11 @@ public class AnnotationConfigApplicationContext implements BeanFactory{
     }
 
     public String[] getBeanDefinitionNames(){
-        return beanNames.toArray(new String[0]);
+        return new ArrayList<>(this.beanMap.keySet()).toArray(new String[this.beanMap.size()]);
     }
 
     public Integer getBeanDefinitionCount(){
-        return beanNames.size();
+        return this.beanMap.size();
     }
 }
 

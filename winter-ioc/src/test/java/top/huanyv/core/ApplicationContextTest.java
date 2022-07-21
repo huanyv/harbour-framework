@@ -5,6 +5,8 @@ import org.junit.Test;
 import top.huanyv.core.dao.UserDao;
 import top.huanyv.core.service.UserService;
 
+import java.util.Arrays;
+
 
 public class ApplicationContextTest {
 
@@ -17,6 +19,8 @@ public class ApplicationContextTest {
         UserService userService = (UserService) app.getBean("userService");
         UserDao userDao = app.getBean(UserDao.class);
         userService.getUser();
+
+        System.out.println("app.getBean(\"string\") = " + app.getBean("string"));
 
     }
 
