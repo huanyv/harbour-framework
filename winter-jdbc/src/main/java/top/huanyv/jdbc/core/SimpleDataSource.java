@@ -3,8 +3,11 @@ package top.huanyv.jdbc.core;
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
@@ -19,21 +22,32 @@ public class SimpleDataSource implements DataSource {
     private String password;
 
     public SimpleDataSource() {
-        try {
-            Class.forName(driverClassName);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    }
+
+    public static DataSource createDataSource(Properties properties) {
+        return createDataSource((Map) properties);
+    }
+    public static DataSource createDataSource(Map map) {
+        String driverClassName = (String) map.get("driverClassName");
+        String url = (String) map.get("url");
+        String username = (String) map.get("username");
+        String password = (String) map.get("password");
+        SimpleDataSource dataSource = new SimpleDataSource();
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        return dataSource;
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        return null;
+        return DriverManager.getConnection(url, this.username, this.password);
     }
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        return null;
+        return DriverManager.getConnection(url, username, password);
     }
 
     @Override
@@ -69,5 +83,42 @@ public class SimpleDataSource implements DataSource {
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return null;
+    }
+
+    public String getDriverClassName() {
+        return driverClassName;
+    }
+
+    public void setDriverClassName(String driverClassName) {
+        try {
+            Class.forName(driverClassName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        this.driverClassName = driverClassName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

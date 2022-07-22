@@ -20,6 +20,7 @@ public class ApplicationContextTest {
         userService.getUser();
 
         System.out.println("app.getBean(\"string\") = " + app.getBean("string"));
+        System.out.println("app.getBean(\"string\") = " + app.getBean("string2"));
 
     }
 
