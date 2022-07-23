@@ -1,4 +1,4 @@
-package top.huanyv.jdbc.core;
+package top.huanyv.jdbc.extend;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;

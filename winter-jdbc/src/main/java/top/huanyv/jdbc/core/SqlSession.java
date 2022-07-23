@@ -31,38 +31,22 @@ public class SqlSession {
 */
 
     private Connection connection;
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
 
     private MapperScanner mapperScanner;
 
-    private QueryRunner queryRunner = new QueryRunner();
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+    public Connection getConnection() {
+        return connection;
+    }
 
     public void setMapperScanner(MapperScanner mapperScanner) {
-        mapperScanner.loadMapper((proxy, method, args) -> {
-            String sql = "";
-            Select select = method.getAnnotation(Select.class);
-            if (select != null) {
-                System.out.println("select.value() = " + select.value());
-                sql = select.value();
-
-                Class<?> returnType = method.getReturnType();
-                if (returnType.equals(List.class)) {
-                    Type type = ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
-                    Object queryResult = queryRunner.query(connection, sql, new BeanListHandler((Class) type), args);
-                    return queryResult;
-                }
-
-            }
-            Update update = method.getAnnotation(Update.class);
-            if (update != null) {
-
-            }
-
-            return null;
-        });
         this.mapperScanner = mapperScanner;
+    }
+
+    public MapperScanner getMapperScanner() {
+        return mapperScanner;
     }
 
     public <T> T getMapper(Class<T> clazz) {

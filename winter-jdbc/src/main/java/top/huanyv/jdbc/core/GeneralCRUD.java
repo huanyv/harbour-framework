@@ -1,6 +1,5 @@
 package top.huanyv.jdbc.core;
 
-import com.alibaba.druid.util.JdbcUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -25,7 +24,6 @@ public abstract class GeneralCRUD {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }finally {
-            JdbcUtils.close(conn);
         }
         return -1;
     }

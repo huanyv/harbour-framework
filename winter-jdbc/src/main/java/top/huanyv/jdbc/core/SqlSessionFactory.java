@@ -1,5 +1,7 @@
 package top.huanyv.jdbc.core;
 
+import top.huanyv.jdbc.extend.SimpleDataSource;
+
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,8 +29,8 @@ public class SqlSessionFactory {
      *    password=123 <br/>
      * </code>
      * <br/>
-     * @param inputStream
-     * @return
+     * @param inputStream 配置文件
+     * @return SqlSession
      */
     public static SqlSession openSession(InputStream inputStream) {
         // 加载配置文件
@@ -41,26 +43,39 @@ public class SqlSessionFactory {
         DataSource dataSource = SimpleDataSource.createDataSource(properties);
         String scanPack = properties.getProperty(SCAN_PACKAGE_KEY);
 
-        // 创建mapperscan实例
-        MapperScanner mapperScanner = new MapperScanner();
-        mapperScanner.setDataSource(dataSource);
-        mapperScanner.setScanPack(scanPack);
-
-        return openSession(mapperScanner);
+        return openSession(dataSource, scanPack);
     }
 
     /**
      * 创建一个sqlSession
      */
-    public static SqlSession openSession(MapperScanner scan) {
+    public static SqlSession openSession(DataSource dataSource, String scanPackage) {
+        // 创建mapperscan实例
+        MapperScanner mapperScanner = new MapperScanner();
+        mapperScanner.setScanPack(scanPackage);
+
+        return openSession(dataSource, mapperScanner);
+    }
+
+
+    public static SqlSession openSession(DataSource dataSource, MapperScanner mapperScanner) {
         SqlSession sqlSession = new SqlSession();
-        sqlSession.setMapperScanner(scan);
+        sqlSession.setMapperScanner(mapperScanner);
+
+        Connection connection = null;
+
         try {
-            Connection connection = scan.getDataSource().getConnection();
+            connection = dataSource.getConnection();
             sqlSession.setConnection(connection);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
+        // 加载代理对象
+        MapperProxyHandler mapperProxyHandler = new MapperProxyHandler();
+        mapperProxyHandler.setConnection(connection);
+        mapperScanner.loadMapper(mapperProxyHandler);
+
         return sqlSession;
     }
 

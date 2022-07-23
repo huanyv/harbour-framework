@@ -1,13 +1,11 @@
 package top.huanyv.jdbc.core;
 
-import top.huanyv.ioc.utils.ClassUtil;
 import top.huanyv.jdbc.anno.Mapper;
+import top.huanyv.utils.ClassUtil;
 import top.huanyv.utils.StringUtil;
 
-import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,11 +15,18 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2022/7/22 15:54
  */
 public class MapperScanner {
+
+    // 持久层接口所在的包
     private String scanPack;
-    private DataSource dataSource;
 
     // 所有的mapper代理实例
     private Map<String, Object> mappers = new ConcurrentHashMap<>();
+
+    public MapperScanner() { }
+
+    public MapperScanner(String scanPack) {
+        this.scanPack = scanPack;
+    }
 
     // 动态代理实现接口
     void loadMapper(InvocationHandler invocationHandler) {
@@ -30,9 +35,21 @@ public class MapperScanner {
         for (Class<?> clazz : classes) {
             // 接口名首字母小写
             String mapperName = StringUtil.firstLetterLower(clazz.getSimpleName());
-            // 代理实现
-            Object o = ProxyFactory.getImpl(clazz, invocationHandler);
-            this.mappers.put(mapperName, o);
+            Object mapperInstance = null;
+            if (clazz.isInterface()) {
+                // 代理实现
+                mapperInstance = ProxyFactory.getImpl(clazz, invocationHandler);
+            } else if (clazz.isLocalClass()) {
+                try {
+                    mapperInstance = clazz.getConstructor().newInstance();
+                } catch (NoSuchMethodException | IllegalAccessException
+                        | InstantiationException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (StringUtil.hasText(mapperName) && mapperInstance != null) {
+                this.mappers.put(mapperName, mapperInstance);
+            }
         }
     }
 
@@ -44,14 +61,6 @@ public class MapperScanner {
         this.scanPack = scanPack;
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
     public Map<String, Object> getMappers() {
         return mappers;
     }
@@ -60,7 +69,6 @@ public class MapperScanner {
     public String toString() {
         return "MapperConfigurer{" +
                 "scanPack='" + scanPack + '\'' +
-                ", dataSource=" + dataSource +
                 '}';
     }
 }
