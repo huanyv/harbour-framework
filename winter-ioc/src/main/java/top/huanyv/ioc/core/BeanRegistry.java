@@ -5,5 +5,5 @@ package top.huanyv.ioc.core;
  * @date 2022/7/21 15:59
  */
 public interface BeanRegistry {
-    void register(AnnotationConfigApplicationContext applicationContext);
+    void set(ApplicationContext applicationContext);
 }

@@ -14,6 +14,9 @@ public class UserService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private BookService bookService;
+
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
@@ -23,4 +26,14 @@ public class UserService {
         System.out.println("service...");
     }
 
+
+    public BookService getBookService() {
+        System.out.println("bookService.toString() = " + bookService.toString());
+        return bookService;
+    }
+
+    @Override
+    public String toString() {
+        return "userservice";
+    }
 }

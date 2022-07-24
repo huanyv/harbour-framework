@@ -2,6 +2,7 @@ package top.huanyv.jdbc.extend;
 
 import top.huanyv.ioc.anno.Component;
 import top.huanyv.ioc.core.AnnotationConfigApplicationContext;
+import top.huanyv.ioc.core.ApplicationContext;
 import top.huanyv.ioc.core.BeanRegistry;
 import top.huanyv.jdbc.core.MapperScanner;
 import top.huanyv.jdbc.core.SqlSession;
@@ -15,9 +16,10 @@ import java.util.Map;
  * @date 2022/7/23 16:31
  */
 @Component
-public class WinterBeanRegister implements BeanRegistry {
+public class MapperRegister implements BeanRegistry {
+
     @Override
-    public void register(AnnotationConfigApplicationContext applicationContext) {
+    public void set(ApplicationContext applicationContext) {
         DataSource dataSource = applicationContext.getBean(DataSource.class);
         MapperScanner mapperScanner = applicationContext.getBean(MapperScanner.class);
 

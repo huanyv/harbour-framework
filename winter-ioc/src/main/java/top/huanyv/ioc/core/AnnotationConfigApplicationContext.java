@@ -2,17 +2,22 @@ package top.huanyv.ioc.core;
 
 
 import top.huanyv.ioc.anno.*;
+import top.huanyv.ioc.config.GlobalConfiguration;
 import top.huanyv.utils.ClassUtil;
 import top.huanyv.utils.StringUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
-public class AnnotationConfigApplicationContext implements BeanFactory {
+public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     /**
      * Bean容器
@@ -20,16 +25,16 @@ public class AnnotationConfigApplicationContext implements BeanFactory {
     private Map<String, Object> beanMap = new ConcurrentHashMap<>();
 
     /**
-     * BeanName集合
+     * bean定义
      */
-    private List<String> beanNames = new ArrayList<>();
-
     private Set<BeanDefinition> beanDefinitions = new HashSet<>();
+
 
     public AnnotationConfigApplicationContext(String... basePackages) {
         //遍历包，找到目标类(原材料)
         for (int i = 0; i < basePackages.length; i++) {
-            findBeanDefinitions(basePackages[i]);
+            String scanPackage = basePackages[i].trim();
+            findBeanDefinitions(scanPackage);
         }
 
         //根据原材料创建bean
@@ -43,7 +48,7 @@ public class AnnotationConfigApplicationContext implements BeanFactory {
         // 外部注入的bean
         Set<BeanRegistry> beanRegistries = extendBean();
         for (BeanRegistry beanRegistry : beanRegistries) {
-            beanRegistry.register(this);
+            beanRegistry.set(this);
         }
 
         // 自动装载
@@ -133,6 +138,16 @@ public class AnnotationConfigApplicationContext implements BeanFactory {
             }
         }
         return beanRegistries;
+//
+//        Set<BeanDefinition> beanDefinitions = this.beanDefinitions.stream()
+//                .filter(beanDefinition -> BeanRegistry.class.isAssignableFrom(beanDefinition.getBeanClass()))
+//                .collect(Collectors.toSet());
+//
+//        autowiredBean(beanDefinitions);
+//
+//        return beanDefinitions.stream()
+//                .map(beanDefinition -> (BeanRegistry) getBean(beanDefinition.getBeanName()))
+//                .collect(Collectors.toSet());
     }
 
     /**
@@ -183,7 +198,7 @@ public class AnnotationConfigApplicationContext implements BeanFactory {
         for (Map.Entry<String, Object> entry : this.beanMap.entrySet()) {
             Object o = entry.getValue();
             if (clazz.isInstance(o)) {
-                return (T) beanMap.get(entry.getKey());
+                return (T) o;
             }
         }
         return null;
@@ -194,22 +209,32 @@ public class AnnotationConfigApplicationContext implements BeanFactory {
         return this.beanMap.containsKey(name);
     }
 
-
+    @Override
     public void register(Object o) {
         String beanName = StringUtil.firstLetterLower(o.getClass().getSimpleName());
         register(beanName, o);
     }
 
+    @Override
     public void register(String beanName, Object o) {
         this.beanMap.put(beanName, o);
     }
 
+    @Override
     public String[] getBeanDefinitionNames() {
         return new ArrayList<>(this.beanMap.keySet()).toArray(new String[this.beanMap.size()]);
     }
 
-    public Integer getBeanDefinitionCount() {
+    @Override
+    public int getBeanDefinitionCount() {
         return this.beanMap.size();
+    }
+
+    @Override
+    public Set<Object> getBeansByAnnotation(Class<? extends Annotation> aClass) {
+        return this.beanMap.entrySet().stream()
+                .filter(entry -> entry.getValue().getClass().isAnnotationPresent(aClass))
+                .map(Map.Entry::getValue).collect(Collectors.toSet());
     }
 }
 
