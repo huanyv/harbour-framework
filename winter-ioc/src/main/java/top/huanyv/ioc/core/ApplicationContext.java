@@ -17,6 +17,5 @@ public interface ApplicationContext extends BeanFactory{
 
     int getBeanDefinitionCount();
 
-    Set<Object> getBeansByAnnotation(Class<? extends Annotation> aClass);
 
 }

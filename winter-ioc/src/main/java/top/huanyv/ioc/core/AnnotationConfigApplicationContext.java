@@ -230,11 +230,6 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         return this.beanMap.size();
     }
 
-    @Override
-    public Set<Object> getBeansByAnnotation(Class<? extends Annotation> aClass) {
-        return this.beanMap.entrySet().stream()
-                .filter(entry -> entry.getValue().getClass().isAnnotationPresent(aClass))
-                .map(Map.Entry::getValue).collect(Collectors.toSet());
-    }
+
 }
 
