@@ -22,14 +22,7 @@ public class WebApplicationListener implements ServletContextListener {
         ServletContext servletContext = sce.getServletContext();
 
         String configLocation = servletContext.getInitParameter("ConfigLocation");
-
-        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(configLocation);
-        Properties properties = new Properties();
-        try {
-            properties.load(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Properties properties = PropertiesUtil.getProperties(configLocation);
         String packages = properties.getProperty("component.scan");
 
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(packages.split(","));

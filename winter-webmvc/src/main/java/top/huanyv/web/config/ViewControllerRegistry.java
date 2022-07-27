@@ -13,15 +13,9 @@ public class ViewControllerRegistry {
 
     private Map<String, String> viewController = new HashMap<>();
 
-    private ViewResolver viewResolver;
-
     public ViewControllerRegistry add(String path, String viewName) {
         this.viewController.put(path, viewName);
         return this;
-    }
-
-    public void setViewResolver(ViewResolver viewResolver) {
-        this.viewResolver = viewResolver;
     }
 
     public Map<String, String> getViewController() {

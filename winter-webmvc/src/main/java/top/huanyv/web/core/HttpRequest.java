@@ -3,15 +3,16 @@ package top.huanyv.web.core;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import top.huanyv.utils.IoUtil;
 import top.huanyv.web.enums.RequestMethod;
 import top.huanyv.utils.WebUtil;
-import top.huanyv.web.view.TemplateEngineInstance;
 import top.huanyv.web.view.ViewResolver;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.*;
 
@@ -25,14 +26,12 @@ public class HttpRequest {
     private final String uri;
     private final RequestHandlerRegistry registry;
 
-    private final TemplateEngineInstance templateEngineInstance;
 
     public HttpRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         this.servletRequest = servletRequest;
         this.servletResponse = servletResponse;
         this.uri = WebUtil.getRequestURI(servletRequest);
         this.registry = RequestHandlerRegistry.single();
-        templateEngineInstance  = TemplateEngineInstance.single();
     }
 
     public void setViewResolver(ViewResolver viewResolver) {
@@ -70,19 +69,7 @@ public class HttpRequest {
         if (RequestMethod.GET.name().equalsIgnoreCase(method)) {
             return servletRequest.getQueryString();
         }
-        ServletInputStream inputStream = servletRequest.getInputStream();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        int len = 0;
-        byte[] buffer = new byte[1024];
-        while ((len = inputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0 ,len);
-        }
-
-        outputStream.flush();
-        outputStream.close();
-        inputStream.close();
-
-        return new String(outputStream.toByteArray(), Charset.forName(servletRequest.getCharacterEncoding()));
+        return IoUtil.readStr(servletRequest.getInputStream(), Charset.forName(servletRequest.getCharacterEncoding()));
     }
 
     public String pathVar(String name) {
@@ -90,28 +77,47 @@ public class HttpRequest {
     }
 
     /**
-     * 文件上传
-     * @param file 上传路径
+     * 多文件上传
      */
-    public Map<String, String> uploadFile(File file) {
-        Map<String, String> param = new HashMap<>();
+    public List<FileItem> getFileItems() {
         // 判断是否是文件
         if(ServletFileUpload.isMultipartContent(servletRequest)) {
+            ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());//工厂
+            try {
+                return servletFileUpload.parseRequest(servletRequest);//获取多段数据集合
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+    public FileItem getFileItem() {
+        List<FileItem> fileItems = getFileItems();
+        for (FileItem fileItem : fileItems) {
+            if (!fileItem.isFormField()) {
+                return fileItem;
+            }
+        }
+        return null;
+    }
+
+    public String getParam(String name) {
+        if (ServletFileUpload.isMultipartContent(servletRequest)) {
             ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());//工厂
             try {
                 List<FileItem> fileItems = servletFileUpload.parseRequest(servletRequest);//获取多段数据集合
                 for (FileItem fileItem:fileItems) {
                     if(fileItem.isFormField()) { //不是文件
-                        param.put(fileItem.getFieldName(), fileItem.getString(servletRequest.getCharacterEncoding()));
-                    }else { //是文件
-                        fileItem.write(new File(file.getAbsolutePath() + File.separator + fileItem.getName()));
+                        if (fileItem.getFieldName().equals(name)) {
+                            return fileItem.getString(servletRequest.getCharacterEncoding());
+                        }
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return param;
+        return getParameter(name);
     }
 
 

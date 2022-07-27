@@ -1,10 +1,9 @@
 package top.huanyv.web.core;
 
 
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.json.JSONUtil;
 import sun.misc.BASE64Encoder;
-import top.huanyv.web.view.TemplateEngineInstance;
+import top.huanyv.utils.IoUtil;
+import top.huanyv.utils.JsonUtil;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -15,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Locale;
 
@@ -23,12 +23,10 @@ public class HttpResponse {
     private HttpServletRequest servletRequest;
     private HttpServletResponse servletResponse;
 
-    private final TemplateEngineInstance templateEngineInstance;
 
     public HttpResponse(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         this.servletRequest = servletRequest;
         this.servletResponse = servletResponse;
-        templateEngineInstance  = TemplateEngineInstance.single();
     }
 
 
@@ -49,7 +47,10 @@ public class HttpResponse {
     }
 
     public void json(Object content) throws IOException {
-        String json = JSONUtil.toJsonStr(content);
+        if (content instanceof CharSequence) {
+            write((CharSequence) content, "application/json");
+        }
+        String json = JsonUtil.toJson(content);
         write(json, "application/json");
     }
 
@@ -57,16 +58,16 @@ public class HttpResponse {
         write(content, "text/xml");
     }
 
-    public void write(String content, String contentType) throws IOException {
+    public void write(CharSequence content, String contentType) throws IOException {
         servletResponse.setContentType(contentType);
         servletResponse.getWriter().println(content);
     }
 
     public void file(File file) throws IOException {
         String fileName = file.getName();
-        if(servletRequest.getHeaders("User-Agent").equals("FireFox")) { // 如果是火狐浏览器
+        if("FireFox".equals(servletRequest.getHeaders("User-Agent"))) { // 如果是火狐浏览器
             servletResponse.setHeader("Content-Disposition", "attachment; filename==?UTF-8?B?"
-                    + new BASE64Encoder().encode(fileName.getBytes("UTF-8")) + "?=");
+                    + new BASE64Encoder().encode(fileName.getBytes(StandardCharsets.UTF_8)) + "?=");
         }else {
             servletResponse.setHeader("Content-Disposition", "attachment; filename="
                     + URLEncoder.encode(fileName, "UTF-8"));
