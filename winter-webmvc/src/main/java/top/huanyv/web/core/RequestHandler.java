@@ -39,15 +39,9 @@ public class RequestHandler {
         this.handler = handler;
     }
 
-    public void handle(Object... args) {
-        try {
-            this.handler.setAccessible(true);
-            this.handler.invoke(this.adapter, args);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    public void handle(Object... args) throws InvocationTargetException, IllegalAccessException {
+        this.handler.setAccessible(true);
+        this.handler.invoke(this.adapter, args);
     }
 
 }

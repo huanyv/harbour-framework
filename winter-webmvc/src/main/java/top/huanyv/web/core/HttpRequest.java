@@ -3,6 +3,7 @@ package top.huanyv.web.core;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import top.huanyv.utils.Assert;
 import top.huanyv.utils.IoUtil;
 import top.huanyv.web.enums.RequestMethod;
 import top.huanyv.utils.WebUtil;
@@ -15,6 +16,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.*;
+import java.util.function.Supplier;
 
 public class HttpRequest {
 
@@ -58,6 +60,14 @@ public class HttpRequest {
      * @param name 视图名
      */
     public void view(String name) throws IOException {
+        Assert.notNull(this.viewResolver, () -> {
+            try {
+                servletResponse.sendError(500, "View resolver not config!");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return "View resolver not config!";
+        });
         this.viewResolver.process(name, servletRequest, servletResponse);
     }
 

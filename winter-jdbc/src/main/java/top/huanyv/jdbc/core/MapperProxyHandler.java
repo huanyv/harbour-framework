@@ -45,6 +45,7 @@ public class MapperProxyHandler implements InvocationHandler {
         if (delete != null) {
             return doUpdate(delete.value(), method, args);
         }
+
         return null;
     }
 

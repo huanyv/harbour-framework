@@ -222,7 +222,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     @Override
     public String[] getBeanDefinitionNames() {
-        return new ArrayList<>(this.beanMap.keySet()).toArray(new String[this.beanMap.size()]);
+        return this.beanMap.keySet().toArray(new String[0]);
     }
 
     @Override

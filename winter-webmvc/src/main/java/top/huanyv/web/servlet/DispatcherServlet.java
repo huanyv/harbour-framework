@@ -1,5 +1,7 @@
 package top.huanyv.web.servlet;
 
+import top.huanyv.ioc.utils.BeanFactoryUtil;
+import top.huanyv.web.anno.ExceptionPoint;
 import top.huanyv.web.anno.Guard;
 import top.huanyv.web.anno.Order;
 import top.huanyv.web.anno.RequestPath;
@@ -8,6 +10,8 @@ import top.huanyv.web.core.*;
 import top.huanyv.ioc.core.ApplicationContext;
 import top.huanyv.utils.WebUtil;
 import top.huanyv.web.enums.RequestMethod;
+import top.huanyv.web.exception.DefaultExceptionHandler;
+import top.huanyv.web.exception.ExceptionHandler;
 import top.huanyv.web.guard.NavigationGuard;
 import top.huanyv.web.guard.NavigationGuardChain;
 import top.huanyv.web.guard.NavigationGuardMapping;
@@ -21,10 +25,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +51,15 @@ public class DispatcherServlet extends HttpServlet {
      */
     private ResourceHandler resourceHandler;
 
+    /**
+     * 路由守卫链
+     */
     private List<NavigationGuardMapping> guardMappings = new ArrayList<>();
+
+    /**
+     * 异常处理器
+     */
+    private ExceptionHandler exceptionHandler;
 
     @Override
     public void init() throws ServletException {
@@ -61,14 +72,13 @@ public class DispatcherServlet extends HttpServlet {
                 = (ApplicationContext)servletContext.getAttribute(WebGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME);
 
         // 遍历所有的bean，找到controller
-        for (String beanDefinitionName : applicationContext.getBeanDefinitionNames()) {
-            Object bean = applicationContext.getBean(beanDefinitionName);
+        for (Object bean : BeanFactoryUtil.getBeans(applicationContext)) {
             RequestPath requestPath = bean.getClass().getAnnotation(RequestPath.class);
             if (requestPath != null) {
-                // 基路由
-                String path = requestPath.value();
-
+                // 遍历方法
                 for (Method method : bean.getClass().getDeclaredMethods()) {
+                    // 基路由
+                    String path = requestPath.value();
                     RequestPath methodRequestPath = method.getAnnotation(RequestPath.class);
                     if (methodRequestPath != null) {
                         // 拼接上子路由
@@ -78,6 +88,12 @@ public class DispatcherServlet extends HttpServlet {
                 }
             }
         }
+
+        this.exceptionHandler = applicationContext.getBean(ExceptionHandler.class);
+        if (this.exceptionHandler == null) {
+            this.exceptionHandler = new DefaultExceptionHandler();
+        }
+
         // 获取配置类
         WebConfigurer webConfigurer = applicationContext.getBean(WebConfigurer.class);
         if (webConfigurer == null) {
@@ -104,15 +120,24 @@ public class DispatcherServlet extends HttpServlet {
             this.resourceHandler.add(entry.getKey(), entry.getValue());
         }
 
-        for (String beanDefinitionName : applicationContext.getBeanDefinitionNames()) {
-            NavigationGuardMapping navigationGuardMapping = new NavigationGuardMapping();
-            Object bean = applicationContext.getBean(beanDefinitionName);
+        // 配置路由守卫
+        NavigationGuardRegistry navigationGuardRegistry = new NavigationGuardRegistry();
+        webConfigurer.configNavigationRegistry(navigationGuardRegistry);
+        this.guardMappings.addAll(navigationGuardRegistry.getConfigNavigationGuards());
+
+        // 扫描路由守卫
+        for (Object bean : BeanFactoryUtil.getBeans(applicationContext)) {
+            // 如果是路由守卫
             if (bean instanceof NavigationGuard) {
+                NavigationGuardMapping navigationGuardMapping = new NavigationGuardMapping();
                 NavigationGuard navigationGuard = (NavigationGuard) bean;
                 Guard guard = bean.getClass().getAnnotation(Guard.class);
                 if (guard != null) {
+                    // 获得顺序
                     Order order = bean.getClass().getAnnotation(Order.class);
+                    // 获得匹配路径
                     String[] urlPatterns = guard.value();
+                    // 获得排序路径
                     String[] exclude = guard.exclude();
                     navigationGuardMapping.setNavigationGuard(navigationGuard);
                     navigationGuardMapping.setUrlPatterns(urlPatterns);
@@ -120,12 +145,14 @@ public class DispatcherServlet extends HttpServlet {
                     if (order != null) {
                         navigationGuardMapping.setOrder(order.value());
                     } else {
-                        navigationGuardMapping.setOrder(0);
+                        navigationGuardMapping.setOrder(guard.order());
                     }
                     this.guardMappings.add(navigationGuardMapping);
                 }
             }
         }
+
+
 
     }
 
@@ -135,9 +162,12 @@ public class DispatcherServlet extends HttpServlet {
 
         HttpRequest httpRequest = new HttpRequest(req, resp);
         httpRequest.setViewResolver(this.viewResolver);
+        HttpResponse httpResponse = new HttpResponse(req, resp);
 
+        // 获取路由守卫执行链
         NavigationGuardChain navigationGuardChain = getNavigationGuardChain(req);
-        boolean handleBefore = navigationGuardChain.handleBefore(httpRequest, new HttpResponse(req, resp));
+        // 路由守卫前置操作
+        boolean handleBefore = navigationGuardChain.handleBefore(httpRequest, httpResponse);
         if (!handleBefore) {
             return;
         }
@@ -165,28 +195,65 @@ public class DispatcherServlet extends HttpServlet {
         // 判断处理器是否存在
         if (requestHandler != null) {
             // 处理请求
-            requestHandler.handle(httpRequest, new HttpResponse(req, resp));
+            try {
+                requestHandler.handle(httpRequest, httpResponse);
+            } catch (InvocationTargetException e) {
+                // TODO 异常处理器转发
+                Exception targetException = (Exception) e.getTargetException();
+                Method exceptionMethod = null;
+                for (Method method : exceptionHandler.getClass().getDeclaredMethods()) {
+                    ExceptionPoint exceptionPoint = method.getAnnotation(ExceptionPoint.class);
+                    if (exceptionPoint != null) {
+                        for (Class<? extends Throwable> clazz : exceptionPoint.value()) {
+                            if (clazz.isInstance(targetException)) {
+                                exceptionMethod = method;
+                            }
+                        }
+                    }
+                }
+
+                if (exceptionMethod == null) {
+                    this.exceptionHandler.handle(httpRequest, httpResponse, targetException);
+                } else {
+                    try {
+                        exceptionMethod.invoke(this.exceptionHandler, httpRequest, httpResponse, targetException);
+                    } catch (IllegalAccessException | InvocationTargetException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+                return;
+//                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         } else {
             // 这个请求方式没有注册
             resp.sendError(405, "request method not exists.");
         }
 
-        navigationGuardChain.handleAfter(new HttpRequest(req, resp), new HttpResponse(req, resp));
+        // 路由守卫 后置操作
+        navigationGuardChain.handleAfter(httpRequest, httpResponse);
 
     }
 
 
     public NavigationGuardChain getNavigationGuardChain(HttpServletRequest request) {
+        // 请求uri
         String uri = WebUtil.getRequestURI(request);
         NavigationGuardChain navigationGuardChain = new NavigationGuardChain();
-        if (SystemConstants.PATH_SEPARATOR.equals(uri)) {
-            navigationGuardChain.setNavigationGuards(this.guardMappings);
-            return navigationGuardChain;
-        }
+
         List<NavigationGuardMapping> navigationGuardMappings = this.guardMappings.stream()
                 .filter(navigationGuardMapping -> navigationGuardMapping.hasUrlPatten(uri)
                         && !navigationGuardMapping.isExclude(uri))
-                .collect(Collectors.toList());
+                .sorted((o1, o2) -> {
+                    // 排序，如果序号一样，按照类名顺序
+                    if (o1.getOrder() == o2.getOrder()) {
+                        return o1.getNavigationGuard().getClass().getName()
+                                .compareTo(o2.getNavigationGuard().getClass().getName());
+                    }
+                    return o1.getOrder() - o2.getOrder();
+                }).collect(Collectors.toList());
         navigationGuardChain.setNavigationGuards(navigationGuardMappings);
         return navigationGuardChain;
     }

@@ -106,39 +106,5 @@ public class RequestHandlerRegistry {
 
     }
 
-    /**
-     * 处理请求
-     * @param req 请求
-     * @param resp 响应
-     * @return 状态码，没有注册这个请求，404；注册了，但没有注册这个请求方式405；处理成功，200
-     */
-    public int handle(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        String uri = WebUtil.getRequestURI(req);
-
-        // 这个请求没有注册
-        if (!containsRequest(uri)) {
-            return 404;
-        }
-
-        RequestMethod requestMethod = RequestMethod.valueOf(req.getMethod().toUpperCase());
-        // 获取当前uri的对应请求处理器映射
-        RequestMapping mapping = getMapping(uri);
-        // 获取当前请求方式的处理
-        RequestHandler requestHandler = mapping.getRequestHandler(requestMethod);
-
-        // 设置pathVar
-        mapping.parsePathVars(uri);
-
-        // 判断处理器是否存在
-        if (requestHandler != null) {
-            // 处理请求
-            requestHandler.handle(new HttpRequest(req, resp), new HttpResponse(req, resp));
-            return 200;
-        } else {
-            // 这个请求方式没有注册
-            return 405;
-        }
-    }
-
 
 }

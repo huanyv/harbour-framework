@@ -15,5 +15,10 @@ public interface WebConfigurer {
 
     }
 
+    default void configNavigationRegistry(NavigationGuardRegistry registry) {
+
+    }
+
+
 
 }

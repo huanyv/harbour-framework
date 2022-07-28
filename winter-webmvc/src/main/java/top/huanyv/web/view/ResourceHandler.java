@@ -1,10 +1,7 @@
 package top.huanyv.web.view;
 
 import top.huanyv.enums.MimeTypeEnum;
-import top.huanyv.utils.ClassLoaderUtil;
-import top.huanyv.utils.IoUtil;
-import top.huanyv.utils.StringUtil;
-import top.huanyv.utils.WebUtil;
+import top.huanyv.utils.*;
 import top.huanyv.web.utils.SystemConstants;
 
 import javax.servlet.ServletOutputStream;
@@ -37,6 +34,7 @@ public class ResourceHandler {
      * @return 前缀 没有为null
      */
     public String getMatchPrefix(String uri) {
+        // TODO fix 应该匹配多个urlpattern
         List<String> pres = new ArrayList<>();
         // 遍历所有uri符合的前缀
         for (Map.Entry<String, String> entry : resourceMapping.entrySet()) {

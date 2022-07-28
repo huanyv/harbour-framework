@@ -5,6 +5,7 @@ import top.huanyv.web.core.HttpRequest;
 import top.huanyv.web.core.HttpResponse;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,18 +15,22 @@ import java.util.stream.Collectors;
  */
 public class NavigationGuardChain {
 
+    // 路由映射执行链
     private List<NavigationGuardMapping> navigationGuards = new ArrayList<>();
 
     public void setNavigationGuards(List<NavigationGuardMapping> navigationGuards) {
         this.navigationGuards = navigationGuards;
     }
 
-
+    /**
+     * 前置操作
+     * @param request 请求对象
+     * @param response 响应对象
+     * @return 是否中断
+     */
     public boolean handleBefore(HttpRequest request, HttpResponse response) {
-        List<NavigationGuardMapping> navigationGuardMappings = this.navigationGuards.stream()
-                .sorted((o1, o2) -> o1.getOrder() - o2.getOrder())
-                .collect(Collectors.toList());
-        for (NavigationGuardMapping navigationGuardMapping : navigationGuardMappings) {
+        for (int i = 0; i < this.navigationGuards.size(); i++) {
+            NavigationGuardMapping navigationGuardMapping = this.navigationGuards.get(i);
             boolean beforeEach = navigationGuardMapping.getNavigationGuard().beforeEach(request, response);
             if (!beforeEach) {
                 return false;
@@ -33,14 +38,16 @@ public class NavigationGuardChain {
         }
         return true;
     }
+
+    /**
+     * 后置操作
+     * @param request 请求对象
+     * @param response 响应对象
+     */
     public void handleAfter(HttpRequest request, HttpResponse response) {
-        List<NavigationGuardMapping> navigationGuardMappings = this.navigationGuards.stream()
-                .sorted((o1, o2) -> o2.getOrder() - o1.getOrder())
-                .collect(Collectors.toList());
-        for (NavigationGuardMapping navigationGuardMapping : navigationGuardMappings) {
+        for (int i = this.navigationGuards.size() - 1; i >= 0; i--) {
+            NavigationGuardMapping navigationGuardMapping = this.navigationGuards.get(i);
             navigationGuardMapping.getNavigationGuard().afterEach(request, response);
         }
-
     }
-
 }

@@ -5,14 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author admin
- * @date 2022/7/27 17:18
- */
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Guard {
-    String[] value();
-    String[] exclude();
-    int order() default 0;
+public @interface ExceptionPoint {
+    Class<? extends Throwable>[] value();
 }

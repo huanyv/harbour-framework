@@ -9,8 +9,10 @@ import top.huanyv.web.core.HttpResponse;
  */
 public interface NavigationGuard {
 
-    boolean beforeEach(HttpRequest req, HttpResponse resp);
+    default boolean beforeEach(HttpRequest req, HttpResponse resp) {
+        return true;
+    }
 
-    boolean afterEach(HttpRequest req, HttpResponse resp);
+    void afterEach(HttpRequest req, HttpResponse resp);
 
 }
