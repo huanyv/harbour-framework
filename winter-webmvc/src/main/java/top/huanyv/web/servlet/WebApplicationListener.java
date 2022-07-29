@@ -21,11 +21,13 @@ public class WebApplicationListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         ServletContext servletContext = sce.getServletContext();
 
-        String configLocation = servletContext.getInitParameter("ConfigLocation");
-        Properties properties = PropertiesUtil.getProperties(configLocation);
-        String packages = properties.getProperty("component.scan");
+//        String configLocation = servletContext.getInitParameter("ConfigLocation");
+//        Properties properties = PropertiesUtil.getProperties(configLocation);
+//        String packages = properties.getProperty("component.scan");
 
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(packages.split(","));
+        String scanPackages = servletContext.getInitParameter("ScanPackages");
+
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(scanPackages.split(","));
 
         servletContext.setAttribute(WebGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME, applicationContext);
     }

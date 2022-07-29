@@ -106,7 +106,7 @@ public abstract class TemplateServlet extends HttpServlet {
             httpRequest = new HttpRequest(req, resp);
             httpRequest.setViewResolver(this.viewResolver);
             httpResponse = new HttpResponse(req, resp);
-            // 请求分发
+            // 路由分发
             doRouting(req, resp);
         } catch (InvocationTargetException e) {
             Throwable throwable = e.getTargetException();

@@ -3,7 +3,7 @@ package top.huanyv.jdbc.core.controller;
 import top.huanyv.ioc.core.AnnotationConfigApplicationContext;
 import top.huanyv.jdbc.core.SqlSessionTest;
 import top.huanyv.jdbc.core.service.UserService;
-import top.huanyv.jdbc.extend.MapperRegister;
+import top.huanyv.jdbc.extend.SqlSessionFactoryBean;
 
 import java.util.Arrays;
 
@@ -16,7 +16,7 @@ public class UserController {
     public static void main(String[] args) {
         AnnotationConfigApplicationContext app
                 = new AnnotationConfigApplicationContext(SqlSessionTest.class.getPackage().getName()
-                , MapperRegister.class.getPackage().getName());
+                , SqlSessionFactoryBean.class.getPackage().getName());
 
         System.out.println("app.getBeanDefinitionNames() = " + Arrays.toString(app.getBeanDefinitionNames()));
 

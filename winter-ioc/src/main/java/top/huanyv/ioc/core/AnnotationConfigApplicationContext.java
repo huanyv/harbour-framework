@@ -32,10 +32,11 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     public AnnotationConfigApplicationContext(String... basePackages) {
         //遍历包，找到目标类(原材料)
-        for (int i = 0; i < basePackages.length; i++) {
-            String scanPackage = basePackages[i].trim();
-            findBeanDefinitions(scanPackage);
-        }
+//        for (int i = 0; i < basePackages.length; i++) {
+//            String scanPackage = basePackages[i].trim();
+//            findBeanDefinitions(scanPackage);
+//        }
+            findBeanDefinitions(basePackages);
 
         //根据原材料创建bean
         createBean(beanDefinitions);
@@ -63,7 +64,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
      * @param basePack
      * @return BeanDefinition集合
      */
-    private void findBeanDefinitions(String basePack) {
+    private void findBeanDefinitions(String... basePack) {
         //获取basePack包下所有的class类
         Set<Class<?>> classes = ClassUtil.getClasses(basePack);
         for (Class<?> clazz : classes) {

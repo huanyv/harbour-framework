@@ -7,10 +7,7 @@ import top.huanyv.web.anno.*;
 import top.huanyv.web.config.NavigationGuardRegistry;
 import top.huanyv.web.config.ResourceMappingRegistry;
 import top.huanyv.web.config.ViewControllerRegistry;
-import top.huanyv.web.core.HttpRequest;
-import top.huanyv.web.core.HttpResponse;
-import top.huanyv.web.core.RequestHandler;
-import top.huanyv.web.core.RequestMapping;
+import top.huanyv.web.core.*;
 import top.huanyv.web.enums.RequestMethod;
 import top.huanyv.web.exception.DefaultExceptionHandler;
 import top.huanyv.web.exception.ExceptionHandler;
@@ -72,14 +69,20 @@ public abstract class InitRouterServlet extends TemplateServlet {
             }
         }
 
+        Winter winter = new DefaultWinter();
+        for (Object bean : BeanFactoryUtil.getBeansByType(applicationContext, RouteRegistry.class)) {
+            RouteRegistry routeRegistry = (RouteRegistry) bean;
+            routeRegistry.run(winter);
+        }
+
     }
 
     @Override
     void initExceptionHandler(ApplicationContext applicationContext) {
-        // 找异常处理器
+        // 从容器中找到异常处理器
         this.exceptionHandler = applicationContext.getBean(ExceptionHandler.class);
+        // 如果容器中没有，使用默认的
         if (this.exceptionHandler == null) {
-            // 如果容器中没有，使用默认的
             this.exceptionHandler = new DefaultExceptionHandler();
         }
     }
@@ -89,8 +92,8 @@ public abstract class InitRouterServlet extends TemplateServlet {
         // 视图解析器配置
         this.viewResolver = applicationContext.getBean(ViewResolver.class);
 
+        // 视图控制器配置
         if (this.viewResolver != null) {
-            // 视图控制器配置
             ViewControllerRegistry viewControllerRegistry = new ViewControllerRegistry();
             webConfigurer.addViewController(viewControllerRegistry);
             for (Map.Entry<String, String> entry : viewControllerRegistry.getViewController().entrySet()) {

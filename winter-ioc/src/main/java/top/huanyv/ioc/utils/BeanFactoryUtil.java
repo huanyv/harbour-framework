@@ -43,5 +43,15 @@ public class BeanFactoryUtil {
         return beanList;
     }
 
+    public static List<Object> getBeansByType(ApplicationContext applicationContext, Class<?> clazz) {
+        List<Object> beanList = new ArrayList<>();
+        for (String beanName : applicationContext.getBeanDefinitionNames()) {
+            Object bean = applicationContext.getBean(beanName);
+            if (clazz.isInstance(bean)) {
+                beanList.add(bean);
+            }
+        }
+        return beanList;
+    }
 
 }

@@ -1,7 +1,6 @@
 package top.huanyv.jdbc.extend;
 
 import top.huanyv.ioc.anno.Component;
-import top.huanyv.ioc.core.AnnotationConfigApplicationContext;
 import top.huanyv.ioc.core.ApplicationContext;
 import top.huanyv.ioc.core.BeanRegistry;
 import top.huanyv.jdbc.core.MapperScanner;
@@ -15,8 +14,7 @@ import java.util.Map;
  * @author admin
  * @date 2022/7/23 16:31
  */
-@Component
-public class MapperRegister implements BeanRegistry {
+public class SqlSessionFactoryBean implements BeanRegistry {
 
     @Override
     public void set(ApplicationContext applicationContext) {

@@ -103,6 +103,7 @@ public class RouterServlet extends InitRouterServlet {
         String uri = WebUtil.getRequestURI(request);
         NavigationGuardChain navigationGuardChain = new NavigationGuardChain();
 
+        // 过滤，与url pattern匹配，不可与exclude url匹配
         List<NavigationGuardMapping> navigationGuardMappings = this.guardMappings.stream()
                 .filter(navigationGuardMapping -> navigationGuardMapping.hasUrlPatten(uri)
                         && !navigationGuardMapping.isExclude(uri))

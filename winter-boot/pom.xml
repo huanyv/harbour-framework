@@ -5,12 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>top.huanyv</groupId>
-    <artifactId>winter-ioc</artifactId>
+    <artifactId>winter-boot</artifactId>
     <version>1.0</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
@@ -20,14 +23,51 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>top.huanyv</groupId>
-            <artifactId>java-utils</artifactId>
+            <artifactId>winter-webmvc</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>top.huanyv</groupId>
+            <artifactId>winter-jdbc</artifactId>
+            <version>1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>top.huanyv</groupId>
+                    <artifactId>winter-ioc</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>9.0.64</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.49</version>
+        </dependency>
+
     </dependencies>
+
+
     <build>
         <plugins>
+            <!--生成java帮助文档-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <docencoding>UTF-8</docencoding>
+                </configuration>
+            </plugin>
             <!--生成源码包-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -45,4 +85,6 @@
             </plugin>
         </plugins>
     </build>
+
+
 </project>
