@@ -43,6 +43,12 @@ public class RequestHandlerRegistry {
         register(urlPattern, RequestMethod.DELETE, servletHandler);
     }
 
+    public void register(String urlPattern, Object adapter, Method method) {
+        register(urlPattern, RequestMethod.GET, adapter, method);
+        register(urlPattern, RequestMethod.POST, adapter, method);
+        register(urlPattern, RequestMethod.PUT, adapter, method);
+        register(urlPattern, RequestMethod.DELETE, adapter, method);
+    }
     /**
      * 请求注册到注册容器中
      * @param urlPattern 请求地址
