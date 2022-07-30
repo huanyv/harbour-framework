@@ -1,16 +1,12 @@
 package top.huanyv.web.servlet;
 
-import top.huanyv.utils.PropertiesUtil;
-import top.huanyv.web.config.WebGlobalConfig;
+import top.huanyv.web.config.WebMvcGlobalConfig;
 import top.huanyv.ioc.core.AnnotationConfigApplicationContext;
 import top.huanyv.ioc.core.ApplicationContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 /**
  * @author admin
@@ -29,7 +25,7 @@ public class WebApplicationListener implements ServletContextListener {
 
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(scanPackages.split(","));
 
-        servletContext.setAttribute(WebGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME, applicationContext);
+        servletContext.setAttribute(WebMvcGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME, applicationContext);
     }
 
     @Override

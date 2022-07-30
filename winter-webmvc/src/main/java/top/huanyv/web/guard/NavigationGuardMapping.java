@@ -1,7 +1,7 @@
 package top.huanyv.web.guard;
 
 import top.huanyv.utils.AntPathMatcher;
-import top.huanyv.web.utils.SystemConstants;
+import top.huanyv.web.config.WebMvcGlobalConfig;
 
 /**
  * @author admin
@@ -29,7 +29,7 @@ public class NavigationGuardMapping {
     public boolean hasUrlPatten(String path) {
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         for (String pattern : this.urlPatterns) {
-            if (SystemConstants.PATH_SEPARATOR.equals(path) && "/**".equals(pattern)) {
+            if (WebMvcGlobalConfig.PATH_SEPARATOR.equals(path) && "/**".equals(pattern)) {
                 return true;
             }
             if (antPathMatcher.match(pattern, path)) {

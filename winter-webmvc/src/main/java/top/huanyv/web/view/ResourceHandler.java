@@ -2,7 +2,7 @@ package top.huanyv.web.view;
 
 import top.huanyv.enums.MimeTypeEnum;
 import top.huanyv.utils.*;
-import top.huanyv.web.utils.SystemConstants;
+import top.huanyv.web.config.WebMvcGlobalConfig;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -75,7 +75,7 @@ public class ResourceHandler {
             if (location.startsWith(RESOURCE_LOCATION_PREFIX)) {
                 String realLocation = location.substring(RESOURCE_LOCATION_PREFIX.length()) + resourcePath;
                 inputStream = ClassLoaderUtil
-                        .getInputStream(StringUtil.removePrefix(realLocation, SystemConstants.PATH_SEPARATOR));
+                        .getInputStream(StringUtil.removePrefix(realLocation, WebMvcGlobalConfig.PATH_SEPARATOR));
             } else {
                 try {
                     inputStream = new FileInputStream(location + resourcePath);

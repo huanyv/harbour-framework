@@ -3,7 +3,7 @@ package top.huanyv.web.servlet;
 import top.huanyv.ioc.core.ApplicationContext;
 import top.huanyv.web.config.DefaultWebConfigurer;
 import top.huanyv.web.config.WebConfigurer;
-import top.huanyv.web.config.WebGlobalConfig;
+import top.huanyv.web.config.WebMvcGlobalConfig;
 import top.huanyv.web.core.HttpRequest;
 import top.huanyv.web.core.HttpResponse;
 import top.huanyv.web.core.RequestHandlerRegistry;
@@ -16,7 +16,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -65,7 +64,7 @@ public abstract class TemplateServlet extends HttpServlet {
         // 获取IOC容器
         ServletContext servletContext = getServletContext();
         ApplicationContext applicationContext
-                = (ApplicationContext)servletContext.getAttribute(WebGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME);
+                = (ApplicationContext)servletContext.getAttribute(WebMvcGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME);
 
         // 获取配置类
         webConfigurer = applicationContext.getBean(WebConfigurer.class);

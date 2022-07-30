@@ -1,12 +1,12 @@
 package top.huanyv.boot.test;
 
 import org.junit.Test;
-import top.huanyv.boot.core.BootWinter;
+import top.huanyv.boot.core.Winter;
 
 public class MainTest {
     @Test
     public void test01() {
-        BootWinter app = BootWinter.use();
+        Winter app = Winter.use();
 
         app.get("/admin", (req, resp) -> {
             resp.html("<h1>admin</h1>");

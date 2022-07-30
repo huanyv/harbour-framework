@@ -7,5 +7,5 @@ import java.io.IOException;
 
 @FunctionalInterface
 public interface ServletHandler {
-    void handle(HttpRequest req, HttpResponse resp) throws IOException;
+    void handle(HttpRequest req, HttpResponse resp) throws Exception;
 }

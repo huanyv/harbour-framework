@@ -5,5 +5,5 @@ package top.huanyv.web.core;
  * @date 2022/7/29 15:03
  */
 public interface RouteRegistry {
-    void run(Winter app);
+    void run(Routing app);
 }

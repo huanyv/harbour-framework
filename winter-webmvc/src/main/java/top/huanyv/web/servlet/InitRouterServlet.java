@@ -2,7 +2,6 @@ package top.huanyv.web.servlet;
 
 import top.huanyv.ioc.core.ApplicationContext;
 import top.huanyv.ioc.utils.BeanFactoryUtil;
-import top.huanyv.utils.WebUtil;
 import top.huanyv.web.anno.*;
 import top.huanyv.web.config.NavigationGuardRegistry;
 import top.huanyv.web.config.ResourceMappingRegistry;
@@ -12,17 +11,11 @@ import top.huanyv.web.enums.RequestMethod;
 import top.huanyv.web.exception.DefaultExceptionHandler;
 import top.huanyv.web.exception.ExceptionHandler;
 import top.huanyv.web.guard.NavigationGuard;
-import top.huanyv.web.guard.NavigationGuardChain;
 import top.huanyv.web.guard.NavigationGuardMapping;
 import top.huanyv.web.view.ViewResolver;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author admin
@@ -69,10 +62,10 @@ public abstract class InitRouterServlet extends TemplateServlet {
             }
         }
 
-        Winter winter = new DefaultWinter();
+        Routing routing = new DefaultRouting();
         for (Object bean : BeanFactoryUtil.getBeansByType(applicationContext, RouteRegistry.class)) {
             RouteRegistry routeRegistry = (RouteRegistry) bean;
-            routeRegistry.run(winter);
+            routeRegistry.run(routing);
         }
 
     }

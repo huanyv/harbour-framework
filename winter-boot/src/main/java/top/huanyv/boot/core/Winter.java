@@ -6,29 +6,32 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import top.huanyv.boot.config.BootGlobalConfig;
+import top.huanyv.boot.utils.CommandLineUtil;
 import top.huanyv.utils.PropertiesUtil;
+import top.huanyv.utils.ResourceUtil;
+import top.huanyv.web.config.WebMvcGlobalConfig;
 import top.huanyv.web.core.RequestHandlerRegistry;
+import top.huanyv.web.core.Routing;
 import top.huanyv.web.enums.RequestMethod;
 import top.huanyv.web.interfaces.ServletHandler;
 import top.huanyv.web.servlet.RouterServlet;
 import top.huanyv.web.servlet.WebApplicationListener;
-import top.huanyv.web.utils.SystemConstants;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import static top.huanyv.boot.config.BootGlobalConfig.*;
 
-public class BootWinter {
+public class Winter implements Routing {
 
     /**
      * 单例
      */
-    private BootWinter() { }
+    private Winter() { }
     private static class SingleHolder {
-        private static final BootWinter INSTANCE = new BootWinter();
+        private static final Winter INSTANCE = new Winter();
     }
-    public static BootWinter use() {
+    public static Winter use() {
         return SingleHolder.INSTANCE;
     }
 
@@ -53,13 +56,13 @@ public class BootWinter {
      * 初始化
      * @param port 端口
      */
-    public void init(int port) {
+    private void init(int port) {
         init(port, "");
     }
-    public void init(int port, String ctx) {
+    private void init(int port, String ctx) {
         init(port, ctx, StandardCharsets.UTF_8.name());
     }
-    public void init(int port, String ctx, String uriEncoding) {
+    private void init(int port, String ctx, String uriEncoding) {
         Connector connector = new Connector();
         connector.setPort(port);
         connector.setURIEncoding(uriEncoding);
@@ -71,92 +74,52 @@ public class BootWinter {
      * 设置context-path
      * @param ctx context-path
      */
-    public void setCtx(String ctx) {
+    private void setCtx(String ctx) {
         this.context = tomcat.addContext(ctx, System.getProperty("java.io.tmpdir"));
     }
 
-    /**
-     * GET请求
-     * @param pattern 请求地址
-     * @param servletHandler 请求处理器
-     */
-    public void get(String pattern, ServletHandler servletHandler) {
-        request(pattern, servletHandler, RequestMethod.GET);
-    }
 
-    /**
-     * POST请求
-     */
-    public void post(String pattern, ServletHandler servletHandler) {
-        request(pattern, servletHandler, RequestMethod.POST);
-    }
-
-    /**
-     * PUT请求
-     */
-    public void put(String pattern, ServletHandler servletHandler) {
-        request(pattern, servletHandler, RequestMethod.PUT);
-    }
-
-    /**
-     * delete请求
-     */
-    public void delete(String pattern, ServletHandler servletHandler) {
-        request(pattern, servletHandler, RequestMethod.DELETE);
-    }
-
-    /**
-     * 所有请求
-     */
-    public void request(String pattern, ServletHandler servletHandler) {
-        request(pattern, servletHandler, RequestMethod.GET);
-        request(pattern, servletHandler, RequestMethod.POST);
-        request(pattern, servletHandler, RequestMethod.PUT);
-        request(pattern, servletHandler, RequestMethod.DELETE);
-    }
-
-    /**
-     * 请求 注册到 处理器容器中
-     */
-    public void request(String pattern, ServletHandler servletHandler, RequestMethod method) {
-        this.requestRegistry.register(pattern, method, servletHandler);
-    }
-
-
-    /**
-     * 添加一个视图跳转
-     * @param urlPattern 地址
-     * @param templateName 视图名称
-     */
-    public void addView(String urlPattern, String templateName) {
-        request(urlPattern, (req, resp) -> req.view(templateName));
+    @Override
+    public void register(String urlPattern, RequestMethod method, ServletHandler handler) {
+        this.requestRegistry.register(urlPattern, method, handler);
     }
 
     /**
      * 服务启动
      */
+    @Override
     public void start(Class<?> mainClass, String[] args) {
+        CommandLineUtil commandLineUtil = new CommandLineUtil(args);
+        // 获取命令行的环境参数名
+        String envSuffix = commandLineUtil.getArgumentValue(ENV_COMMAND_LINE_ARGUMENT_NAME, null);
+        // 如果为空，用默认的，否则用命令行
+        String appEnv = DEFAULT_CONFIG_PROPERTIES;
+        if (envSuffix != null) {
+            appEnv = "application-" + envSuffix + ".properties";
+        }
 
-        Properties properties = PropertiesUtil.getProperties("application.properties");
+        Properties properties = PropertiesUtil.getProperties(appEnv);
         // =======服务启动前初始化=======
-        String port = properties.getProperty(CONFIG_KEY_SERVER_PORT, DEFAULT_SERVER_PORT);
+        // 获取设置端口，命令行 > 配置文件，默认8090
+        String port = commandLineUtil.getArgumentValue(PORT_COMMAND_LINE_ARGUMENT_NAME
+                , properties.getProperty(CONFIG_KEY_SERVER_PORT, DEFAULT_SERVER_PORT));
         String contextPath = properties.getProperty(CONFIG_KEY_SERVER_CONTEXT, DEFAULT_SERVLET_CONTEXT);
         String encoding = properties.getProperty(CONFIG_KEY_GLOBAL_ENCODING, DEFAULT_GLOBAL_ENCODING);
         init(Integer.parseInt(port), contextPath, encoding);
         // ===========================
 
+        // 注册
         String scanPackages = mainClass.getPackage().getName() + ", top.huanyv.boot";
-        this.context.addParameter("ScanPackages", scanPackages);
+        this.context.addParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES, scanPackages);
         this.context.addApplicationListener(WebApplicationListener.class.getName());
 
         // 请求注册到tomcat容器中
         RouterServlet routerServlet = new RouterServlet();
-        Wrapper dispatcher = this.tomcat.addServlet(this.context, SystemConstants.DISPATCHER_SERVLET_NAME, routerServlet);
-        dispatcher.addMapping(SystemConstants.DISPATCHER_SERVLET_URL_PATTERN);
+        Wrapper router = this.tomcat.addServlet(this.context, WebMvcGlobalConfig.ROUTER_SERVLET_NAME, routerServlet);
+        router.addMapping("/");
 
-
-
-        String banner = "";
+        // 获取banner
+        String banner = ResourceUtil.readStr(BANNER_FILE_NAME, DEFAULT_BANNER);
         System.out.println();
         System.out.println(banner);
         System.out.println();

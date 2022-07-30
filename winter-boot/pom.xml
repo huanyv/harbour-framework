@@ -25,32 +25,22 @@
         </dependency>
 
         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.49</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>top.huanyv</groupId>
             <artifactId>winter-webmvc</artifactId>
             <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>top.huanyv</groupId>
-            <artifactId>winter-jdbc</artifactId>
-            <version>1.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>top.huanyv</groupId>
-                    <artifactId>winter-ioc</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
             <version>9.0.64</version>
-        </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.49</version>
         </dependency>
 
     </dependencies>
@@ -83,6 +73,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 

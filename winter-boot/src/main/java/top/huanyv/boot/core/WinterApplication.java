@@ -8,11 +8,7 @@ package top.huanyv.boot.core;
 public class WinterApplication {
 
     public static void run(Class<?> clazz, String[] args) {
-
-        BootWinter app = BootWinter.use();
-
-
-
+        Winter app = Winter.use();
         app.start(clazz, args);
     }
 
