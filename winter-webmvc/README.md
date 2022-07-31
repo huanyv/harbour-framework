@@ -1,50 +1,88 @@
-# 内嵌tomcat封装
+# web框架
 
-## 1. 快速使用
+## 0. 使用
 
-* 此项目根目录执行`mvn install`
-* 新建项目，引入以下依赖
+* web.xml
 
 ```xml
-    <dependencies>
-        <dependency>
-            <groupId>top.huanyv</groupId>
-            <artifactId>winter</artifactId>
-            <version>2.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-    </dependencies>
+<servlet>
+	<servlet-name>routerServlet</servlet-name>
+	<servlet-class>top.huanyv.web.servlet.RouterServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+	<servlet-name>routerServlet</servlet-name>
+	<url-pattern>/</url-pattern>
+</servlet-mapping>
+
+<context-param>
+	<param-name>ScanPackages</param-name>
+	<param-value>org.example</param-value>
+</context-param>
+<listener>
+	<listener-class>top.huanyv.web.servlet.WebApplicationListener</listener-class>
+</listener>
 ```
 
-* main方法
+## 1. 路由注册
+
+### 1.1 注解式
+
+* `@Route`所有请求
+* `@Get`get请求
 
 ```java
-public class MainApplication {
-    public static void main(String[] args) {
-        Winter app = Winter.use();
-        // GET请求
-        app.get("/hello", (req, resp) -> {
-            resp.html("<h1>Hello World!</h1>");
+@Component
+@Route("/test") // 必须有
+public class HelloController {
+
+    @Autowired
+    private UserService userService;
+
+    @Route("/")
+    public void hello(HttpRequest req, HttpResponse resp) throws IOException {
+        System.out.println("userService.getUserById(1) = " + userService.getUserById(1));
+        resp.html("<h1>hello</h1>");
+    }
+
+    @Route("/admin")
+    public void admin(HttpRequest req, HttpResponse resp) throws IOException {
+        String s = null;
+        if (s.equals("")) {
+            System.out.println(11);
+        }
+        resp.html("admin");
+    }
+
+    @Get("/get/{id}/{name}")
+    public void gettest(HttpRequest req, HttpResponse resp) throws IOException {
+        System.out.println("req.pathVar(\"id\") = " + req.pathVar("id"));
+        System.out.println("req.pathVar(\"name\") = " + req.pathVar("name"));
+        resp.html("<h1>get</h1>");
+    }
+
+}
+```
+
+### 1.2 接口式
+
+```java
+@Component
+public class ChainController implements RouteRegistry {
+
+    @Autowired
+    private UserService userService;
+
+    @Override
+    public void run(Routing app) {
+
+        app.get("/say", (req, resp) -> {
+            System.out.println("userService.getUserById(1) = " + userService.getUserById(1));
+            resp.json(userService.getUserById(1));
+        }).post("/user/{id}/{name}", (req, resp) -> {
+            System.out.println("req.pathVar(\"id\") = " + req.pathVar("id"));
+            System.out.println("req.pathVar(\"name\") = " + req.pathVar("name"));
         });
-        // POST请求
-        app.post("/user", (req, resp) -> {
-            resp.json("添加成功");
-        });
-        // GET、POST、PUT、DELETE，请求均可
-        app.request("/haha", (req, resp) -> {
-            resp.html("<h1>haha</h1>");
-        });
-        // filter过滤器
-        app.filter("/*", (req, resp, chain) -> {
-            resp.setHeader("Access-Control-Allow-Origin", "*");
-            chain.doFilter(req.getOriginal(), resp.getOriginal());
-        });
-        // 最后一步，启动
-        app.start();
+
     }
 }
 ```
@@ -52,99 +90,183 @@ public class MainApplication {
 ## 2. restful
 
 ```java
-app.get("/user/{id}/{name}", (req, resp) -> {
-    String id = req.pathVar("id");
-    String name = req.pathVar("name");
-    resp.json("获取成功：用户" + id + ":" + name);
-});
-
-app.post("/user", (req, resp) -> {
-    resp.json("添加成功");
-});
-
-app.delete("/user/{id}", (req, resp) -> {
-    String id = req.pathVar("id");
-    resp.json("用户" + id + "删除成功");
-});
-app.put("/user", (req, resp) -> {
-    String id = req.pathVar("id");
-    resp.json("用户修改成功");
-});
+@Get("/get/{id}/{name}")
+public void gettest(HttpRequest req, HttpResponse resp) throws IOException {
+    System.out.println("req.pathVar(\"id\") = " + req.pathVar("id"));
+    System.out.println("req.pathVar(\"name\") = " + req.pathVar("name"));
+    resp.html("<h1>get</h1>");
+}
 ```
 
 ## 3. 配置
 
-* 继承`WebConfiguration`接口
-* 调用`setConfig`方法
-
 ```java
-app.setConfig(new WebConfiguration() {
+@Configuration
+@Component
+public class Webconfig implements WebConfigurer {
+
     @Override
-    public int getServerPort() {
-        return 8090;
+    public void addViewController(ViewControllerRegistry registry) {
+        registry.add("/view", "view");
     }
 
     @Override
-    public String getServerContext() {
-        return "/test";
+    public void addResourceMapping(ResourceMappingRegistry registry) {
+        registry.add("/statics", "classpath:statics");
     }
-});	
+
+    @Override
+    public void configNavigationRegistry(NavigationGuardRegistry registry) {
+        registry.addNavigationGuard(new Guard4()).addUrlPattern("/**")
+                .excludeUrlPattern("/statics/**")
+                .setOrder(-1);
+    }
+
+    @Bean
+    public ViewResolver viewResolver() {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setPrefix("templates/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
+        ThymeleafViewResolver thymeleafViewResolver = new ThymeleafViewResolver();
+        thymeleafViewResolver.setTemplateEngine(templateEngine);
+        return thymeleafViewResolver;
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        Properties properties = PropertiesUtil.getProperties("jdbc.properties");
+        return SimpleDataSource.createDataSource(properties);
+    }
+
+    @Bean
+    public MapperScanner mapperScanner () {
+        MapperScanner mapperScanner = new MapperScanner();
+        mapperScanner.setScanPack("org.example");
+        return mapperScanner;
+    }
+
+    @Bean
+    public SqlSessionFactoryBean mapperRegister() {
+        return new SqlSessionFactoryBean();
+    }
+}
 ```
-
-* 在`app.properties`，文件下写配置，配置项在`GlobalConfig`类下
-* 配置类 > 配置文件
 
 
 ## 4. 页面资源
 
-* 使用thymeleaf为视图引擎，默认在`templates`文件夹下
-* 静态文件默认在`static`文件夹下
-* 均是类路径
-* 添加视图：
+* 可以使用thymeleaf视图解析器
+* 配置类可以配置视图控制器
+* 静态资源也可以配置
 
 ```java
-app.addView("/", "index");
-```
+@Configuration
+@Component
+public class Webconfig implements WebConfigurer {
 
-## 5. 分层
-
-* 实现`ControllerRunner`接口，重写方法
-* 加上`@Controller`注解
-* 里面的代码只会执行一次
-
-```java
-@Controller
-public class UserController implements ControllerRunner {
     @Override
-    public void run(Winter app, UrlConver urlConver) {
-        app.setConfig(new WebConfiguration() {
-            @Override
-            public int getServerPort() {
-                return 8090;
-            }
-
-            @Override
-            public String getServerContext() {
-                return "/test";
-            }
-        });
-        app.get("/admin", (req, resp) -> {
-            resp.html("你好哈哈");
-        });
-        app.addView("/", "index");
+    public void addViewController(ViewControllerRegistry registry) {
+        registry.add("/view", "view");
     }
+
+    @Override
+    public void addResourceMapping(ResourceMappingRegistry registry) {
+        registry.add("/statics", "classpath:statics");
+        registry.add("/web/static", "classpath:static, classpath:, C:\\Users\\admin\\Desktop\\cogo");
+    }
+
+    @Bean
+    public ViewResolver viewResolver() {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setPrefix("templates/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
+        ThymeleafViewResolver thymeleafViewResolver = new ThymeleafViewResolver();
+        thymeleafViewResolver.setTemplateEngine(templateEngine);
+        return thymeleafViewResolver;
+    }
+
 }
 ```
+
+## 5. 路由守卫
 
 ```java
-public class MainApplication {
-    public static void main(String[] args) {
-        WinterApplication.run(MainApplication.class, args);
+public class Guard4 implements NavigationGuard {
+    @Override
+    public boolean beforeEach(HttpRequest req, HttpResponse resp) {
+        System.out.println("guard4-before");
+        return true;
+    }
+
+    @Override
+    public void afterEach(HttpRequest req, HttpResponse resp) {
+        System.out.println("guard4-after");
+    }
+
+}
+```
+
+### 5.1 配置类
+
+```java
+@Override
+public void configNavigationRegistry(NavigationGuardRegistry registry) {
+    registry.addNavigationGuard(new Guard4()).addUrlPattern("/**")
+            .excludeUrlPattern("/statics/**")
+            .setOrder(-1);
+}
+```
+
+### 5.2 注解组件注册
+
+```java
+@Component
+@Guard(value = {"/**"}, exclude = {"/static/**", "/statics/**"}, order = 1)
+public class Guard1 implements NavigationGuard {
+    @Override
+    public boolean beforeEach(HttpRequest req, HttpResponse resp) {
+        System.out.println("guard1-before");
+        return true;
+    }
+
+    @Override
+    public void afterEach(HttpRequest req, HttpResponse resp) {
+        System.out.println("guard1-after");
     }
 }
 ```
 
-## 6. 其它
+## 6. 异常处理器
+
+* 实现`ExceptionHandler`接口，只能有一个异常处理器类
+
+```java
+@Component
+public class GlobalException implements ExceptionHandler {
+
+    @ExceptionPoint(NullPointerException.class)
+    public void handle1(HttpRequest request, HttpResponse response, NullPointerException e) throws Exception{
+        System.out.println("空指针了");
+        response.html("空指针");
+    }
+
+
+    @ExceptionPoint(IllegalArgumentException.class)
+    public void illegal(HttpRequest req, HttpResponse resp, IllegalArgumentException e) {
+        System.out.println("异常");
+    }
+}
+```
+
+## 7. 其它
 
 * 重新封装了request与response对象
 * 保留原来api，增加了几个新的方法，简化部分操作
@@ -163,57 +285,3 @@ public class MainApplication {
 	* `file(File file)`下载文件
 * `getOriginal()`获取原生的request、response
 
-## 7. 打包运行
-
-* 内嵌tomcat，打jar包即可
-* 引入`maven-assembly-plugin`插件，并指名主方法类
-* `java -jar `有`jar-with-dependencies`的jar包
-
-```xml
-<packaging>jar</packaging>
-
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>top.huanyv</groupId>
-            <artifactId>winter</artifactId>
-            <version>2.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>主方法类</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>assembly</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-```
