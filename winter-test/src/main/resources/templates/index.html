@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+</head>
+<body>
+
+    <div class="layui-container">
+        <!--信息搜索-->
+        <div class="layui-row">
+            <div class="layui-card">
+                <div class="layui-card-header">搜索信息</div>
+                <div class="layui-card-body">
+                    <form class="layui-form">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">图书名称：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="bname" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button type="button" class="layui-btn layui-btn-primary layui-border-black"
+                                        lay-submit lay-filter="data-search-btn">
+                                        <i class="layui-icon layui-icon-search"></i>搜索
+                                </button>
+                                <button type="reset" class="layui-btn layui-btn-primary layui-border-orange"
+                                        lay-submit>
+                                        <i class="layui-icon layui-icon-refresh"></i>重置
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row">
+            <!-- 表格-->
+            <table id="dataTable" lay-filter="dataTable"></table>
+        </div>
+    </div>
+
+    <!--添加与修改窗口表单-->
+    <div id="addAndUpdateWindow" style="display: none;padding: 10px 10px 10px 10px">
+        <form id="addAndUpdateForm" class="layui-form" lay-filter="addAndUpdateForm">
+            <input type="hidden" id="formMethod" name="_method" value="PUT">
+            <input type="hidden" id="id" name="id">
+            <div class="layui-form-item">
+                <label class="layui-form-label" for="bname" >图书名称：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="bname" id="bname" class="layui-input"
+                           lay-verify="required" autocomplete="off" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" for="author" >图书作者：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="author" id="author" class="layui-input"
+                           lay-verify="required" autocomplete="off" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" for="pubcomp" >出版社：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="pubcomp" id="pubcomp" class="layui-input"
+                           lay-verify="required" autocomplete="off" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" for="pubdate" >出版日期：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="pubdate" id="pubdate" class="layui-input"
+                           lay-verify="required|date" autocomplete="off" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" for="bcount">余量：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="bcount" id="bcount" class="layui-input"
+                           lay-verify="required|number" autocomplete="off" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" for="price" >价格：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="price" id="price" class="layui-input"
+                           lay-verify="required|number" autocomplete="off" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn" lay-submit lay-filter="doSubmit">提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!--表格行工具-->
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">
+            <i class="layui-icon layui-icon-edit"></i>编辑
+        </a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">
+            <i class="layui-icon layui-icon-delete"></i>删除
+        </a>
+    </script>
+
+    <!--表格头工具-->
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">
+                <i class="layui-icon layui-icon-add-circle-fine"></i>添加
+            </button>
+        </div>
+    </script>
+
+    <!--项目的上下文根路径-->
+    <span id="ctxPath" style="display: none">[[${#request.contextPath}]]</span>
+
+    <script th:src="@{/jquery/jquery-3.6.0.js}"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+    <script th:inline="none">
+        layui.use(['layer','table','laydate','form'],function () {
+            var table = layui.table;
+            var layer = layui.layer;
+            var laydate = layui.laydate;
+            var form = layui.form;
+
+            var baseUrl = $("#ctxPath").text();
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#pubdate' //指定元素
+                ,type: 'date'
+            });
+
+            //表格渲染
+            table.render({
+                elem: '#dataTable'
+                ,height: 550
+                ,url: baseUrl + '/admin/book/list' // 数据接口
+                ,page: true // 开启分页
+                ,toolbar: '#toolbarDemo'
+                ,cols: [[
+                    {field: 'id', title: '编号', width:80}
+                    ,{field: 'bname', title: '名称', width:280}
+                    ,{field: 'author', title: '作者', width:120}
+                    ,{field: 'pubcomp', title: '出版社', width:150}
+                    ,{field: 'pubdate', title: '出版日期', width: 180}
+                    ,{field: 'bcount', title: '库存', width: 80}
+                    ,{field: 'price', title: '价格', width: 80}
+                    ,{fixed: 'right', title:'操作', minWidth:150, align:'center', toolbar: '#barDemo'} //这里的toolbar值是模板元素的选择器
+                ]]
+            });
+
+            // 信息搜索
+            form.on("submit(data-search-btn)",function (data) {
+                table.reload('dataTable', {
+                    where: data.field
+                    ,page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                });
+            })
+
+            // 工具条事件
+            // 注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            table.on('tool(dataTable)', function(obj){
+                var data = obj.data; // 获得当前行数据
+                switch (obj.event) {
+                    case 'edit':
+                        openUpdateWindow(data);
+                        break;
+                    case 'del':
+                        deleteBookById(data);
+                        break;
+                }
+            });
+
+            // 触发事件
+            table.on('toolbar(dataTable)', function(obj){
+                // console.log(obj.config.cols)
+                switch(obj.event){
+                    case 'add':
+                        openAddWindow();
+                        break;
+                }
+            });
+
+            var url = "";
+
+            // 打开添加窗口
+            function openAddWindow() {
+                windownIndex = layer.open({
+                    type: 1,
+                    title: '添加图书',
+                    content: $('#addAndUpdateWindow'),
+                    area: ['500px', '450px'],
+                    success: function(layero, index){
+                        $("#formMethod").attr("name","");
+                        $("#formMethod").attr("value","");
+                        $("#addAndUpdateForm")[0].reset() // 表单数据清空
+                        url = baseUrl + "/admin/book/addBook"
+                    }
+                });
+            }
+            // 打开修改窗口
+            function openUpdateWindow(data) {
+                windownIndex = layer.open({
+                    type: 1,
+                    title: '修改图书',
+                    content: $('#addAndUpdateWindow'),
+                    area: ['500px', '450px'],
+                    success: function(layero, index){
+                        // 设置PUT提交方式
+                        $("#formMethod").attr("name","_method");
+                        $("#formMethod").attr("value","PUT");
+                        form.val("addAndUpdateForm",data) // 表单回显
+                        url = baseUrl + "/admin/book/updateBook"
+                    }
+                });
+            }
+
+            // 添加与修改表单提交事件
+            form.on("submit(doSubmit)",function (data){
+                $.post(url,data.field,function (result) {
+                    if (result.code == 0) {
+                        // 请求成功
+                        layer.msg(result.msg,{"icon":"1"});
+                        // 表格重载
+                        table.reload('dataTable');
+                        layer.close(windownIndex)
+                    } else{
+                        layer.msg(result.msg,{"icon":"2"});
+                    }
+                },"json")
+            })
+
+            function deleteBookById(data) {
+                layer.confirm('确定要删除【' + data.bname + '】吗？', {icon: 3, title:'提示'}, function(index){
+                    $.post(baseUrl + "/admin/book/deleteBookById",{
+                        "id": data.id,
+                        "_method": "DELETE"
+                    },function (result) {
+                        if (result.code == 0) {
+                            // 请求成功
+                            layer.msg(result.msg,{"icon":"1"});
+                            // 表格重载
+                            table.reload('dataTable');
+                            layer.close(windownIndex)
+                        } else{
+                            layer.msg(result.msg,{"icon":"2"});
+                        }
+                    },"json")
+                    layer.close(index);
+                });
+            }
+
+        })
+    </script>
+
+</body>
+</html>

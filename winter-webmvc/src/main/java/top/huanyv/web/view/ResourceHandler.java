@@ -69,6 +69,9 @@ public class ResourceHandler {
         for (int i = 0; i < locations.length; i++) {
             // uri去掉前缀
             String resourcePath = uri.substring(prefix.length());
+            if (WebMvcGlobalConfig.PATH_SEPARATOR.equals(prefix)) {
+                resourcePath = uri;
+            }
             // 某个location
             String location = locations[i].trim();
             // 如果是classpath下的
