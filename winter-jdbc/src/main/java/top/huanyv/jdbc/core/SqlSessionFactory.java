@@ -66,14 +66,14 @@ public class SqlSessionFactory {
 
         try {
             connection = dataSource.getConnection();
-            sqlSession.setConnection(connection);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
+        ConnectionHolder.set(connection);
+
         // 加载代理对象
         MapperProxyHandler mapperProxyHandler = new MapperProxyHandler();
-        mapperProxyHandler.setConnection(connection);
         mapperScanner.loadMapper(mapperProxyHandler);
 
         return sqlSession;

@@ -30,16 +30,8 @@ public class SqlSession {
     maxActive=10
 */
 
-    private Connection connection;
 
     private MapperScanner mapperScanner;
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-    public Connection getConnection() {
-        return connection;
-    }
 
     public void setMapperScanner(MapperScanner mapperScanner) {
         this.mapperScanner = mapperScanner;

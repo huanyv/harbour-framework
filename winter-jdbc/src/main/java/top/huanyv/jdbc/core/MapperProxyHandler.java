@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class MapperProxyHandler implements InvocationHandler {
 
-    private Connection connection;
+    private Connection connection = ConnectionHolder.getCurConnection();
 
     private QueryRunner queryRunner = new QueryRunner();
 
