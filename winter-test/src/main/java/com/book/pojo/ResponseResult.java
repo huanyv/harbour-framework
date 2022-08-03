@@ -22,4 +22,19 @@ public class ResponseResult {
         this.count = count;
         this.data = data;
     }
+
+    public static ResponseResult success(String msg) {
+        return new ResponseResult(OK, msg, null, null);
+    }
+
+    public static ResponseResult fail(String msg) {
+        return new ResponseResult(SERVER_ERROR, msg, null, null);
+    }
+
+    public static ResponseResult conditionResult(boolean condition, String trueMsg, String falseMsg) {
+        if (condition) {
+            return success(trueMsg);
+        }
+        return fail(falseMsg);
+    }
 }

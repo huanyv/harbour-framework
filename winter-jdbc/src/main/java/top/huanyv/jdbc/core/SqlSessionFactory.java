@@ -70,6 +70,7 @@ public class SqlSessionFactory {
             throwables.printStackTrace();
         }
 
+        ConnectionHolder.setDataSource(dataSource);
         ConnectionHolder.set(connection);
 
         // 加载代理对象

@@ -6,6 +6,7 @@ import com.book.pojo.vo.BookVo;
 import com.book.service.BookService;
 import top.huanyv.ioc.anno.Autowired;
 import top.huanyv.ioc.anno.Component;
+import top.huanyv.jdbc.core.Page;
 
 import java.util.List;
 
@@ -16,8 +17,8 @@ public class BookServiceImpl implements BookService {
     private BookMapper bookMapper;
 
     @Override
-    public List<Book> listBook() {
-        return bookMapper.listBook();
+    public Page<Book> listBook(String bname, int pageNum, int pageSize) {
+        return bookMapper.listBook(bname, pageNum, pageSize);
     }
 
     @Override

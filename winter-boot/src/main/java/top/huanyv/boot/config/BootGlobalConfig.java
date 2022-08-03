@@ -19,9 +19,31 @@ public class BootGlobalConfig {
     public static final String PORT_COMMAND_LINE_ARGUMENT_NAME = "--server.port";
 
     public static final String BANNER_FILE_NAME = "banner.txt";
-    public static final String DEFAULT_BANNER = "__        ___       _            \n" +
+    public static final String DEFAULT_BANNER = "                   _ooOoo_\n" +
+            "                  o8888888o\n" +
+            "                  88\" . \"88\n" +
+            "                  (| -_- |)\n" +
+            "                  O\\  =  /O\n" +
+            "               ____/`---'\\____\n" +
+            "             .'  \\\\|     |//  `.\n" +
+            "            /  \\\\|||  :  |||//  \\\n" +
+            "           /  _||||| -:- |||||-  \\\n" +
+            "           |   | \\\\\\  -  /// |   |\n" +
+            "           | \\_|  ''\\---/''  |   |\n" +
+            "           \\  .-\\__  `-`  ___/-. /\n" +
+            "         ___`. .'  /--.--\\  `. . __\n" +
+            "      .\"\" '<  `.___\\_<|>_/___.'  >'\"\".\n" +
+            "     | | :  `- \\`.;`\\ _ /`;.`/ - ` : | |\n" +
+            "     \\  \\ `-.   \\_ __\\ /__ _/   .-` /  /\n" +
+            "======`-.____`-.___\\_____/___.-`____.-'======\n" +
+            "                   `=---='\n" +
+            "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n" +
+            "            佛祖保佑       永无BUG";
+
+    public static final String DEFAULT_BANNER_LOGO = "__        ___       _            \n" +
             "\\ \\      / (_)_ __ | |_ ___ _ __ \n" +
             " \\ \\ /\\ / /| | '_ \\| __/ _ \\ '__|\n" +
             "  \\ V  V / | | | | | ||  __/ |   \n" +
             "   \\_/\\_/  |_|_| |_|\\__\\___|_|   ";
+
 }

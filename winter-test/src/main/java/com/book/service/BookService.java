@@ -2,6 +2,7 @@ package com.book.service;
 
 import com.book.pojo.Book;
 import com.book.pojo.vo.BookVo;
+import top.huanyv.jdbc.core.Page;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface BookService {
      * 查询图书
      * @return
      */
-    List<Book> listBook();
+    Page<Book> listBook(String bname, int pageNUm, int pageSize);
 
     /**
      * 添加图书

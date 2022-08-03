@@ -45,7 +45,6 @@
     <!--添加与修改窗口表单-->
     <div id="addAndUpdateWindow" style="display: none;padding: 10px 10px 10px 10px">
         <form id="addAndUpdateForm" class="layui-form" lay-filter="addAndUpdateForm">
-            <input type="hidden" id="formMethod" name="_method" value="PUT">
             <input type="hidden" id="id" name="id">
             <div class="layui-form-item">
                 <label class="layui-form-label" for="bname" >图书名称：</label>
@@ -141,7 +140,7 @@
             table.render({
                 elem: '#dataTable'
                 ,height: 550
-                ,url: baseUrl + '/admin/book/list' // 数据接口
+                ,url: baseUrl + '/admin/book' // 数据接口
                 ,page: true // 开启分页
                 ,toolbar: '#toolbarDemo'
                 ,cols: [[
@@ -190,7 +189,7 @@
                 }
             });
 
-            var url = "";
+            let requestMethod = "PUT";
 
             // 打开添加窗口
             function openAddWindow() {
@@ -200,10 +199,8 @@
                     content: $('#addAndUpdateWindow'),
                     area: ['500px', '450px'],
                     success: function(layero, index){
-                        $("#formMethod").attr("name","");
-                        $("#formMethod").attr("value","");
                         $("#addAndUpdateForm")[0].reset() // 表单数据清空
-                        url = baseUrl + "/admin/book/addBook"
+                        requestMethod = "POST";
                     }
                 });
             }
@@ -216,45 +213,50 @@
                     area: ['500px', '450px'],
                     success: function(layero, index){
                         // 设置PUT提交方式
-                        $("#formMethod").attr("name","_method");
-                        $("#formMethod").attr("value","PUT");
                         form.val("addAndUpdateForm",data) // 表单回显
-                        url = baseUrl + "/admin/book/updateBook"
+                        requestMethod = "PUT";
                     }
                 });
             }
 
             // 添加与修改表单提交事件
-            form.on("submit(doSubmit)",function (data){
-                $.post(url,data.field,function (result) {
-                    if (result.code == 0) {
-                        // 请求成功
-                        layer.msg(result.msg,{"icon":"1"});
+            form.on("submit(doSubmit)",function (data) {
+                fetch(baseUrl + "/admin/book", {
+                    method: requestMethod,
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data.field),
+                }).then((res) => res.json()).then((data) => {
+                    if (data.code === 0) {
+                        layer.msg(data.msg,{"icon":"1"});
                         // 表格重载
                         table.reload('dataTable');
                         layer.close(windownIndex)
                     } else{
                         layer.msg(result.msg,{"icon":"2"});
                     }
-                },"json")
+                });
             })
 
             function deleteBookById(data) {
                 layer.confirm('确定要删除【' + data.bname + '】吗？', {icon: 3, title:'提示'}, function(index){
-                    $.post(baseUrl + "/admin/book/deleteBookById",{
-                        "id": data.id,
-                        "_method": "DELETE"
-                    },function (result) {
-                        if (result.code == 0) {
-                            // 请求成功
-                            layer.msg(result.msg,{"icon":"1"});
+                    fetch(baseUrl + "/admin/book/" + data.id, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                    }).then((res) => res.json()).then((data) => {
+                        console.log("data", data); //返回的数据
+                        if (data.code === 0) {
+                           layer.msg(data.msg,{"icon":"1"});
                             // 表格重载
                             table.reload('dataTable');
                             layer.close(windownIndex)
                         } else{
                             layer.msg(result.msg,{"icon":"2"});
                         }
-                    },"json")
+                    });
                     layer.close(index);
                 });
             }

@@ -14,11 +14,8 @@ public class UpdateTest extends TestCase {
         InputStream inputStream = ClassLoaderUtil.getInputStream("jdbc.properties");
         SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
         int update = new Update(User.class).append("username = ?", "lisi222")
-                .append(true, "sex = ?", "男").where().and("uid = ?", 4).update();
-        String sql = new Update(User.class).append("username = ?", "lisi222")
-                .append(true, "sex = ?", "男").where().and("uid = ?", 4).sql();
+                .append(true, "sex = ?", "男").where().and("uid = ?", 7).update();
         System.out.println(update);
-        System.out.println("sql = " + sql);
 
     }
 }

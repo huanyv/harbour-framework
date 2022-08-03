@@ -3,12 +3,13 @@ package com.book.mapper;
 import com.book.pojo.Book;
 import com.book.pojo.vo.BookVo;
 import top.huanyv.jdbc.anno.*;
+import top.huanyv.jdbc.core.Page;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-@Mapper
+//@Mapper
 public interface BookMapper {
 
     /**
@@ -16,7 +17,7 @@ public interface BookMapper {
      * @return
      */
     @Select("select * from t_book")
-    List<Book> listBook();
+    Page<Book> listBook(String bname, int pageNUm, int pageSize);
 
     /**
      * 添加图书

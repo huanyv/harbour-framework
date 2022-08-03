@@ -6,9 +6,15 @@ package top.huanyv.jdbc.builder;
  */
 public class Where<T> extends QueryBuilder<T> {
 
-    public Where(SqlBuild<T> sqlBuilder) {
+    public Where(SqlBuilder<T> sqlBuilder) {
         super(sqlBuilder);
         append("where");
+    }
+
+    @Override
+    public Where<T> append(String sql) {
+        super.append(sql);
+        return this;
     }
 
     public Where<T> append(String sql, Object... args) {

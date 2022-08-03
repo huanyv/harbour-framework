@@ -6,7 +6,7 @@ package top.huanyv.jdbc.builder;
  */
 public class Having<T> extends QueryBuilder<T>{
 
-    public Having(SqlBuild<T> sqlBuilder) {
+    public Having(SqlBuilder<T> sqlBuilder) {
         super(sqlBuilder);
         append("having");
     }
@@ -28,7 +28,7 @@ public class Having<T> extends QueryBuilder<T>{
 
     public Having<T> or(String sql, Object... args) {
         if (!endKeyWord().equalsIgnoreCase("having")) {
-            this.sqlBuilder.append("or");
+            append("or");
         }
         setArguments(args);
         append(sql);

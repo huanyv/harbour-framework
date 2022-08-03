@@ -39,7 +39,7 @@ public class MapperScanner {
             if (clazz.isInterface()) {
                 // 代理实现
                 mapperInstance = ProxyFactory.getImpl(clazz, invocationHandler);
-            } else if (clazz.isLocalClass()) {
+            } else {
                 try {
                     mapperInstance = clazz.getConstructor().newInstance();
                 } catch (NoSuchMethodException | IllegalAccessException

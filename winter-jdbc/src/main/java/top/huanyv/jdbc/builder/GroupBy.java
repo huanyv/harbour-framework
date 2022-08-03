@@ -6,7 +6,7 @@ package top.huanyv.jdbc.builder;
  */
 public class GroupBy<T> extends QueryBuilder<T>{
 
-    public GroupBy(SqlBuild<T> sqlBuilder, String column) {
+    public GroupBy(SqlBuilder<T> sqlBuilder, String column) {
         super(sqlBuilder);
         append("group by").append(column);
     }

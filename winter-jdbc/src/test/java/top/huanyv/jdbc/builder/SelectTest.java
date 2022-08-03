@@ -24,7 +24,7 @@ public class SelectTest extends TestCase {
                 .where().and("uid = 1").and("username = 'admin'")
                 .limit(10);
         String sql = queryBuilder.sql();
-        System.out.println("queryBuilder.sqlBuilder.arguments = " + Arrays.toString(queryBuilder.sqlBuilder.getArguments()));
+        System.out.println("queryBuilder.sqlBuilder.arguments = " + Arrays.toString(queryBuilder.getArguments()));
         System.out.println(sql);
     }
 

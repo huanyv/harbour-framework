@@ -13,7 +13,7 @@ public class DeleteTest extends TestCase {
     public void testFrom() {
         InputStream inputStream = ClassLoaderUtil.getInputStream("jdbc.properties");
         SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
-        QueryBuilder delete = new Delete().from(User.class).where().and("uid = ?", 4);
+        QueryBuilder delete = new Delete().from(User.class).where().and("uid = ?", 5);
         System.out.println("delete.update() = " + delete.update());
         System.out.println("delete.sql() = " + delete.sql());
     }

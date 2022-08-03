@@ -1,5 +1,6 @@
 package top.huanyv.jdbc.core;
 
+import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,12 +16,26 @@ public class ConnectionHolder {
 
     private static ThreadLocal<Connection> threadLocal = new ThreadLocal<>();
 
+    private static DataSource dataSource;
+
+    public static void setDataSource(DataSource dataSource) {
+        ConnectionHolder.dataSource = dataSource;
+    }
+
     public static void set(Connection connection) {
         threadLocal.set(connection);
     }
 
     public static Connection getCurConnection() {
-        return threadLocal.get();
+        Connection connection = threadLocal.get();
+        if (connection == null) {
+            try {
+                connection = dataSource.getConnection();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return connection;
     }
 
 

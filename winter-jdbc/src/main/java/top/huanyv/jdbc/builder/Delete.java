@@ -6,7 +6,7 @@ package top.huanyv.jdbc.builder;
  */
 public class Delete extends QueryBuilder{
     public Delete() {
-        super(new SqlBuild());
+        super(new SqlBuilder());
         append("delete");
     }
     public From from(Class<?> table) {

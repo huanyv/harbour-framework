@@ -1,6 +1,7 @@
 package top.huanyv.jdbc.builder;
 
-import top.huanyv.jdbc.core.Page;
+import top.huanyv.jdbc.anno.TableName;
+import top.huanyv.utils.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,64 +9,59 @@ import java.util.List;
 
 /**
  * @author admin
- * @date 2022/8/1 16:16
+ * @date 2022/8/1 16:57
  */
-public class SqlBuilder {
+public class SqlBuilder<T> {
+    private List<String> sqlList = new ArrayList<>();
+    private List<Object> arguments = new ArrayList<>();
+    protected Class<T> table;
 
-    public static void main(String[] args) {
-        String[] strings = {"1", "2", "a", "b"};
-//        test(strings);
-        test(1,2,3,4);
+    public String sql() {
+        return String.join(" ", this.sqlList);
     }
 
-    public static void test(Object... objects) {
-        test1(objects);
-    }
-    public static void test1(Object... objects) {
-        System.out.println(objects);
-        System.out.println("objects = " + Arrays.toString(objects));
-    }
-
-    private StringBuilder sql;
-    private List<Object> arguments;
-
-
-    public SqlBuilder(String sql) {
-        this.sql = new StringBuilder(sql);
-        this.arguments = new ArrayList<>();
-    }
-
-    public SqlBuilder append(String sql, Object arg) {
-        this.sql.append(" ").append(sql);
-        this.arguments.add(arg);
+    public SqlBuilder<T> append(String sql) {
+        this.sqlList.add(sql);
         return this;
     }
 
-    public SqlBuilder append(boolean condition ,String sql, Object arg) {
-        if (condition) {
-            this.sql.append(" ").append(sql);
-            this.arguments.add(arg);
+    public String getTableName() {
+        TableName tableName = table.getAnnotation(TableName.class);
+        if (tableName != null) {
+            return tableName.value();
         }
-        return this;
+        return StringUtil.firstLetterLower(table.getSimpleName());
     }
 
-    public <T> List<T> selectList() {
-
-        return null;
+    public List<String> getSqlList() {
+        return sqlList;
     }
 
-    public <T> T selectOne() {
-
-        return null;
+    public Class<T> getTable() {
+        return table;
     }
 
-    public <T> Page<T> page(int pageNum, int pageSize) {
-        int limitBegin = (pageNum - 1) * pageSize;
-        int limitLen = pageSize;
-
-
-
-        return null;
+    public void setSqlList(List<String> sqlList) {
+        this.sqlList = sqlList;
     }
 
+    public void setTable(Class<T> table) {
+        this.table = table;
+    }
+
+    public List<Object> getArguments() {
+        return arguments;
+    }
+
+    public void setArguments(Object... args) {
+        this.arguments.addAll(Arrays.asList(args));
+    }
+
+
+    @Override
+    public String toString() {
+        return "SqlBuild{" +
+                "sql=" + sqlList +
+                '}';
+    }
 }

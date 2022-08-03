@@ -1,14 +1,12 @@
 package top.huanyv.jdbc.builder;
 
-import top.huanyv.utils.StringUtil;
-
 /**
  * @author admin
  * @date 2022/8/1 17:02
  */
 public class From<T> extends QueryBuilder<T> {
 
-    public From(SqlBuild<T> sqlBuilder) {
+    public From(SqlBuilder<T> sqlBuilder) {
         super(sqlBuilder);
         append("from").append(getTableName());
     }

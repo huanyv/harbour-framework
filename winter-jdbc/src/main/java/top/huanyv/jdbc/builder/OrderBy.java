@@ -6,7 +6,7 @@ package top.huanyv.jdbc.builder;
  */
 public class OrderBy<T> extends QueryBuilder<T> {
 
-    public OrderBy(SqlBuild<T> sqlBuilder) {
+    public OrderBy(SqlBuilder<T> sqlBuilder) {
         super(sqlBuilder);
         append("order by");
     }
