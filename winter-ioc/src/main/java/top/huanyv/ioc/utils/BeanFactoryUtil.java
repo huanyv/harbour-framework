@@ -1,7 +1,5 @@
 package top.huanyv.ioc.utils;
 
-import javafx.scene.SceneAntialiasing;
-import top.huanyv.ioc.core.AnnotationConfigApplicationContext;
 import top.huanyv.ioc.core.ApplicationContext;
 
 import java.lang.annotation.Annotation;
@@ -43,12 +41,12 @@ public class BeanFactoryUtil {
         return beanList;
     }
 
-    public static List<Object> getBeansByType(ApplicationContext applicationContext, Class<?> clazz) {
-        List<Object> beanList = new ArrayList<>();
+    public static <T> List<T> getBeansByType(ApplicationContext applicationContext, Class<T> clazz) {
+        List<T> beanList = new ArrayList<>();
         for (String beanName : applicationContext.getBeanDefinitionNames()) {
             Object bean = applicationContext.getBean(beanName);
             if (clazz.isInstance(bean)) {
-                beanList.add(bean);
+                beanList.add((T) bean);
             }
         }
         return beanList;

@@ -1,24 +1,37 @@
 package top.huanyv.web.view;
 
 import org.junit.Test;
+import top.huanyv.jdbc.anno.Mapper;
 import top.huanyv.utils.IoUtil;
 
 import java.io.InputStream;
 
-import static org.junit.Assert.*;
-
 public class ResourceHandlerTest {
 
+
     @Test
-    public void getInputStream() {
+    public void test01() {
         ResourceHandler resourceHandler = new ResourceHandler();
-        resourceHandler.add("/web/static", "classpath:static, classpath:, C:\\Users\\admin\\Desktop\\cogo");
-        InputStream inputStream = resourceHandler.getInputStream("/web/static/error/404.html");
+        resourceHandler.add("/**").addResourceLocations("classpath:static/")
+                .addResourceLocations("D:\\Learn\\notes\\前端\\img\\")
+                .addResourceLocations("C:\\Users\\admin\\Desktop\\demo\\src\\main\\java\\org\\example\\");
+        InputStream inputStream = resourceHandler.getInputStream("/config/Webconfig.java");
         System.out.println(IoUtil.readStr(inputStream));
-        InputStream inputStream1 = resourceHandler.getInputStream("/web/static/style.css");
-        System.out.println(IoUtil.readStr(inputStream1));
-        InputStream inputStream2 = resourceHandler.getInputStream("/web/static/src/test/java/vip/manda/test/annotation/Test1.java");
-        System.out.println(IoUtil.readStr(inputStream2));
+    }
+
+    @Test
+    public void addMapping() {
+        ResourceHandler resourceHandler = new ResourceHandler();
+        resourceHandler.add("/**").addResourceLocations("classpath:static/")
+                .addResourceLocations("D:\\Learn\\notes\\前端\\img\\")
+                .addResourceLocations("C:\\Users\\admin\\Desktop\\demo\\src\\main\\java\\org\\example\\");
+        ResourceMapping resourceMapping = new ResourceMapping();
+        resourceMapping.setUrlPattern("/static/**");
+        resourceMapping.addResourceLocations("/var/www/ccc/");
+
+        resourceHandler.addMapping(resourceMapping);
+
+        System.out.println(resourceHandler);
 
     }
 }

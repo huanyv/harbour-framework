@@ -12,6 +12,7 @@ import top.huanyv.web.exception.DefaultExceptionHandler;
 import top.huanyv.web.exception.ExceptionHandler;
 import top.huanyv.web.guard.NavigationGuard;
 import top.huanyv.web.guard.NavigationGuardMapping;
+import top.huanyv.web.view.ResourceMapping;
 import top.huanyv.web.view.ViewResolver;
 
 import java.lang.reflect.Method;
@@ -63,9 +64,8 @@ public abstract class InitRouterServlet extends TemplateServlet {
         }
 
         Routing routing = new DefaultRouting();
-        for (Object bean : BeanFactoryUtil.getBeansByType(applicationContext, RouteRegistry.class)) {
-            RouteRegistry routeRegistry = (RouteRegistry) bean;
-            routeRegistry.run(routing);
+        for (RouteRegistry registry : BeanFactoryUtil.getBeansByType(applicationContext, RouteRegistry.class)) {
+            registry.run(routing);
         }
 
     }
@@ -100,9 +100,7 @@ public abstract class InitRouterServlet extends TemplateServlet {
         // 静态资源配置
         ResourceMappingRegistry resourceMappingRegistry = new ResourceMappingRegistry();
         webConfigurer.addResourceMapping(resourceMappingRegistry);
-        for (Map.Entry<String, String> entry : resourceMappingRegistry.getResourceMapping().entrySet()) {
-            this.resourceHandler.add(entry.getKey(), entry.getValue());
-        }
+        this.resourceHandler.addMappings(resourceMappingRegistry.getResourceMappings());
     }
 
     @Override
@@ -113,29 +111,25 @@ public abstract class InitRouterServlet extends TemplateServlet {
         this.guardMappings.addAll(navigationGuardRegistry.getConfigNavigationGuards());
 
         // 扫描路由守卫
-        for (Object bean : BeanFactoryUtil.getBeans(applicationContext)) {
-            // 如果是路由守卫
-            if (bean instanceof NavigationGuard) {
-                NavigationGuardMapping navigationGuardMapping = new NavigationGuardMapping();
-                NavigationGuard navigationGuard = (NavigationGuard) bean;
-                Guard guard = bean.getClass().getAnnotation(Guard.class);
-                if (guard != null) {
-                    // 获得顺序
-                    Order order = bean.getClass().getAnnotation(Order.class);
-                    // 获得匹配路径
-                    String[] urlPatterns = guard.value();
-                    // 获得排序路径
-                    String[] exclude = guard.exclude();
-                    navigationGuardMapping.setNavigationGuard(navigationGuard);
-                    navigationGuardMapping.setUrlPatterns(urlPatterns);
-                    navigationGuardMapping.setExcludeUrl(exclude);
-                    if (order != null) {
-                        navigationGuardMapping.setOrder(order.value());
-                    } else {
-                        navigationGuardMapping.setOrder(guard.order());
-                    }
-                    this.guardMappings.add(navigationGuardMapping);
+        for (NavigationGuard navigationGuard : BeanFactoryUtil.getBeansByType(applicationContext, NavigationGuard.class)) {
+            NavigationGuardMapping navigationGuardMapping = new NavigationGuardMapping();
+            Guard guard = navigationGuard.getClass().getAnnotation(Guard.class);
+            if (guard != null) {
+                // 获得顺序
+                Order order = navigationGuard.getClass().getAnnotation(Order.class);
+                // 获得匹配路径
+                String[] urlPatterns = guard.value();
+                // 获得排序路径
+                String[] exclude = guard.exclude();
+                navigationGuardMapping.setNavigationGuard(navigationGuard);
+                navigationGuardMapping.setUrlPatterns(urlPatterns);
+                navigationGuardMapping.setExcludeUrl(exclude);
+                if (order != null) {
+                    navigationGuardMapping.setOrder(order.value());
+                } else {
+                    navigationGuardMapping.setOrder(guard.order());
                 }
+                this.guardMappings.add(navigationGuardMapping);
             }
         }
 

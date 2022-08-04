@@ -8,6 +8,7 @@ import top.huanyv.jdbc.anno.Delete;
 import top.huanyv.jdbc.anno.Insert;
 import top.huanyv.jdbc.anno.Select;
 import top.huanyv.jdbc.anno.Update;
+import top.huanyv.utils.ClassUtil;
 import top.huanyv.utils.MethodUtil;
 
 import java.lang.reflect.InvocationHandler;
@@ -66,7 +67,7 @@ public class MapperProxyHandler implements InvocationHandler {
             queryResult = queryRunner.query(connection, sql, new ScalarHandler<>(), args);
         } else if(returnType.isPrimitive() && !returnType.equals(void.class)) {
             queryResult = queryRunner.query(connection, sql, new ScalarHandler<>(), args);
-        } else {
+        } else if(ClassUtil.isCustomClass(returnType)) {
             // bean 对象
             queryResult = queryRunner.query(connection, sql, new BeanHandler(returnType) ,args);
         }

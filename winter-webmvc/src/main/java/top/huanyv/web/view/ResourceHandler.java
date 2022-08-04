@@ -19,35 +19,23 @@ import java.util.*;
  */
 public class ResourceHandler {
 
-    public static final String RESOURCE_LOCATION_PREFIX = "classpath:";
+    public static final String CLASSPATH_PREFIX = "classpath:";
 
-    private Map<String, String> resourceMapping = new HashMap<>();
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    private List<ResourceMapping> resourceMappings = new ArrayList<>();
 
     // 默认的静态资源前缀
     public ResourceHandler() {
-        this.add("/static", "classpath:static");
+        add("/**").addResourceLocations("classpath:static/");
     }
+
 
     /**
-     * 获取精确匹配的静态资源前缀
-     * @param uri uri
-     * @return 前缀 没有为null
+     * 从ServletContext中获取资源流
+     * @param req 请求对象
+     * @return 不存在， 从配置获取
      */
-    public String getMatchPrefix(String uri) {
-        // TODO fix 应该匹配多个urlpattern
-        List<String> pres = new ArrayList<>();
-        // 遍历所有uri符合的前缀
-        for (Map.Entry<String, String> entry : resourceMapping.entrySet()) {
-            String prefix = entry.getKey();
-            if (uri.startsWith(prefix)) {
-                pres.add(prefix);
-            }
-        }
-        // 取出最长的一个，以精确匹配
-        Optional<String> max = pres.stream().max((o1, o2) -> o1.length() - o2.length());
-        return max.orElse(null);
-    }
-
     public InputStream getInputStream(HttpServletRequest req) {
         String uri = WebUtil.getRequestURI(req);
         InputStream inputStream = req.getServletContext().getResourceAsStream(uri);
@@ -56,49 +44,95 @@ public class ResourceHandler {
         }
         return inputStream;
     }
+
+
+    /**
+     * 从配置获取资源流，
+     * @param uri 请求uri
+     * @return 不存在返回null
+     */
     public InputStream getInputStream(String uri) {
-        // 获取精确匹配的资源前缀
-        String prefix = getMatchPrefix(uri);
-        if (prefix == null) {
-            return null;
-        }
         InputStream inputStream = null;
-        // 获取所有的路径
-        String[] locations = this.resourceMapping.get(prefix).split(",");
-        // 遍历路径, location + uri去掉前缀
-        for (int i = 0; i < locations.length; i++) {
-            // uri去掉前缀
-            String resourcePath = uri.substring(prefix.length());
-            if (WebMvcGlobalConfig.PATH_SEPARATOR.equals(prefix)) {
-                resourcePath = uri;
-            }
-            // 某个location
-            String location = locations[i].trim();
-            // 如果是classpath下的
-            if (location.startsWith(RESOURCE_LOCATION_PREFIX)) {
-                String realLocation = location.substring(RESOURCE_LOCATION_PREFIX.length()) + resourcePath;
-                inputStream = ClassLoaderUtil
-                        .getInputStream(StringUtil.removePrefix(realLocation, WebMvcGlobalConfig.PATH_SEPARATOR));
-            } else {
-                try {
-                    inputStream = new FileInputStream(location + resourcePath);
-                } catch (FileNotFoundException e) {
-                    inputStream = null;
+        for (ResourceMapping mapping : this.resourceMappings) {
+            String urlPattern = mapping.getUrlPattern();
+            // 请求地址与pattern是否匹配
+            if (pathMatcher.match(urlPattern, uri)) {
+                // 获取通配符处的path
+                String relativePath = pathMatcher.extractPathWithinPattern(urlPattern, uri);
+                for (String location : mapping.getLocations()) {
+                    if (location.startsWith(CLASSPATH_PREFIX)) {
+                        inputStream = ClassLoaderUtil
+                                .getInputStream(StringUtil.removePrefix(location, CLASSPATH_PREFIX) + relativePath);
+                    } else {
+                        try {
+                            inputStream = new FileInputStream(location + relativePath);
+                        } catch (FileNotFoundException e) {
+                            inputStream = null;
+                        }
+                    }
+                    if (inputStream != null) {
+                        return inputStream;
+                    }
                 }
-            }
-            if (inputStream != null) {
-                return inputStream;
             }
         }
         return null;
     }
 
+    /**
+     * 是否存在这个资源
+     * @param req 请求对象
+     * @return bool
+     */
     public boolean hasResource(HttpServletRequest req) {
         return getInputStream(req) != null;
     }
 
-    public void add(String prefix, String location) {
-        resourceMapping.put(prefix, location);
+    /**
+     * 添加一个资源映射
+     * @param urlPattern pattern地址
+     * @return mapping
+     */
+    public ResourceMapping add(String urlPattern) {
+        ResourceMapping resourceMapping = new ResourceMapping();
+        this.resourceMappings.add(resourceMapping);
+        resourceMapping.setUrlPattern(urlPattern);
+        return resourceMapping;
+    }
+
+    /**
+     * 获取一个资源映射, 如果不存在新建一个
+     * @return mapping
+     */
+    public ResourceMapping getMapping(String urlPattern) {
+        for (ResourceMapping mapping : this.resourceMappings) {
+            if (mapping.getUrlPattern().equals(urlPattern)) {
+                return mapping;
+            }
+        }
+        ResourceMapping resourceMapping = new ResourceMapping();
+        resourceMapping.setUrlPattern(urlPattern);
+        return resourceMapping;
+    }
+
+    /**
+     * 添加一个资源映射， 如果已经存在对应的地址pattern，追加
+     * @param mapping 映射对象
+     */
+    public void addMapping(ResourceMapping mapping) {
+        ResourceMapping resourceMapping = getMapping(mapping.getUrlPattern());
+        resourceMapping.addResourceLocations(mapping.getLocations().toArray(new String[0]));
+        this.resourceMappings.add(resourceMapping);
+    }
+
+    /**
+     * 批量添加多个资源映射
+     * @param resourceMappings list集合
+     */
+    public void addMappings(List<ResourceMapping> resourceMappings) {
+        for (ResourceMapping resourceMapping : resourceMappings) {
+            addMapping(resourceMapping);
+        }
     }
 
     public void handle(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -114,4 +148,10 @@ public class ResourceHandler {
         IoUtil.copy(inputStream, outputStream);
     }
 
+    @Override
+    public String toString() {
+        return "ResourceHandler{" +
+                "resourceMappings=" + resourceMappings +
+                '}';
+    }
 }

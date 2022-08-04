@@ -25,7 +25,7 @@ public class WebConfig implements WebConfigurer {
 
     @Override
     public void addResourceMapping(ResourceMappingRegistry registry) {
-        registry.add("/", "classpath:static");
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:static/");
     }
 
     @Bean

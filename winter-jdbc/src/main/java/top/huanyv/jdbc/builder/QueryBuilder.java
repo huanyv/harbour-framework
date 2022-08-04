@@ -94,7 +94,7 @@ public class QueryBuilder<T> {
      * 查询第一行的数据
      * @return 对象
      */
-    public T selectOne() {
+    public T selectRow() {
         Connection connection = ConnectionHolder.getCurConnection();
         try {
             return queryRunner.query(connection, sql(), new BeanHandler<T>(this.sqlBuilder.table), getArguments());
@@ -124,7 +124,7 @@ public class QueryBuilder<T> {
      * @param <E> 数据类型
      * @return 数据
      */
-    public <E> E selectScalar(Class<E> clazz) {
+    public <E> E selectOne(Class<E> clazz) {
         Connection connection = ConnectionHolder.getCurConnection();
         try {
             return queryRunner.query(connection, sql(), new ScalarHandler<>(), getArguments());
@@ -139,7 +139,7 @@ public class QueryBuilder<T> {
      * @return long
      */
     public Long count() {
-        return selectScalar(Long.class);
+        return selectOne(Long.class);
     }
 
     /**

@@ -28,12 +28,13 @@ public class ConnectionHolder {
 
     public static Connection getCurConnection() {
         Connection connection = threadLocal.get();
-        if (connection == null) {
-            try {
+        try {
+            if (connection == null || connection.isClosed()) {
                 connection = dataSource.getConnection();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+                set(connection);
             }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
         return connection;
     }
