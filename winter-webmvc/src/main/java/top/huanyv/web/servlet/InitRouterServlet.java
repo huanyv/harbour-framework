@@ -3,9 +3,7 @@ package top.huanyv.web.servlet;
 import top.huanyv.ioc.core.ApplicationContext;
 import top.huanyv.ioc.utils.BeanFactoryUtil;
 import top.huanyv.web.anno.*;
-import top.huanyv.web.config.NavigationGuardRegistry;
-import top.huanyv.web.config.ResourceMappingRegistry;
-import top.huanyv.web.config.ViewControllerRegistry;
+import top.huanyv.web.config.*;
 import top.huanyv.web.core.*;
 import top.huanyv.web.enums.RequestMethod;
 import top.huanyv.web.exception.DefaultExceptionHandler;
@@ -109,6 +107,25 @@ public abstract class InitRouterServlet extends TemplateServlet {
         NavigationGuardRegistry navigationGuardRegistry = new NavigationGuardRegistry();
         webConfigurer.configNavigationRegistry(navigationGuardRegistry);
         this.guardMappings.addAll(navigationGuardRegistry.getConfigNavigationGuards());
+
+        // 配置跨域
+        CorsRegistry corsRegistry = new CorsRegistry();
+        webConfigurer.addCorsMappings(corsRegistry);
+        for (CorsRegistryBean corsRegistryBean : corsRegistry.getCorsRegistryBeans()) {
+            NavigationGuardMapping navigationGuardMapping = new NavigationGuardMapping();
+
+            CorsGuard corsGuard = new CorsGuard();
+            corsGuard.setMaxAge(corsRegistryBean.getMaxAge());
+            corsGuard.setAllowCredentials(corsRegistryBean.getAllowCredentials());
+            corsGuard.setAllowedOriginPatterns(corsRegistryBean.getAllowedOriginPatterns());
+            corsGuard.setAllowedHeaders(corsRegistryBean.getAllowedHeaders());
+            corsGuard.setAllowedMethods(corsRegistryBean.getAllowedMethods());
+
+            navigationGuardMapping.setNavigationGuard(corsGuard);
+            navigationGuardMapping.setOrder(-10);
+            navigationGuardMapping.addUrlPattern(corsRegistryBean.getUrlPattern());
+            this.guardMappings.add(navigationGuardMapping);
+        }
 
         // 扫描路由守卫
         for (NavigationGuard navigationGuard : BeanFactoryUtil.getBeansByType(applicationContext, NavigationGuard.class)) {

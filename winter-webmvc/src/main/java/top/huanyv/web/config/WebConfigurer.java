@@ -19,6 +19,9 @@ public interface WebConfigurer {
 
     }
 
+    default void addCorsMappings(CorsRegistry registry) {
+
+    }
 
 
 }

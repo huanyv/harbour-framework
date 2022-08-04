@@ -21,13 +21,17 @@ public class NavigationGuardMapping {
     // 顺序
     private int order;
 
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
+
     /**
      * 是否是这个地址
      * @param path 地址
      * @return bool
      */
     public boolean hasUrlPatten(String path) {
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        if (this.urlPatterns == null) {
+            return false;
+        }
         for (String pattern : this.urlPatterns) {
             if (WebMvcGlobalConfig.PATH_SEPARATOR.equals(path) && "/**".equals(pattern)) {
                 return true;
@@ -45,7 +49,9 @@ public class NavigationGuardMapping {
      * @return bool
      */
     public boolean isExclude(String path) {
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        if (this.excludeUrl == null) {
+            return false;
+        }
         for (String pattern : this.excludeUrl) {
             if (antPathMatcher.match(pattern, path)) {
                 return true;

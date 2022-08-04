@@ -8,6 +8,7 @@ import top.huanyv.ioc.anno.Configuration;
 import top.huanyv.jdbc.core.MapperScanner;
 import top.huanyv.jdbc.extend.SimpleDataSource;
 import top.huanyv.jdbc.extend.SqlSessionFactoryBean;
+import top.huanyv.web.config.CorsRegistry;
 import top.huanyv.web.config.ResourceMappingRegistry;
 import top.huanyv.web.config.ViewControllerRegistry;
 import top.huanyv.web.config.WebConfigurer;
@@ -26,6 +27,22 @@ public class WebConfig implements WebConfigurer {
     @Override
     public void addResourceMapping(ResourceMappingRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:static/");
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//            // 设置允许跨域请求的域名
+//            .allowedOriginPatterns("*")
+//            // 是否允许cookie
+//            .allowCredentials(true)
+//            // 设置允许的请求方式
+//            .allowedMethods("GET", "POST", "DELETE", "PUT")
+//            // 设置允许的header属性
+//            .allowedHeaders("*")
+//            // 跨域允许时间
+//            .maxAge(3600L);
+        registry.addMapping("/**").defaultRule();
     }
 
     @Bean

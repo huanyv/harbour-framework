@@ -13,6 +13,8 @@ public interface NavigationGuard {
         return true;
     }
 
-    void afterEach(HttpRequest req, HttpResponse resp);
+    default void afterEach(HttpRequest req, HttpResponse resp) {
+
+    }
 
 }

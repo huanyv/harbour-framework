@@ -50,6 +50,8 @@ BookService bookService = app.getBean(BookService.class);
 System.out.println("bookService = " + bookService.getUserService());
 ```
 
+------------------------------------------------------------------------------------------------------------------
+
 # jdbc-简化JDBC操作
 
 ## 接口式调用
@@ -96,7 +98,9 @@ UserDao userDao = sqlSession.getMapper(UserDao.class);
 System.out.println("userDao.getUserById(1) = " + userDao.getUserById(1));
 ```
 
-# webmvc框架
+------------------------------------------------------------------------------------------------------------------
+
+# web框架
 
 ## 0. 使用
 
@@ -199,57 +203,80 @@ public void gettest(HttpRequest req, HttpResponse resp) throws IOException {
 ## 3. 配置
 
 ```java
-@Configuration
 @Component
-public class Webconfig implements WebConfigurer {
+@Configuration
+public class WebConfig implements WebConfigurer {
 
     @Override
     public void addViewController(ViewControllerRegistry registry) {
-        registry.add("/view", "view");
+        registry.add("/", "index");
     }
 
     @Override
     public void addResourceMapping(ResourceMappingRegistry registry) {
-        registry.add("/statics", "classpath:statics");
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:static/");
     }
 
     @Override
-    public void configNavigationRegistry(NavigationGuardRegistry registry) {
-        registry.addNavigationGuard(new Guard4()).addUrlPattern("/**")
-                .excludeUrlPattern("/statics/**")
-                .setOrder(-1);
-    }
-
-    @Bean
-    public ViewResolver viewResolver() {
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("templates/");
-        templateResolver.setSuffix(".html");
-        templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        TemplateEngine templateEngine = new TemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver);
-        ThymeleafViewResolver thymeleafViewResolver = new ThymeleafViewResolver();
-        thymeleafViewResolver.setTemplateEngine(templateEngine);
-        return thymeleafViewResolver;
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+            // 设置允许跨域请求的域名
+            .allowedOriginPatterns("*")
+            // 是否允许cookie
+            .allowCredentials(true)
+            // 设置允许的请求方式
+            .allowedMethods("GET", "POST", "DELETE", "PUT")
+            // 设置允许的header属性
+            .allowedHeaders("*")
+            // 跨域允许时间
+            .maxAge(3600L);
     }
 
     @Bean
     public DataSource dataSource() {
-        Properties properties = PropertiesUtil.getProperties("jdbc.properties");
-        return SimpleDataSource.createDataSource(properties);
+        SimpleDataSource simpleDataSource = new SimpleDataSource();
+        simpleDataSource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
+        simpleDataSource.setDriverClassName(Driver.class.getName());
+        simpleDataSource.setUsername("root");
+        simpleDataSource.setPassword("2233");
+        return simpleDataSource;
     }
 
     @Bean
-    public MapperScanner mapperScanner () {
-        MapperScanner mapperScanner = new MapperScanner();
-        mapperScanner.setScanPack("org.example");
-        return mapperScanner;
+    public MapperScanner mapperScanner() {
+        return new MapperScanner("com.book");
     }
 
     @Bean
-    public SqlSessionFactoryBean mapperRegister() {
+    public SqlSessionFactoryBean sqlSessionFactoryBean() {
         return new SqlSessionFactoryBean();
+    }
+}
+```
+
+### 3.1 跨域配置
+
+* 在配置类中配置
+* 使用默认的规则`registry.addMapping("/static/**").defaultRule();`
+
+```java
+@Component
+@Configuration
+public class WebConfig implements WebConfigurer {
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+            // 设置允许跨域请求的域名
+            .allowedOriginPatterns("*")
+            // 是否允许cookie
+            .allowCredentials(true)
+            // 设置允许的请求方式
+            .allowedMethods("GET", "POST", "DELETE", "PUT")
+            // 设置允许的header属性
+            .allowedHeaders("*")
+            // 跨域允许时间
+            .maxAge(3600L);
     }
 }
 ```
@@ -273,8 +300,8 @@ public class Webconfig implements WebConfigurer {
 
     @Override
     public void addResourceMapping(ResourceMappingRegistry registry) {
-        registry.add("/statics", "classpath:statics");
-        registry.add("/web/static", "classpath:static, classpath:, C:\\Users\\admin\\Desktop\\cogo");
+	    registry.addResourceHandler("/static/**").addResourceLocations("classpath:static/")
+	    	.addResourceLocations("C:\\Users\\admin\\Desktop\\demo\\")
     }
 
     @Bean
@@ -364,7 +391,7 @@ public class GlobalException implements ExceptionHandler {
 }
 ```
 
-## 6. 其它
+## 7. 其它
 
 * 重新封装了request与response对象
 * 保留原来api，增加了几个新的方法，简化部分操作
@@ -382,6 +409,8 @@ public class GlobalException implements ExceptionHandler {
 	* `xml(String content)`响应xml
 	* `file(File file)`下载文件
 * `getOriginal()`获取原生的request、response
+
+------------------------------------------------------------------------------------------------------------------
 
 # boot-内嵌tomcat封装
 
