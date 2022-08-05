@@ -1,11 +1,13 @@
 package com.book.controller;
 
+import com.book.aspect.LogAop;
 import com.book.pojo.Book;
 import com.book.pojo.ResponseResult;
 import com.book.pojo.vo.BookVo;
 import com.book.service.BookService;
 import top.huanyv.ioc.anno.Autowired;
 import top.huanyv.ioc.anno.Component;
+import top.huanyv.ioc.aop.Aop;
 import top.huanyv.jdbc.core.Page;
 import top.huanyv.utils.BeanUtil;
 import top.huanyv.utils.JsonUtil;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @Component
 @Route("/admin/book")
+@Aop(LogAop.class)
 public class BookController {
 
     @Autowired

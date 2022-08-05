@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
  * @author admin
  * @date 2022/7/29 9:22
  */
-public class RouterServlet extends InitRouterServlet {
+//public class RouterServlet extends InitRouterServlet {
+public class RouterServlet extends InitProxyRouterServlet {
 
     @Override
     void doRouting(HttpServletRequest req, HttpServletResponse resp) throws Exception {

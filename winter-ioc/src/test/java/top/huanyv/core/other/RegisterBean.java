@@ -11,7 +11,7 @@ import top.huanyv.ioc.core.BeanRegistry;
  * @author admin
  * @date 2022/7/21 16:03
  */
-@Component
+//@Component
 public class RegisterBean implements BeanRegistry {
 
 

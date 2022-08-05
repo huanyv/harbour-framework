@@ -2,20 +2,16 @@ package top.huanyv.ioc.core;
 
 
 import top.huanyv.ioc.anno.*;
-import top.huanyv.ioc.config.GlobalConfiguration;
+import top.huanyv.ioc.aop.ProxyFactory;
 import top.huanyv.utils.ClassUtil;
 import top.huanyv.utils.StringUtil;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class AnnotationConfigApplicationContext implements ApplicationContext {
 
@@ -36,7 +32,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 //            String scanPackage = basePackages[i].trim();
 //            findBeanDefinitions(scanPackage);
 //        }
-            findBeanDefinitions(basePackages);
+        findBeanDefinitions(basePackages);
 
         //根据原材料创建bean
         createBean(beanDefinitions);
@@ -153,15 +149,15 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     /**
      * 自动装配填充
-     *
      * @param beanDefinitions bean定义
      */
     private void autowiredBean(Set<BeanDefinition> beanDefinitions) {
         for (BeanDefinition beanDefinition : beanDefinitions) {
             String beanName = beanDefinition.getBeanName();
             Class beanClass = beanDefinition.getBeanClass();
-            Field[] fields = beanClass.getDeclaredFields();
-            for (Field field : fields) {
+            Object bean = getBean(beanName);
+            // 属性注入
+            for (Field field : beanClass.getDeclaredFields()) {
                 Object val = null;
                 // 注入
                 if (field.isAnnotationPresent(Autowired.class)) {
@@ -171,16 +167,27 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
                     } else { // 根据类型注入
                         val = getBean(field.getType());
                     }
-                }
-                try {
-                    Object bean = getBean(beanName);
-                    field.setAccessible(true);
-                    field.set(bean, val);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    try {
+                        field.setAccessible(true);
+                        // 获取被注入属性的代理
+                        Object proxyVal = ProxyFactory.getProxy(val);
+                        field.set(bean, proxyVal);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
+
+        // 注入属性后，把类替换成代理类
+        // TODO 没有代理注解的不代理
+        for (BeanDefinition beanDefinition : beanDefinitions) {
+            String beanName = beanDefinition.getBeanName();
+            Object bean = getBean(beanName);
+            Object proxy = ProxyFactory.getProxy(bean);
+            this.beanMap.put(beanName, proxy);
+        }
+
     }
 
     /**
@@ -232,5 +239,8 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     }
 
 
+    public Set<BeanDefinition> getBeanDefinitions() {
+        return beanDefinitions;
+    }
 }
 

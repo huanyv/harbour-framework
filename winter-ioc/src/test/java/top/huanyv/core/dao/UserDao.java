@@ -1,15 +1,15 @@
 package top.huanyv.core.dao;
 
-import top.huanyv.ioc.anno.Component;
+import top.huanyv.core.aop.TestAop;
+import top.huanyv.ioc.aop.Aop;
 
 /**
  * @author admin
- * @date 2022/7/19 10:40
+ * @date 2022/8/5 10:06
  */
-@Component
-public class UserDao {
 
-    public void getUser() {
-        System.out.println("dao.......");
-    }
+public interface UserDao {
+    void getUser();
+
+    void getUserById();
 }
