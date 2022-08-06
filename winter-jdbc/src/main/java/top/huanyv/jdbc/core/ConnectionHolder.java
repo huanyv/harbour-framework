@@ -18,6 +18,8 @@ public class ConnectionHolder {
 
     private static DataSource dataSource;
 
+    private static boolean isAutoClose = true;
+
     public static void setDataSource(DataSource dataSource) {
         ConnectionHolder.dataSource = dataSource;
     }
@@ -40,7 +42,20 @@ public class ConnectionHolder {
     }
 
 
-    public static void close() {
+    public static void autoClose() {
+        if (isAutoClose) {
+            Connection connection = threadLocal.get();
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void handClose() {
         Connection connection = threadLocal.get();
         if (connection != null) {
             try {
@@ -51,5 +66,7 @@ public class ConnectionHolder {
         }
     }
 
-
+    public static void setAutoClose(boolean isAutoClose) {
+        ConnectionHolder.isAutoClose = isAutoClose;
+    }
 }

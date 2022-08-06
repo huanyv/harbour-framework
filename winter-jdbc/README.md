@@ -1,4 +1,4 @@
-# 简化JDBC操作
+# jdbc - 简化JDBC操作
 
 ## 接口式调用
 
@@ -42,4 +42,39 @@ SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
 UserDao userDao = sqlSession.getMapper(UserDao.class);
 
 System.out.println("userDao.getUserById(1) = " + userDao.getUserById(1));
+```
+
+
+## 事务
+
+```java
+public class TransactionAop implements AspectAdvice {
+    @Override
+    public Object aroundAdvice(AdvicePoint point)  {
+        Connection connection = ConnectionHolder.getCurConnection();
+        // 关闭 winter-jdbc的自动关闭连接
+        ConnectionHolder.setAutoClose(false);
+
+        Object result = null;
+        try {
+        	// 开启事务
+            connection.setAutoCommit(false);
+
+            result = point.invoke();
+
+            connection.commit();
+        } catch (Exception throwables) {
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            throwables.printStackTrace();
+            return 0;
+        }
+
+        return result;
+    }
+}
+
 ```

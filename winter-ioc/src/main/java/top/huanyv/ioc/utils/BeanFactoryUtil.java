@@ -54,9 +54,5 @@ public class BeanFactoryUtil {
         return beanList;
     }
 
-    public static Set<BeanDefinition> getBeanDefinitions(ApplicationContext applicationContext) {
-        AnnotationConfigApplicationContext app = (AnnotationConfigApplicationContext) applicationContext;
-        return app.getBeanDefinitions();
-    }
 
 }

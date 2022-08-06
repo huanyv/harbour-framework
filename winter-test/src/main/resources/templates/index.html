@@ -234,7 +234,8 @@
                         table.reload('dataTable');
                         layer.close(windownIndex)
                     } else{
-                        layer.msg(result.msg,{"icon":"2"});
+                        layer.msg(data.msg,{"icon":"2"});
+                        layer.close(windownIndex)
                     }
                 });
             })
@@ -254,7 +255,7 @@
                             table.reload('dataTable');
                             layer.close(windownIndex)
                         } else{
-                            layer.msg(result.msg,{"icon":"2"});
+                            layer.msg(data.msg,{"icon":"2"});
                         }
                     });
                     layer.close(index);

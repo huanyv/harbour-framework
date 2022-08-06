@@ -26,12 +26,12 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
     @Override
     void initRouting(ApplicationContext applicationContext) {
         // 遍历所有的bean，找到所有的路由
-
-        for (BeanDefinition beanDefinition : BeanFactoryUtil.getBeanDefinitions(applicationContext)) {
+        for (String beanName : applicationContext.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = applicationContext.getBeanDefinition(beanName);
             Route route = beanDefinition.getBeanClass().getAnnotation(Route.class);
             if (route != null) {
+                Object RouteBean = applicationContext.getBean(beanName);
                 // 遍历方法
-                Object bean = applicationContext.getBean(beanDefinition.getBeanClass());
                 for (Method method : beanDefinition.getBeanClass().getDeclaredMethods()) {
                     // 基路由
                     String basePath = route.value();
@@ -39,27 +39,27 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
                     if (methodRoute != null) {
                         // 拼接上子路由
                         String path = basePath + methodRoute.value();
-                        requestRegistry.register(path, bean, method);
+                        requestRegistry.register(path, RouteBean, method);
                     }
                     Get get = method.getAnnotation(Get.class);
                     if (get != null) {
                         String path = basePath + get.value();
-                        requestRegistry.register(path, RequestMethod.GET, bean, method);
+                        requestRegistry.register(path, RequestMethod.GET, RouteBean, method);
                     }
                     Post post = method.getAnnotation(Post.class);
                     if (post != null) {
                         String path = basePath + post.value();
-                        requestRegistry.register(path, RequestMethod.POST, bean, method);
+                        requestRegistry.register(path, RequestMethod.POST, RouteBean, method);
                     }
                     Put put = method.getAnnotation(Put.class);
                     if (put != null) {
                         String path = basePath + put.value();
-                        requestRegistry.register(path, RequestMethod.PUT, bean, method);
+                        requestRegistry.register(path, RequestMethod.PUT, RouteBean, method);
                     }
                     Delete delete = method.getAnnotation(Delete.class);
                     if (delete != null) {
                         String path = basePath + delete.value();
-                        requestRegistry.register(path, RequestMethod.DELETE, bean, method);
+                        requestRegistry.register(path, RequestMethod.DELETE, RouteBean, method);
                     }
                 }
             }
@@ -132,26 +132,33 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
         }
 
         // 扫描路由守卫
-        // todo 代理
-        for (NavigationGuard navigationGuard : BeanFactoryUtil.getBeansByType(applicationContext, NavigationGuard.class)) {
-            NavigationGuardMapping navigationGuardMapping = new NavigationGuardMapping();
-            Guard guard = navigationGuard.getClass().getAnnotation(Guard.class);
-            if (guard != null) {
-                // 获得顺序
-                Order order = navigationGuard.getClass().getAnnotation(Order.class);
-                // 获得匹配路径
-                String[] urlPatterns = guard.value();
-                // 获得排序路径
-                String[] exclude = guard.exclude();
-                navigationGuardMapping.setNavigationGuard(navigationGuard);
-                navigationGuardMapping.setUrlPatterns(urlPatterns);
-                navigationGuardMapping.setExcludeUrl(exclude);
-                if (order != null) {
-                    navigationGuardMapping.setOrder(order.value());
-                } else {
-                    navigationGuardMapping.setOrder(guard.order());
+        for (String beanName : applicationContext.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = applicationContext.getBeanDefinition(beanName);
+            Class<?> beanClass = beanDefinition.getBeanClass();
+            // 如果是导航守卫
+            if (NavigationGuard.class.isAssignableFrom(beanClass)) {
+                // 获取实例，代理的
+                NavigationGuard guardBean = applicationContext.getBean(beanName, NavigationGuard.class);
+                Guard guard = beanClass.getAnnotation(Guard.class);
+                if (guard != null) {
+                    // 获得顺序
+                    Order order = beanClass.getAnnotation(Order.class);
+                    // 获得匹配路径
+                    String[] urlPatterns = guard.value();
+                    // 获得排序路径
+                    String[] exclude = guard.exclude();
+                    // 创建映射
+                    NavigationGuardMapping navigationGuardMapping = new NavigationGuardMapping();
+                    navigationGuardMapping.setNavigationGuard(guardBean);
+                    navigationGuardMapping.setUrlPatterns(urlPatterns);
+                    navigationGuardMapping.setExcludeUrl(exclude);
+                    if (order != null) {
+                        navigationGuardMapping.setOrder(order.value());
+                    } else {
+                        navigationGuardMapping.setOrder(guard.order());
+                    }
+                    this.guardMappings.add(navigationGuardMapping);
                 }
-                this.guardMappings.add(navigationGuardMapping);
             }
         }
 

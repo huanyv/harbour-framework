@@ -23,6 +23,9 @@ public interface BeanFactory {
     <T> T getBean(Class<T> clazz);
 
 
+    <T> T getBean(String beanName, Class<T> type);
+
+
     /**
      * 是否包含一个bean
      * @param name bean名称

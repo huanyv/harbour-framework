@@ -43,7 +43,7 @@ public class BookMapperImpl implements BookMapper {
 
     @Override
     public int updateBook(String bname, String author, String pubcomp, Date pubdate, int bcount, BigDecimal price, Integer id) {
-        return new Update(Book.class)
+        int update = new Update(Book.class)
                 .append("bname = ?", bname)
                 .append("author = ?", author)
                 .append("pubcomp = ?", pubcomp)
@@ -51,6 +51,7 @@ public class BookMapperImpl implements BookMapper {
                 .append("bcount = ?", bcount)
                 .append("price = ?", price)
                 .where().append("id = ?", id).update();
+        return update;
     }
 
     @Override

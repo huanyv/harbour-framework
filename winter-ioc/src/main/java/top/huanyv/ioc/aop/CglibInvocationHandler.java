@@ -2,9 +2,7 @@ package top.huanyv.ioc.aop;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import top.huanyv.ioc.core.BeanDefinition;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -23,9 +21,9 @@ public class CglibInvocationHandler<T> implements MethodInterceptor {
     @Override
     public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         Object result = null;
-        boolean isProxy = isProxy(method.getName());
+        boolean isProxy = isProxy(method);
         if (isProxy) {
-            BaseAop aop = getAopInstance(method.getName());
+            AspectAdvice aop = getAopInstance(method);
 
             AdvicePoint advicePoint = new AdvicePoint();
             advicePoint.setTarget(target);
@@ -42,12 +40,12 @@ public class CglibInvocationHandler<T> implements MethodInterceptor {
 
     }
 
-    public boolean isProxy(String methodName) {
+    public boolean isProxy(Method method) {
         if (target.getClass().isAnnotationPresent(Aop.class)) {
             return true;
         }
         try {
-            if (target.getClass().getMethod(methodName).isAnnotationPresent(Aop.class)) {
+            if (target.getClass().getMethod(method.getName(), method.getParameterTypes()).isAnnotationPresent(Aop.class)) {
                 return true;
             }
         } catch (NoSuchMethodException e) {
@@ -57,13 +55,13 @@ public class CglibInvocationHandler<T> implements MethodInterceptor {
     }
 
 
-    public BaseAop getAopInstance(String methodName) {
+    public AspectAdvice getAopInstance(Method method) {
         Aop aop = target.getClass().getAnnotation(Aop.class);
         try {
             if (aop != null) {
                 return aop.value().getConstructor().newInstance();
             }
-            aop = target.getClass().getMethod(methodName).getAnnotation(Aop.class);
+            aop = target.getClass().getMethod(method.getName(), method.getParameterTypes()).getAnnotation(Aop.class);
             if (aop != null) {
                 return aop.value().getConstructor().newInstance();
             }

@@ -1,16 +1,15 @@
 package top.huanyv.core.aop;
 
 import top.huanyv.ioc.aop.AdvicePoint;
-import top.huanyv.ioc.aop.BaseAop;
+import top.huanyv.ioc.aop.AspectAdvice;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.PortUnreachableException;
 
 /**
  * @author admin
  * @date 2022/8/5 8:52
  */
-public class TestAop implements BaseAop {
+public class TestAop implements AspectAdvice {
     @Override
     public void beforeAdvice(Object[] args) {
         System.out.println(this.getClass().getSimpleName() + "before");

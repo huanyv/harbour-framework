@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class MapperProxyHandler implements InvocationHandler {
 
-    private Connection connection = ConnectionHolder.getCurConnection();
+//    private Connection connection = ConnectionHolder.getCurConnection();
 
     private QueryRunner queryRunner = new QueryRunner();
 
@@ -47,10 +47,13 @@ public class MapperProxyHandler implements InvocationHandler {
             return doUpdate(delete.value(), method, args);
         }
 
+        ConnectionHolder.autoClose();
+
         return null;
     }
 
     public Object doSelect(Method method, Object[] args) throws SQLException {
+        Connection connection = ConnectionHolder.getCurConnection();
         String sql = method.getAnnotation(Select.class).value();
 
         Object queryResult = null;
@@ -76,10 +79,8 @@ public class MapperProxyHandler implements InvocationHandler {
     }
 
     public int doUpdate(String sql, Method method, Object[] args) throws SQLException {
+        Connection connection = ConnectionHolder.getCurConnection();
         return queryRunner.update(connection, sql, args);
     }
 
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
 }

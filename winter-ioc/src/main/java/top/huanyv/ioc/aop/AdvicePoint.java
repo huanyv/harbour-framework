@@ -15,7 +15,7 @@ public class AdvicePoint {
 
     private Object[] args;
 
-    private BaseAop aspect;
+    private AspectAdvice aspect;
 
 
     public Object invoke() throws InvocationTargetException, IllegalAccessException {
@@ -39,7 +39,7 @@ public class AdvicePoint {
         this.args = args;
     }
 
-    public void setAspect(BaseAop aspect) {
+    public void setAspect(AspectAdvice aspect) {
         this.aspect = aspect;
     }
 

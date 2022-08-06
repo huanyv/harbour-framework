@@ -1,10 +1,7 @@
 package com.book.service;
 
 import com.book.pojo.Book;
-import com.book.pojo.vo.BookVo;
 import top.huanyv.jdbc.core.Page;
-
-import java.util.List;
 
 public interface BookService {
 

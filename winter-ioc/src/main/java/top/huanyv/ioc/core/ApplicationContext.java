@@ -17,5 +17,6 @@ public interface ApplicationContext extends BeanFactory{
 
     int getBeanDefinitionCount();
 
+    BeanDefinition getBeanDefinition(String beanName);
 
 }

@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class AnnotationConfigApplicationContext implements ApplicationContext {
 
@@ -19,6 +20,8 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
      * Bean容器
      */
     private Map<String, Object> beanMap = new ConcurrentHashMap<>();
+
+    private Map<String, Object> sourceBeanMap = new ConcurrentHashMap<>();
 
     /**
      * bean定义
@@ -28,10 +31,6 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     public AnnotationConfigApplicationContext(String... basePackages) {
         //遍历包，找到目标类(原材料)
-//        for (int i = 0; i < basePackages.length; i++) {
-//            String scanPackage = basePackages[i].trim();
-//            findBeanDefinitions(scanPackage);
-//        }
         findBeanDefinitions(basePackages);
 
         //根据原材料创建bean
@@ -77,7 +76,6 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     /**
      * 实例化对象并填充属性
-     *
      * @param beanDefinitions
      */
     private void createBean(Set<BeanDefinition> beanDefinitions) {
@@ -88,7 +86,12 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
                 Constructor constructor = beanClass.getConstructor();
                 constructor.setAccessible(true);
                 Object beanInstance = constructor.newInstance();
-                this.beanMap.put(beanName, beanInstance);
+                // bean map中存放代理类， 从窗口中取出的也是代理类
+                Object proxyBean = ProxyFactory.getProxy(beanInstance);
+                this.beanMap.put(beanName, proxyBean);
+
+                // 原始类型的map，被代理的类对象，
+                this.sourceBeanMap.put(beanName, beanInstance);
             } catch (NoSuchMethodException | IllegalAccessException
                     | InstantiationException | InvocationTargetException e) {
                 e.printStackTrace();
@@ -148,14 +151,15 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     }
 
     /**
-     * 自动装配填充
+     * 自动装配填充，从代理对象map中，注入到被代理的对象中
      * @param beanDefinitions bean定义
      */
     private void autowiredBean(Set<BeanDefinition> beanDefinitions) {
         for (BeanDefinition beanDefinition : beanDefinitions) {
             String beanName = beanDefinition.getBeanName();
             Class beanClass = beanDefinition.getBeanClass();
-            Object bean = getBean(beanName);
+            // 被代理的类
+            Object bean = this.sourceBeanMap.get(beanName);
             // 属性注入
             for (Field field : beanClass.getDeclaredFields()) {
                 Object val = null;
@@ -169,23 +173,12 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
                     }
                     try {
                         field.setAccessible(true);
-                        // 获取被注入属性的代理
-                        Object proxyVal = ProxyFactory.getProxy(val);
-                        field.set(bean, proxyVal);
+                        field.set(bean, val);
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
                 }
             }
-        }
-
-        // 注入属性后，把类替换成代理类
-        // TODO 没有代理注解的不代理
-        for (BeanDefinition beanDefinition : beanDefinitions) {
-            String beanName = beanDefinition.getBeanName();
-            Object bean = getBean(beanName);
-            Object proxy = ProxyFactory.getProxy(bean);
-            this.beanMap.put(beanName, proxy);
         }
 
     }
@@ -213,6 +206,11 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     }
 
     @Override
+    public <T> T getBean(String beanName, Class<T> type) {
+        return (T) getBean(beanName);
+    }
+
+    @Override
     public boolean containsBean(String name) {
         return this.beanMap.containsKey(name);
     }
@@ -230,7 +228,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     @Override
     public String[] getBeanDefinitionNames() {
-        return this.beanMap.keySet().toArray(new String[0]);
+        return this.beanDefinitions.stream().map(BeanDefinition::getBeanName).distinct().toArray(String[]::new);
     }
 
     @Override
@@ -238,9 +236,17 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         return this.beanMap.size();
     }
 
-
-    public Set<BeanDefinition> getBeanDefinitions() {
-        return beanDefinitions;
+    @Override
+    public BeanDefinition getBeanDefinition(String beanName) {
+        if (beanName == null) {
+            return null;
+        }
+        for (BeanDefinition beanDefinition : this.beanDefinitions) {
+            if (beanName.equals(beanDefinition.getBeanName())) {
+                return beanDefinition;
+            }
+        }
+        return null;
     }
 }
 

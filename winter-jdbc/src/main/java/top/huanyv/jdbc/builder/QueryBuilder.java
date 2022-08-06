@@ -100,6 +100,8 @@ public class QueryBuilder<T> {
             return queryRunner.query(connection, sql(), new BeanHandler<T>(this.sqlBuilder.table), getArguments());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            ConnectionHolder.autoClose();
         }
         return null;
     }
@@ -114,6 +116,8 @@ public class QueryBuilder<T> {
             return queryRunner.query(connection, sql(), new BeanListHandler<T>(this.sqlBuilder.table), getArguments());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            ConnectionHolder.autoClose();
         }
         return null;
     }
@@ -130,6 +134,8 @@ public class QueryBuilder<T> {
             return queryRunner.query(connection, sql(), new ScalarHandler<>(), getArguments());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            ConnectionHolder.autoClose();
         }
         return null;
     }
@@ -194,6 +200,8 @@ public class QueryBuilder<T> {
             return queryRunner.update(connection, sql(), getArguments());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            ConnectionHolder.autoClose();
         }
         return 0;
     }

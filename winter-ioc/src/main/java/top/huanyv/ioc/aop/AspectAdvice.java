@@ -9,7 +9,7 @@ import java.lang.reflect.Proxy;
  * @author admin
  * @date 2022/8/5 8:44
  */
-public interface BaseAop {
+public interface AspectAdvice {
 
     default void beforeAdvice(Object[] args) {
 
