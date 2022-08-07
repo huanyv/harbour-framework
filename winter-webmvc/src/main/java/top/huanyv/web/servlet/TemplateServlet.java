@@ -1,6 +1,7 @@
 package top.huanyv.web.servlet;
 
 import top.huanyv.ioc.core.ApplicationContext;
+import top.huanyv.utils.ReflectUtil;
 import top.huanyv.web.config.DefaultWebConfigurer;
 import top.huanyv.web.config.WebConfigurer;
 import top.huanyv.web.config.WebMvcGlobalConfig;
@@ -108,11 +109,13 @@ public abstract class TemplateServlet extends HttpServlet {
             // 路由分发
             doRouting(req, resp);
         } catch (InvocationTargetException e) {
-            Throwable throwable = e.getTargetException();
-            if (throwable instanceof Exception) {
-                Exception targetEx = (Exception) throwable;
-                doException(httpRequest, httpResponse, targetEx);
-            }
+//            Throwable throwable = e.getTargetException();
+//            if (throwable instanceof Exception) {
+//                Exception targetEx = (Exception) throwable;
+//                doException(httpRequest, httpResponse, targetEx);
+//            }
+            Exception targetException = ReflectUtil.getTargetException(e);
+            doException(httpRequest, httpResponse, targetException);
         } catch (Exception e) {
             doException(httpRequest, httpResponse, e);
         }

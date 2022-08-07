@@ -1,12 +1,21 @@
 package top.huanyv.core;
 
 
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import org.junit.Test;
 import top.huanyv.core.dao.UserDao;
 import top.huanyv.core.dao.UserDaoImpl;
 import top.huanyv.core.service.UserService;
 import top.huanyv.ioc.aop.ProxyFactory;
 import top.huanyv.ioc.core.AnnotationConfigApplicationContext;
+import top.huanyv.ioc.utils.AopUtil;
+import top.huanyv.utils.ProxyUtil;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
+import java.util.Arrays;
 
 
 public class ApplicationContextTest {
@@ -40,13 +49,16 @@ public class ApplicationContextTest {
 
     @Test
     public void test01() throws Exception {
-//        UserDao userDao = ProxyFactory.getProxy(new UserDaoImpl());
-//        userDao.getUser();
+        AnnotationConfigApplicationContext app
+                = new AnnotationConfigApplicationContext(ApplicationContextTest.class.getPackage().getName());
+        UserService userService = app.getBean(UserService.class);
+        UserDao userDao = app.getBean(UserDao.class);
 
-//        Field field = userService.getClass().getDeclaredField("userDao");
-//        field.setAccessible(true);
-//        field.set(userService, userDao);
-//        userService.getUser();
+        System.out.println("AopUtil.getTargetObject(userDao) = " + AopUtil.getTargetObject(userDao));
+        System.out.println("AopUtil.getTargetObject(userService) = " + AopUtil.getTargetObject(userService));
+        System.out.println("AopUtil.getTargetClass(userDao) = " + AopUtil.getTargetClass(userDao));
+        System.out.println("AopUtil.getTargetClass(userService) = " + AopUtil.getTargetClass(userService));
     }
+
 
 }

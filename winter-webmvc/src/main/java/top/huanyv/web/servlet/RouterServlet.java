@@ -1,5 +1,6 @@
 package top.huanyv.web.servlet;
 
+import top.huanyv.ioc.utils.AopUtil;
 import top.huanyv.utils.WebUtil;
 import top.huanyv.web.anno.*;
 import top.huanyv.web.core.HttpRequest;
@@ -7,6 +8,7 @@ import top.huanyv.web.core.HttpResponse;
 import top.huanyv.web.core.RequestHandler;
 import top.huanyv.web.core.RequestMapping;
 import top.huanyv.web.enums.RequestMethod;
+import top.huanyv.web.exception.ExceptionHandler;
 import top.huanyv.web.guard.NavigationGuardChain;
 import top.huanyv.web.guard.NavigationGuardMapping;
 
@@ -76,6 +78,7 @@ public class RouterServlet extends InitProxyRouterServlet {
     @Override
     void doException(HttpRequest req, HttpResponse resp, Exception ex) {
         Method exceptionMethod = null;
+        exceptionHandler = (ExceptionHandler) AopUtil.getTargetObject(exceptionHandler);
         for (Method method : exceptionHandler.getClass().getDeclaredMethods()) {
             ExceptionPoint exceptionPoint = method.getAnnotation(ExceptionPoint.class);
             if (exceptionPoint != null) {
