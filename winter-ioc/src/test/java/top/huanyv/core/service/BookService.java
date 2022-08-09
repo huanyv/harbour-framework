@@ -7,7 +7,7 @@ import top.huanyv.ioc.anno.Component;
  * @author admin
  * @date 2022/7/24 15:02
  */
-//@Component
+@Component
 public class BookService {
 
     @Autowired

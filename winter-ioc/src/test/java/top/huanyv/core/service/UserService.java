@@ -5,6 +5,7 @@ import top.huanyv.core.dao.UserDao;
 import top.huanyv.ioc.anno.Autowired;
 import top.huanyv.ioc.anno.Component;
 import top.huanyv.core.dao.UserDaoImpl;
+import top.huanyv.ioc.anno.Qualifier;
 import top.huanyv.ioc.aop.Aop;
 
 /**
@@ -15,10 +16,11 @@ import top.huanyv.ioc.aop.Aop;
 public class UserService {
 
     @Autowired
+    @Qualifier("userDao")
     private UserDao userDao;
 
-//    @Autowired
-//    private BookService bookService;
+    @Autowired
+    private BookService bookService;
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
@@ -35,10 +37,10 @@ public class UserService {
     }
 
 
-//    public BookService getBookService() {
-//        System.out.println("bookService.toString() = " + bookService.toString());
-//        return bookService;
-//    }
+    public BookService getBookService() {
+        System.out.println("bookService.toString() = " + bookService.toString());
+        return bookService;
+    }
 
     @Override
     public String toString() {

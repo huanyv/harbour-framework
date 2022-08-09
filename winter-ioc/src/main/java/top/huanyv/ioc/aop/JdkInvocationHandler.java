@@ -1,5 +1,7 @@
 package top.huanyv.ioc.aop;
 
+import top.huanyv.ioc.core.BeanDefinitionRegistry;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,17 +14,25 @@ public class JdkInvocationHandler<T> implements InvocationHandler {
 
     private T target;
 
+    private BeanDefinitionRegistry beanDefinitionRegistry;
+
 
     public JdkInvocationHandler(T target) {
         this.target = target;
     }
 
+    public JdkInvocationHandler(T target, BeanDefinitionRegistry beanDefinitionRegistry) {
+        this.target = target;
+        this.beanDefinitionRegistry = beanDefinitionRegistry;
+    }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object result = null;
-        boolean isProxy = isProxy(method);
+        boolean isProxy = beanDefinitionRegistry.isNeedProxy(target.getClass(), method);
         if (isProxy) {
-            AspectAdvice aop = getAopInstance(method);
+            Method targetMethod = target.getClass().getMethod(method.getName(), method.getParameterTypes());
+            AspectAdvice aop = beanDefinitionRegistry.getBeanAspect(targetMethod);
 
             AdvicePoint advicePoint = new AdvicePoint();
             advicePoint.setTarget(target);

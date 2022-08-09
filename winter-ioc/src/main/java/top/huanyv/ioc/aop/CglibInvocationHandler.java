@@ -2,6 +2,7 @@ package top.huanyv.ioc.aop;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
+import top.huanyv.ioc.core.BeanDefinitionRegistry;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,16 +15,24 @@ public class CglibInvocationHandler<T> implements MethodInterceptor {
 
     private T target;
 
+    private BeanDefinitionRegistry beanDefinitionRegistry;
+
     public CglibInvocationHandler(T target) {
         this.target = target;
+    }
+
+    public CglibInvocationHandler(T target, BeanDefinitionRegistry beanDefinitionRegistry) {
+        this.target = target;
+        this.beanDefinitionRegistry = beanDefinitionRegistry;
     }
 
     @Override
     public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         Object result = null;
-        boolean isProxy = isProxy(method);
+        boolean isProxy = beanDefinitionRegistry.isNeedProxy(target.getClass(), method);
         if (isProxy) {
-            AspectAdvice aop = getAopInstance(method);
+            Method targetMethod = target.getClass().getMethod(method.getName(), method.getParameterTypes());
+            AspectAdvice aop = beanDefinitionRegistry.getBeanAspect(targetMethod);
 
             AdvicePoint advicePoint = new AdvicePoint();
             advicePoint.setTarget(target);

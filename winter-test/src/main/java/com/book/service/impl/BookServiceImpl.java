@@ -41,7 +41,10 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Aop(TransactionAop.class)
     public int deleteBookById(Integer id) {
+//        bookMapper.deleteBookById(id);
+//        int i = 10 / 0;
         return bookMapper.deleteBookById(id);
     }
 }

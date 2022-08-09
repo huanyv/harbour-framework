@@ -1,9 +1,5 @@
 package top.huanyv.core.other;
 
-import top.huanyv.core.service.BookService;
-import top.huanyv.ioc.anno.Autowired;
-import top.huanyv.ioc.anno.Component;
-import top.huanyv.ioc.core.AnnotationConfigApplicationContext;
 import top.huanyv.ioc.core.ApplicationContext;
 import top.huanyv.ioc.core.BeanRegistry;
 

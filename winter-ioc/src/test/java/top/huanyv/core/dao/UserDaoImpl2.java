@@ -2,19 +2,16 @@ package top.huanyv.core.dao;
 
 import top.huanyv.core.aop.Test02Aop;
 import top.huanyv.core.aop.TestAop;
-import top.huanyv.core.service.UserService;
 import top.huanyv.ioc.anno.Component;
 import top.huanyv.ioc.aop.Aop;
-
-import java.util.Arrays;
 
 /**
  * @author admin
  * @date 2022/7/19 10:40
  */
-@Component("userDao")
+@Component
 //@Aop(TestAop.class)
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl2 implements UserDao {
 
     @Aop(TestAop.class)
     @Override
