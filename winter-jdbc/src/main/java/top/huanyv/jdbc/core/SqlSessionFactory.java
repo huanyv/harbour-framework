@@ -73,9 +73,7 @@ public class SqlSessionFactory {
         ConnectionHolder.setDataSource(dataSource);
         ConnectionHolder.set(connection);
 
-        // 加载代理对象
-        MapperProxyHandler mapperProxyHandler = new MapperProxyHandler();
-        mapperScanner.loadMapper(mapperProxyHandler);
+        mapperScanner.loadMapper();
 
         return sqlSession;
     }

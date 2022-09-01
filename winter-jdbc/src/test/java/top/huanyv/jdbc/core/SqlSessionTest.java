@@ -4,6 +4,7 @@ package top.huanyv.jdbc.core;
 import org.junit.Test;
 import top.huanyv.jdbc.core.dao.UserDao;
 import top.huanyv.jdbc.dao.UserDaoImpl;
+import top.huanyv.utils.Assert;
 
 import java.io.InputStream;
 

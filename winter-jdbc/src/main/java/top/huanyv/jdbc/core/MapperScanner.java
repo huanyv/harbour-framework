@@ -29,7 +29,7 @@ public class MapperScanner {
     }
 
     // 动态代理实现接口
-    void loadMapper(InvocationHandler invocationHandler) {
+    void loadMapper() {
         // 扫描包
         Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(scanPack, Mapper.class);
         for (Class<?> clazz : classes) {
@@ -38,7 +38,7 @@ public class MapperScanner {
             Object mapperInstance = null;
             if (clazz.isInterface()) {
                 // 代理实现
-                mapperInstance = ProxyFactory.getImpl(clazz, invocationHandler);
+                mapperInstance = ProxyFactory.getImpl(clazz, new MapperProxyHandler());
             } else {
                 try {
                     mapperInstance = clazz.getConstructor().newInstance();
