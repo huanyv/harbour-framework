@@ -10,7 +10,7 @@ public class Delete extends QueryBuilder{
         append("delete");
     }
     public From from(Class<?> table) {
-        this.sqlBuilder.setTable(table);
+        this.sqlBuilder.setTableClass(table);
         return new From(this.sqlBuilder);
     }
 }

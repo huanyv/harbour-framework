@@ -29,6 +29,12 @@ public class TransactionAop implements AspectAdvice {
             return 0;
         }
 
+        try {
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
         return result;
     }
 }

@@ -18,7 +18,7 @@ public class Select extends QueryBuilder {
     }
 
     public <T> From<T> from(Class<T> table) {
-        this.sqlBuilder.setTable(table);
+        this.sqlBuilder.setTableClass(table);
         return new From<T>(this.sqlBuilder);
     }
 

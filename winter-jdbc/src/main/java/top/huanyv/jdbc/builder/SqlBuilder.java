@@ -14,7 +14,7 @@ import java.util.List;
 public class SqlBuilder<T> {
     private List<String> sqlList = new ArrayList<>();
     private List<Object> arguments = new ArrayList<>();
-    protected Class<T> table;
+    protected Class<T> tableClass;
 
     public String sql() {
         return String.join(" ", this.sqlList);
@@ -26,27 +26,27 @@ public class SqlBuilder<T> {
     }
 
     public String getTableName() {
-        TableName tableName = table.getAnnotation(TableName.class);
+        TableName tableName = tableClass.getAnnotation(TableName.class);
         if (tableName != null) {
             return tableName.value();
         }
-        return StringUtil.firstLetterLower(table.getSimpleName());
+        return StringUtil.firstLetterLower(tableClass.getSimpleName());
     }
 
     public List<String> getSqlList() {
         return sqlList;
     }
 
-    public Class<T> getTable() {
-        return table;
+    public Class<T> getTableClass() {
+        return tableClass;
     }
 
     public void setSqlList(List<String> sqlList) {
         this.sqlList = sqlList;
     }
 
-    public void setTable(Class<T> table) {
-        this.table = table;
+    public void setTableClass(Class<T> tableClass) {
+        this.tableClass = tableClass;
     }
 
     public List<Object> getArguments() {

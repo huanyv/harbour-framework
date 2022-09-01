@@ -97,7 +97,7 @@ public class QueryBuilder<T> {
     public T selectRow() {
         Connection connection = ConnectionHolder.getCurConnection();
         try {
-            return queryRunner.query(connection, sql(), new BeanHandler<T>(this.sqlBuilder.table), getArguments());
+            return queryRunner.query(connection, sql(), new BeanHandler<T>(this.sqlBuilder.tableClass), getArguments());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         } finally {
@@ -113,7 +113,7 @@ public class QueryBuilder<T> {
     public List<T> selectList() {
         Connection connection = ConnectionHolder.getCurConnection();
         try {
-            return queryRunner.query(connection, sql(), new BeanListHandler<T>(this.sqlBuilder.table), getArguments());
+            return queryRunner.query(connection, sql(), new BeanListHandler<T>(this.sqlBuilder.tableClass), getArguments());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         } finally {
@@ -156,7 +156,7 @@ public class QueryBuilder<T> {
      */
     public Page<T> page(int pageNum, int pageSize) {
         Page<T> page = new Page<>();
-        Long count = new Select("count(*)").from(this.sqlBuilder.table).count();
+        Long count = new Select("count(*)").from(this.sqlBuilder.tableClass).count();
         int pages = (int) (count / pageSize);
         if (count % pageSize > 0) {
             pages++;

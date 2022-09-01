@@ -3,6 +3,7 @@ package top.huanyv.jdbc.core;
 
 import org.junit.Test;
 import top.huanyv.jdbc.core.dao.UserDao;
+import top.huanyv.jdbc.dao.UserDaoImpl;
 
 import java.io.InputStream;
 
@@ -21,5 +22,10 @@ public class SqlSessionTest {
 //        System.out.println(user);
 //        System.out.println("userDao.getUserCount() = " + userDao.getUserCount());
 //        System.out.println("userDao.getUserNameById(1) = " + userDao.getUserNameById(1));
+    }
+
+    @Test
+    public void test2() {
+        new UserDaoImpl().selectAll();
     }
 }

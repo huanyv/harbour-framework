@@ -7,7 +7,7 @@ package top.huanyv.jdbc.builder;
 public class Update extends QueryBuilder {
     public Update(Class<?> table) {
         super(new SqlBuilder<>());
-        this.sqlBuilder.setTable(table);
+        this.sqlBuilder.setTableClass(table);
         append("update").append(getTableName()).append("set");
     }
 

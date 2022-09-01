@@ -7,7 +7,7 @@ package top.huanyv.jdbc.builder;
 public class Insert extends QueryBuilder {
     public Insert(Class<?> clazz) {
         super(new SqlBuilder<>());
-        this.sqlBuilder.setTable(clazz);
+        this.sqlBuilder.setTableClass(clazz);
         append("insert into").append(getTableName());
     }
 
