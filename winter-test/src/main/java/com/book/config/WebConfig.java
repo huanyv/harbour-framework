@@ -65,6 +65,7 @@ public class WebConfig implements WebConfigurer {
 
     @Bean
     public SqlContextFactoryBean sqlContextFactoryBean() {
+        // 加载配置
         JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
 
         SimpleDataSource simpleDataSource = new SimpleDataSource();
@@ -78,4 +79,5 @@ public class WebConfig implements WebConfigurer {
 
         return new SqlContextFactoryBean();
     }
+
 }

@@ -1,7 +1,7 @@
 package top.huanyv.jdbc.core.service;
 
-import top.huanyv.ioc.anno.Autowired;
 import top.huanyv.ioc.anno.Component;
+import top.huanyv.ioc.anno.Inject;
 import top.huanyv.jdbc.core.entity.User;
 import top.huanyv.jdbc.core.dao.UserDao;
 
@@ -12,7 +12,7 @@ import top.huanyv.jdbc.core.dao.UserDao;
 @Component
 public class UserService {
 
-    @Autowired
+    @Inject
     private UserDao userDao;
 
     public User getUserById(Integer id) {

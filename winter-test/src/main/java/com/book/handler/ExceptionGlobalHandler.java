@@ -2,7 +2,6 @@ package com.book.handler;
 
 import com.book.pojo.ResponseResult;
 import top.huanyv.ioc.anno.Component;
-import top.huanyv.jdbc.anno.Mapper;
 import top.huanyv.web.anno.ExceptionPoint;
 import top.huanyv.web.core.HttpRequest;
 import top.huanyv.web.core.HttpResponse;

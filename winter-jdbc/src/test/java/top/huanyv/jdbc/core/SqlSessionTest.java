@@ -2,9 +2,9 @@ package top.huanyv.jdbc.core;
 
 
 import org.junit.Test;
-import top.huanyv.jdbc.core.dao.UserDao;
+import top.huanyv.jdbc.core.entity.User;
+import top.huanyv.jdbc.dao.UserDao;
 import top.huanyv.jdbc.dao.UserDaoImpl;
-import top.huanyv.utils.Assert;
 
 import java.io.InputStream;
 
@@ -27,6 +27,52 @@ public class SqlSessionTest {
 
     @Test
     public void test2() {
-        new UserDaoImpl().selectAll();
+        UserDao userDao = new UserDaoImpl();
+        InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
+        JdbcConfigurer.create(inputStream);
+
+        User user = userDao.selectById(1);
+        System.out.println(user);
     }
+
+    @Test
+    public void test3() {
+        UserDao userDao = new UserDaoImpl();
+        InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
+        JdbcConfigurer.create(inputStream);
+
+        User user = new User();
+        user.setUsername("danni");
+        user.setPassword("123");
+        user.setSex("男");
+        user.setEmail("123@qq.com");
+
+        int insert = userDao.insert(user);
+
+    }
+
+    @Test
+    public void test4() {
+        UserDao userDao = new UserDaoImpl();
+        InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
+        JdbcConfigurer.create(inputStream);
+
+        User user = new User();
+        user.setUid(7L);
+        user.setUsername("lisi");
+        user.setSex("女");
+
+        int update = userDao.updateById(user);
+
+    }
+    @Test
+    public void test5() {
+        UserDao userDao = new UserDaoImpl();
+        InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
+        JdbcConfigurer.create(inputStream);
+
+        int deleteById = userDao.deleteById(13);
+        System.out.println(deleteById);
+    }
+
 }

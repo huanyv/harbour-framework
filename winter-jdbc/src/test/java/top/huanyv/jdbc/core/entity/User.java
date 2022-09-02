@@ -1,10 +1,14 @@
 package top.huanyv.jdbc.core.entity;
 
+import top.huanyv.jdbc.anno.TableId;
+
 /**
  * @author admin
  * @date 2022/7/22 17:30
  */
 public class User {
+
+    @TableId
     private Long uid;
     private String username;
     private String password;

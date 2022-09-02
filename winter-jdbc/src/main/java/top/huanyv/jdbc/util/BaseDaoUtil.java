@@ -1,7 +1,11 @@
 package top.huanyv.jdbc.util;
 
+import top.huanyv.jdbc.anno.TableId;
+import top.huanyv.jdbc.anno.TableName;
 import top.huanyv.jdbc.builder.BaseDao;
+import top.huanyv.utils.StringUtil;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -49,5 +53,23 @@ public class BaseDaoUtil {
             }
         }
         return null;
+    }
+
+
+    public static String getTableId(Class<?> clazz) {
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(TableId.class)) {
+                return field.getName();
+            }
+        }
+        return "id";
+    }
+
+    public static String getTableName(Class<?> clazz) {
+        TableName tableName = clazz.getAnnotation(TableName.class);
+        if (tableName != null) {
+            return tableName.value();
+        }
+        return StringUtil.firstLetterLower(clazz.getSimpleName());
     }
 }

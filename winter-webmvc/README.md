@@ -25,7 +25,7 @@
 
 ## 1. 路由注册
 
-### 1.1 注解式
+### 1.1 注解方法式
 
 * `@Route`所有请求
 * `@Get`get请求
@@ -63,7 +63,7 @@ public class HelloController {
 }
 ```
 
-### 1.2 接口式
+### 1.2 接口函数式
 
 ```java
 @Component
@@ -131,24 +131,22 @@ public class WebConfig implements WebConfigurer {
     }
 
     @Bean
-    public DataSource dataSource() {
+    public SqlContextFactoryBean sqlContextFactoryBean() {
+        // 加载配置
+        JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
+
         SimpleDataSource simpleDataSource = new SimpleDataSource();
         simpleDataSource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
         simpleDataSource.setDriverClassName(Driver.class.getName());
         simpleDataSource.setUsername("root");
         simpleDataSource.setPassword("2233");
-        return simpleDataSource;
+
+        jdbcConfigurer.setDataSource(simpleDataSource);
+        jdbcConfigurer.setScanPackages("com.book");
+
+        return new SqlContextFactoryBean();
     }
 
-    @Bean
-    public MapperScanner mapperScanner() {
-        return new MapperScanner("com.book");
-    }
-
-    @Bean
-    public SqlSessionFactoryBean sqlSessionFactoryBean() {
-        return new SqlSessionFactoryBean();
-    }
 }
 ```
 

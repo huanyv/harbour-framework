@@ -3,6 +3,7 @@ package com.book.mapper;
 import com.book.pojo.Book;
 import com.book.pojo.vo.BookVo;
 import top.huanyv.jdbc.anno.*;
+import top.huanyv.jdbc.builder.BaseDao;
 import top.huanyv.jdbc.core.Page;
 
 import java.math.BigDecimal;
@@ -10,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 //@Mapper
-public interface BookMapper {
+public interface BookMapper extends BaseDao<Book> {
 
     /**
      * 查询图书

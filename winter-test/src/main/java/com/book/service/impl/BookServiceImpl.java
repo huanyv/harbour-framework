@@ -3,8 +3,8 @@ package com.book.service.impl;
 import com.book.mapper.BookMapper;
 import com.book.pojo.Book;
 import com.book.service.BookService;
-import top.huanyv.ioc.anno.Autowired;
 import top.huanyv.ioc.anno.Component;
+import top.huanyv.ioc.anno.Inject;
 import top.huanyv.ioc.aop.Aop;
 import top.huanyv.jdbc.core.Page;
 import top.huanyv.jdbc.core.TransactionAop;
@@ -14,10 +14,10 @@ import javax.sql.DataSource;
 @Component
 public class BookServiceImpl implements BookService {
 
-    @Autowired
+    @Inject
     private BookMapper bookMapper;
 
-    @Autowired
+    @Inject
     private DataSource dataSource;
 
     @Override
@@ -27,8 +27,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public int insertBook(Book book) {
-        return bookMapper.insertBook(book.getBname(), book.getAuthor()
-                , book.getPubcomp(), book.getPubdate(), book.getBcount(), book.getPrice());
+//        return bookMapper.insertBook(book.getBname(), book.getAuthor()
+//                , book.getPubcomp(), book.getPubdate(), book.getBcount(), book.getPrice());
+        return bookMapper.insert(book);
     }
 
     @Override
@@ -37,14 +38,16 @@ public class BookServiceImpl implements BookService {
 //         事务测试
 //        bookMapper.updateBook(book.getBname(), book.getAuthor(), book.getPubcomp(), book.getPubdate(), book.getBcount(), book.getPrice(), book.getId());
 //        int i = 10 / 0;
-        return bookMapper.updateBook(book.getBname(), book.getAuthor(), book.getPubcomp(), book.getPubdate(), book.getBcount(), book.getPrice(), book.getId());
+//        return bookMapper.updateBook(book.getBname(), book.getAuthor(), book.getPubcomp(), book.getPubdate(), book.getBcount(), book.getPrice(), book.getId());
+        return bookMapper.updateById(book);
     }
 
     @Override
     @Aop(TransactionAop.class)
     public int deleteBookById(Integer id) {
-        bookMapper.deleteBookById(id);
-        int i = 10 / 0;
-        return bookMapper.deleteBookById(id);
+//        bookMapper.deleteBookById(id);
+//        int i = 10 / 0;
+//        return bookMapper.deleteBookById(id);
+        return bookMapper.deleteById(id);
     }
 }

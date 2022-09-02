@@ -1,12 +1,8 @@
 package top.huanyv.core.service;
 
-import top.huanyv.core.aop.TestAop;
 import top.huanyv.core.dao.UserDao;
-import top.huanyv.ioc.anno.Autowired;
 import top.huanyv.ioc.anno.Component;
-import top.huanyv.core.dao.UserDaoImpl;
-import top.huanyv.ioc.anno.Qualifier;
-import top.huanyv.ioc.aop.Aop;
+import top.huanyv.ioc.anno.Inject;
 
 /**
  * @author admin
@@ -15,11 +11,10 @@ import top.huanyv.ioc.aop.Aop;
 @Component
 public class UserService {
 
-    @Autowired
-    @Qualifier("userDao")
+    @Inject("userDao")
     private UserDao userDao;
 
-    @Autowired
+    @Inject
     private BookService bookService;
 
     public void setUserDao(UserDao userDao) {

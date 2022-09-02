@@ -22,7 +22,7 @@ public class ApplicationContextTest {
         BookService bookService = app.getBean(BookService.class);
         bookService.getUserService();
 
-        UserDao userDao = app.getBean(UserDao.class);
+//        UserDao userDao = app.getBean(UserDao.class);
 
     }
 

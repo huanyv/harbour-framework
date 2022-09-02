@@ -1,7 +1,7 @@
 package top.huanyv.core.service;
 
-import top.huanyv.ioc.anno.Autowired;
 import top.huanyv.ioc.anno.Component;
+import top.huanyv.ioc.anno.Inject;
 
 /**
  * @author admin
@@ -10,7 +10,7 @@ import top.huanyv.ioc.anno.Component;
 @Component
 public class BookService {
 
-    @Autowired
+    @Inject
     private UserService userService;
 
 

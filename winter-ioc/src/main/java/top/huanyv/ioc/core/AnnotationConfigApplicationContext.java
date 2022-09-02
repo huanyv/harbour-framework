@@ -133,15 +133,14 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
             Class<?> beanClass = beanDefinition.getBeanClass();
             Object instance = this.earlyBeans.get(beanName);
             for (Field field : beanClass.getDeclaredFields()) {
-                Autowired autowired = field.getAnnotation(Autowired.class);
+                Inject inject = field.getAnnotation(Inject.class);
                 Object val = null;
-                if (autowired != null) {
-                    Qualifier qualifier = field.getAnnotation(Qualifier.class);
-                    if (qualifier != null) {
-                        // 按名字注入
-                        val = getBean(qualifier.value());
+                if (inject != null) {
+                    String injectName = inject.value();
+                    if (StringUtil.hasText(injectName)) {
+                        // 名称注入
+                        val = getBean(injectName);
                     } else {
-                        // 类型注入
                         val = getBean(field.getType());
                     }
                     field.setAccessible(true);
