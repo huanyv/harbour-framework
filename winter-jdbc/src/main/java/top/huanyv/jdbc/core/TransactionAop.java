@@ -3,38 +3,28 @@ package top.huanyv.jdbc.core;
 import top.huanyv.ioc.aop.AdvicePoint;
 import top.huanyv.ioc.aop.AspectAdvice;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 public class TransactionAop implements AspectAdvice {
+
     @Override
     public Object aroundAdvice(AdvicePoint point)  {
-        Connection connection = ConnectionHolder.getCurConnection();
-        ConnectionHolder.setAutoClose(false);
+
+        SqlContext sqlContext = SqlContextFactory.getSqlContext();
 
         Object result = null;
         try {
-            connection.setAutoCommit(false);
+            // 开启事务
+            sqlContext.beginTransaction();
 
             result = point.invoke();
 
-            connection.commit();
+            // 事务提交
+            sqlContext.commit();
         } catch (Exception throwables) {
-            try {
-                connection.rollback();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            // 事务回滚
+            sqlContext.rollback();
             throwables.printStackTrace();
             return 0;
         }
-
-        try {
-            connection.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
         return result;
     }
 }

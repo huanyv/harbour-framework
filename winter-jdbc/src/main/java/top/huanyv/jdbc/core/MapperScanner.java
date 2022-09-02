@@ -1,10 +1,9 @@
 package top.huanyv.jdbc.core;
 
-import top.huanyv.jdbc.anno.Mapper;
+import top.huanyv.jdbc.anno.Dao;
 import top.huanyv.utils.ClassUtil;
 import top.huanyv.utils.StringUtil;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
@@ -16,22 +15,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MapperScanner {
 
-    // 持久层接口所在的包
-    private String scanPack;
+    private JdbcConfigurer config = JdbcConfigurer.create();
 
     // 所有的mapper代理实例
     private Map<String, Object> mappers = new ConcurrentHashMap<>();
 
-    public MapperScanner() { }
-
-    public MapperScanner(String scanPack) {
-        this.scanPack = scanPack;
-    }
-
-    // 动态代理实现接口
-    void loadMapper() {
+    public MapperScanner() {
+        String scanPackages = config.getScanPackages();
         // 扫描包
-        Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(scanPack, Mapper.class);
+        Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(scanPackages, Dao.class);
         for (Class<?> clazz : classes) {
             // 接口名首字母小写
             String mapperName = StringUtil.firstLetterLower(clazz.getSimpleName());
@@ -53,22 +45,4 @@ public class MapperScanner {
         }
     }
 
-    public String getScanPack() {
-        return scanPack;
-    }
-
-    public void setScanPack(String scanPack) {
-        this.scanPack = scanPack;
-    }
-
-    public Map<String, Object> getMappers() {
-        return mappers;
-    }
-
-    @Override
-    public String toString() {
-        return "MapperConfigurer{" +
-                "scanPack='" + scanPack + '\'' +
-                '}';
-    }
 }

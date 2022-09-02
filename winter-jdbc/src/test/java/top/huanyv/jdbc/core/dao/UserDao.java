@@ -1,6 +1,7 @@
 package top.huanyv.jdbc.core.dao;
 
-import top.huanyv.jdbc.anno.Mapper;
+import top.huanyv.jdbc.anno.Delete;
+import top.huanyv.jdbc.anno.Dao;
 import top.huanyv.jdbc.anno.Select;
 import top.huanyv.jdbc.anno.Update;
 import top.huanyv.jdbc.core.entity.User;
@@ -11,7 +12,7 @@ import java.util.List;
  * @author admin
  * @date 2022/7/21 17:09
  */
-@Mapper
+@Dao
 public interface UserDao {
 
     @Select("select * from user where uid = ?")
@@ -30,4 +31,7 @@ public interface UserDao {
 
     @Update("update user set username = ? where uid = ?")
     int updateUsernameById(String username, Integer id);
+
+    @Delete("delete from user where uid = ?")
+    int deleteUserById(Integer uid);
 }

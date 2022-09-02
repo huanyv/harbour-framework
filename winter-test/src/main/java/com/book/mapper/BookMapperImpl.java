@@ -1,29 +1,22 @@
 package com.book.mapper;
 
 import com.book.pojo.Book;
-import com.mysql.jdbc.Driver;
-import top.huanyv.ioc.anno.Autowired;
-import top.huanyv.jdbc.anno.Mapper;
+import top.huanyv.jdbc.anno.Dao;
 import top.huanyv.jdbc.builder.Delete;
 import top.huanyv.jdbc.builder.Insert;
 import top.huanyv.jdbc.builder.Select;
 import top.huanyv.jdbc.builder.Update;
-import top.huanyv.jdbc.core.ConnectionHolder;
 import top.huanyv.jdbc.core.Page;
-import top.huanyv.jdbc.extend.SimpleDataSource;
 import top.huanyv.utils.StringUtil;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author admin
  * @date 2022/8/3 9:15
  */
-@Mapper
+@Dao
 public class BookMapperImpl implements BookMapper {
 
     @Override

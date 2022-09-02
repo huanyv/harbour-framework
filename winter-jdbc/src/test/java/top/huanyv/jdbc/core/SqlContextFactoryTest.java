@@ -1,21 +1,20 @@
 package top.huanyv.jdbc.core;
 
 import junit.framework.TestCase;
+import top.huanyv.jdbc.builder.Delete;
+import top.huanyv.jdbc.builder.Select;
+import top.huanyv.jdbc.builder.Update;
+import top.huanyv.jdbc.core.dao.UserDao;
 import top.huanyv.jdbc.core.entity.User;
-import top.huanyv.jdbc.extend.SimpleDataSource;
 
-import javax.sql.DataSource;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Properties;
 
 public class SqlContextFactoryTest extends TestCase {
 
     public void testGetSqlContext() throws Exception {
         InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
-        Configuration.create(inputStream);
+        JdbcConfigurer.create(inputStream);
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
 
         try {
@@ -34,4 +33,44 @@ public class SqlContextFactoryTest extends TestCase {
 
 
     }
+
+    public void test02() {
+        InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
+        JdbcConfigurer.create(inputStream);
+        SqlContext sqlContext = SqlContextFactory.getSqlContext();
+        UserDao userDao = sqlContext.getDao(UserDao.class);
+        List<User> users = userDao.getUser();
+        users.stream().forEach(System.out::println);
+    }
+
+    public void test03() {
+        InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
+        JdbcConfigurer.create(inputStream);
+
+        SqlContext sqlContext = SqlContextFactory.getSqlContext();
+
+
+        try {
+            sqlContext.beginTransaction();
+
+            int update = new Update(User.class)
+                    .append("username = ?", "lisi2233")
+                    .where().append("uid = ?", 7)
+                    .update();
+            System.out.println("update = " + update);
+
+//            int i = 10 / 0;
+
+            int delete = new Delete().from(User.class).where().append("uid = ?", 12).update();
+            System.out.println("delete = " + delete);
+
+            sqlContext.commit();
+        } catch (Exception e) {
+            sqlContext.rollback();
+            e.printStackTrace();
+        }
+
+
+    }
+
 }

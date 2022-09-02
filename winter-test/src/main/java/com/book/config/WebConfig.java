@@ -5,15 +5,13 @@ import com.mysql.jdbc.Driver;
 import top.huanyv.ioc.anno.Bean;
 import top.huanyv.ioc.anno.Component;
 import top.huanyv.ioc.anno.Configuration;
-import top.huanyv.jdbc.core.MapperScanner;
+import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.jdbc.extend.SimpleDataSource;
-import top.huanyv.jdbc.extend.SqlSessionFactoryBean;
+import top.huanyv.jdbc.extend.SqlContextFactoryBean;
 import top.huanyv.web.config.CorsRegistry;
 import top.huanyv.web.config.ResourceMappingRegistry;
 import top.huanyv.web.config.ViewControllerRegistry;
 import top.huanyv.web.config.WebConfigurer;
-
-import javax.sql.DataSource;
 
 @Component
 @Configuration
@@ -45,23 +43,39 @@ public class WebConfig implements WebConfigurer {
         registry.addMapping("/**").defaultRule();
     }
 
+//    @Bean
+//    public DataSource dataSource() {
+//        SimpleDataSource simpleDataSource = new SimpleDataSource();
+//        simpleDataSource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
+//        simpleDataSource.setDriverClassName(Driver.class.getName());
+//        simpleDataSource.setUsername("root");
+//        simpleDataSource.setPassword("2233");
+//        return simpleDataSource;
+//    }
+//
+//    @Bean
+//    public MapperScanner mapperScanner() {
+//        return new MapperScanner("com.book");
+//    }
+//
+//    @Bean
+//    public SqlSessionFactoryBean sqlSessionFactoryBean() {
+//        return new SqlSessionFactoryBean();
+//    }
+
     @Bean
-    public DataSource dataSource() {
+    public SqlContextFactoryBean sqlContextFactoryBean() {
+        JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
+
         SimpleDataSource simpleDataSource = new SimpleDataSource();
         simpleDataSource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
         simpleDataSource.setDriverClassName(Driver.class.getName());
         simpleDataSource.setUsername("root");
         simpleDataSource.setPassword("2233");
-        return simpleDataSource;
-    }
 
-    @Bean
-    public MapperScanner mapperScanner() {
-        return new MapperScanner("com.book");
-    }
+        jdbcConfigurer.setDataSource(simpleDataSource);
+        jdbcConfigurer.setScanPackages("com.book");
 
-    @Bean
-    public SqlSessionFactoryBean sqlSessionFactoryBean() {
-        return new SqlSessionFactoryBean();
+        return new SqlContextFactoryBean();
     }
 }

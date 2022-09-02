@@ -6,6 +6,8 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import top.huanyv.jdbc.core.ConnectionHolder;
 import top.huanyv.jdbc.core.Page;
+import top.huanyv.jdbc.core.SqlContext;
+import top.huanyv.jdbc.core.SqlContextFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,6 +20,8 @@ import java.util.List;
 public class QueryBuilder<T> {
     protected SqlBuilder<T> sqlBuilder;
     private QueryRunner queryRunner = new QueryRunner();
+
+    private SqlContext sqlContext = SqlContextFactory.getSqlContext();
 
     public QueryBuilder() {
         this.sqlBuilder = new SqlBuilder<>();
@@ -95,15 +99,7 @@ public class QueryBuilder<T> {
      * @return 对象
      */
     public T selectRow() {
-        Connection connection = ConnectionHolder.getCurConnection();
-        try {
-            return queryRunner.query(connection, sql(), new BeanHandler<T>(this.sqlBuilder.tableClass), getArguments());
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            ConnectionHolder.autoClose();
-        }
-        return null;
+        return sqlContext.selectRow(this.sqlBuilder.tableClass, sql(), getArguments());
     }
 
     /**
@@ -111,15 +107,7 @@ public class QueryBuilder<T> {
      * @return list
      */
     public List<T> selectList() {
-        Connection connection = ConnectionHolder.getCurConnection();
-        try {
-            return queryRunner.query(connection, sql(), new BeanListHandler<T>(this.sqlBuilder.tableClass), getArguments());
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            ConnectionHolder.autoClose();
-        }
-        return null;
+        return sqlContext.selectList(this.sqlBuilder.tableClass, sql(), getArguments());
     }
 
     /**
@@ -129,15 +117,7 @@ public class QueryBuilder<T> {
      * @return 数据
      */
     public <E> E selectOne(Class<E> clazz) {
-        Connection connection = ConnectionHolder.getCurConnection();
-        try {
-            return queryRunner.query(connection, sql(), new ScalarHandler<>(), getArguments());
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            ConnectionHolder.autoClose();
-        }
-        return null;
+        return (E) sqlContext.selectValue(sql(), getArguments());
     }
 
     /**
@@ -156,7 +136,12 @@ public class QueryBuilder<T> {
      */
     public Page<T> page(int pageNum, int pageSize) {
         Page<T> page = new Page<>();
-        Long count = new Select("count(*)").from(this.sqlBuilder.tableClass).count();
+
+//        Long count = new Select("count(*)").from(this.sqlBuilder.tableClass).count();
+        String tableName = getTableName();
+
+        Long count = (Long) sqlContext.selectValue("select count(*) from " + tableName);
+
         int pages = (int) (count / pageSize);
         if (count % pageSize > 0) {
             pages++;
@@ -195,15 +180,7 @@ public class QueryBuilder<T> {
      * @return 改动成功的条数，> 0 表示修改成功
      */
     public int update() {
-        Connection connection = ConnectionHolder.getCurConnection();
-        try {
-            return queryRunner.update(connection, sql(), getArguments());
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            ConnectionHolder.autoClose();
-        }
-        return 0;
+        return sqlContext.update(sql(), getArguments());
     }
 
 

@@ -13,12 +13,12 @@ public class SqlSessionTest {
     @Test
     public void testGetMapper() {
 
-        InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
-        SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
-
-        UserDao userDao = sqlSession.getMapper(UserDao.class);
-
-        System.out.println("userDao.getUserById(1) = " + userDao.getUserById(1));
+//        InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
+//        SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
+//
+//        UserDao userDao = sqlSession.getMapper(UserDao.class);
+//
+//        System.out.println("userDao.getUserById(1) = " + userDao.getUserById(1));
 //        List<User> user = userDao.getUser();
 //        System.out.println(user);
 //        System.out.println("userDao.getUserCount() = " + userDao.getUserCount());

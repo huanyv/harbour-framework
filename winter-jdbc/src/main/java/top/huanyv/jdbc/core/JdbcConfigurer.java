@@ -1,7 +1,6 @@
 package top.huanyv.jdbc.core;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.Properties;
 
 import top.huanyv.jdbc.extend.SimpleDataSource;
@@ -13,7 +12,7 @@ import javax.sql.DataSource;
  * @author huanyv
  * @date 2022/9/1 19:39
  */
-public class Configuration {
+public class JdbcConfigurer {
 
     private DataSource dataSource;
 
@@ -27,21 +26,21 @@ public class Configuration {
     /**
      * 单例
      */
-    private static Configuration configuration;
+    private static JdbcConfigurer configuration;
 
-    private Configuration() { }
+    private JdbcConfigurer() { }
 
     private static class SingletonHolder {
-        private static final Configuration CONFIGURATION = new Configuration();
+        private static final JdbcConfigurer CONFIGURATION = new JdbcConfigurer();
     }
 
-    public static Configuration create() {
+    public static JdbcConfigurer create() {
         return SingletonHolder.CONFIGURATION;
     }
 
-    public static Configuration create(InputStream inputStream) {
+    public static JdbcConfigurer create(InputStream inputStream) {
         Assert.notNull(inputStream);
-        Configuration config = SingletonHolder.CONFIGURATION;
+        JdbcConfigurer config = SingletonHolder.CONFIGURATION;
         try {
             Properties properties = new Properties();
             properties.load(inputStream);
@@ -76,6 +75,10 @@ public class Configuration {
         this.scanPackages = scanPackages;
     }
 
+    public String getScanPackages() {
+        return scanPackages;
+    }
+
     public DataSource getDataSource() {
         if (dataSource == null) {
             SimpleDataSource simpleDataSource = new SimpleDataSource();
@@ -88,4 +91,7 @@ public class Configuration {
         return dataSource;
     }
 
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 }

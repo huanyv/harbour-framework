@@ -2,8 +2,6 @@ package top.huanyv.jdbc.builder;
 
 import junit.framework.TestCase;
 import top.huanyv.jdbc.core.Page;
-import top.huanyv.jdbc.core.SqlSession;
-import top.huanyv.jdbc.core.SqlSessionFactory;
 import top.huanyv.jdbc.core.entity.User;
 import top.huanyv.utils.ClassLoaderUtil;
 
@@ -14,7 +12,7 @@ public class QueryBuilderTest extends TestCase {
 
     public void testSelectOne() {
         InputStream inputStream = ClassLoaderUtil.getInputStream("jdbc.properties");
-        SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
+//        SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
         User user = new Select().from(User.class).where().and("uid = ?", 1).selectRow();
         System.out.println(user);
         List<User> users = new Select().from(User.class).selectList();
@@ -25,14 +23,14 @@ public class QueryBuilderTest extends TestCase {
 
     public void testPage() {
         InputStream inputStream = ClassLoaderUtil.getInputStream("jdbc.properties");
-        SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
+//        SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
         Page<User> page = new Select().from(User.class).page(12, 5);
         System.out.println("page = " + page);
     }
 
     public void testUpdate() {
         InputStream inputStream = ClassLoaderUtil.getInputStream("jdbc.properties");
-        SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
+//        SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
         int update = new QueryBuilder().append("insert into user").append("(username, password, sex, email)")
                 .append("values(?, ?, ?, ?)", "zhangsan2k", "abc", "男", "1232qq.com").update();
         System.out.println(update);

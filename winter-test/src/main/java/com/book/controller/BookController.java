@@ -23,7 +23,7 @@ import java.util.List;
 
 @Component
 @Route("/admin/book")
-//@Aop(LogAop.class)
+@Aop(LogAop.class)
 public class BookController {
 
     @Autowired

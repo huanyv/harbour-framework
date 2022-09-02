@@ -29,6 +29,15 @@ public class MapperProxyHandler implements InvocationHandler {
 
     private QueryRunner queryRunner = new QueryRunner();
 
+    private SqlContext sqlContext;
+
+    public MapperProxyHandler() {
+    }
+
+    public MapperProxyHandler(SqlContext sqlContext) {
+        this.sqlContext = sqlContext;
+    }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.isAnnotationPresent(Select.class)) {
@@ -53,7 +62,6 @@ public class MapperProxyHandler implements InvocationHandler {
     }
 
     public Object doSelect(Method method, Object[] args) throws SQLException {
-        Connection connection = ConnectionHolder.getCurConnection();
         String sql = method.getAnnotation(Select.class).value();
 
         Object queryResult = null;
@@ -63,24 +71,23 @@ public class MapperProxyHandler implements InvocationHandler {
         if (List.class.equals(returnType)) {
             // 获取list中的泛型
             Class<?> type = (Class) MethodUtil.getMethodReturnGenerics(method)[0];
-            queryResult = queryRunner.query(connection, sql, new BeanListHandler(type), args);
+            queryResult = sqlContext.selectList(type, sql, args);
         } else if(Number.class.isAssignableFrom(returnType)) {
-            queryResult = queryRunner.query(connection, sql, new ScalarHandler<>(), args);
+            queryResult = sqlContext.selectValue(sql, args);
         } else if(String.class.equals(returnType)) {
-            queryResult = queryRunner.query(connection, sql, new ScalarHandler<>(), args);
+            queryResult = sqlContext.selectValue(sql, args);
         } else if(returnType.isPrimitive() && !returnType.equals(void.class)) {
-            queryResult = queryRunner.query(connection, sql, new ScalarHandler<>(), args);
+            queryResult = sqlContext.selectValue(sql, args);
         } else if(ClassUtil.isCustomClass(returnType)) {
             // bean 对象
-            queryResult = queryRunner.query(connection, sql, new BeanHandler(returnType) ,args);
+            queryResult = sqlContext.selectRow(returnType, sql, args);
         }
 
         return queryResult;
     }
 
     public int doUpdate(String sql, Method method, Object[] args) throws SQLException {
-        Connection connection = ConnectionHolder.getCurConnection();
-        return queryRunner.update(connection, sql, args);
+        return sqlContext.update(sql, args);
     }
 
 }

@@ -1,13 +1,13 @@
 package top.huanyv.jdbc.core.config;
 
+import com.mysql.jdbc.Driver;
 import top.huanyv.ioc.anno.Bean;
 import top.huanyv.ioc.anno.Configuration;
-import top.huanyv.jdbc.core.MapperScanner;
+import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.jdbc.extend.SimpleDataSource;
-import top.huanyv.jdbc.core.SqlSessionTest;
+import top.huanyv.jdbc.extend.SqlContextFactoryBean;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -18,17 +18,32 @@ import java.util.Properties;
 @Configuration
 public class MapperConfig {
 
+//    @Bean
+//    public DataSource dataSource() throws IOException {
+//        InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
+//        Properties properties = new Properties();
+//        properties.load(inputStream);
+//        return SimpleDataSource.createDataSource(properties);
+//    }
+//    @Bean
+//    public MapperScanner mapperScanner() {
+//        return new MapperScanner(SqlSessionTest.class.getPackage().getName());
+//    }
 
     @Bean
-    public DataSource dataSource() throws IOException {
-        InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
-        Properties properties = new Properties();
-        properties.load(inputStream);
-        return SimpleDataSource.createDataSource(properties);
-    }
-    @Bean
-    public MapperScanner mapperScanner() {
-        return new MapperScanner(SqlSessionTest.class.getPackage().getName());
+    public SqlContextFactoryBean sqlSessionFactoryBean() throws Exception {
+        // 类配置
+        JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
+        jdbcConfigurer.setDriverClassName(Driver.class.getName());
+        jdbcConfigurer.setUrl("jdbc:mysql://localhost:3306/temp?useSSL=false");
+        jdbcConfigurer.setUsername("root");
+        jdbcConfigurer.setPassword("2233");
+        jdbcConfigurer.setScanPackages("com.huanyv.jdbc.core");
+
+        SqlContextFactoryBean sqlSessionFactoryBean = new SqlContextFactoryBean();
+        // 文件配置
+//        sqlSessionFactoryBean.setConfigLocation("jdbc.properties");
+        return sqlSessionFactoryBean;
     }
 
 }
