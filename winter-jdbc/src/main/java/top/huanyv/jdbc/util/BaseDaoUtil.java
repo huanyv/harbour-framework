@@ -14,29 +14,13 @@ import java.lang.reflect.Type;
  * @date 2022/9/1 10:21
  */
 public class BaseDaoUtil {
-//    public static Class<?> getType(Class<? extends BaseDao> clazz) {
-//
-//        for (Type genericInterface : clazz.getGenericInterfaces()) {
-//            if (genericInterface.equals(BaseDao.class)) {
-//                ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
-//                Class actualTypeArgument = (Class) parameterizedType.getActualTypeArguments()[0];
-//                return actualTypeArgument;
-//            }
-//            Class anInterface = (Class) genericInterface;
-//            for (Type type : anInterface.getGenericInterfaces()) {
-//                if (type instanceof ParameterizedType) {
-//                    ParameterizedType parameterizedType = (ParameterizedType) type;
-//                    if (BaseDao.class.equals(parameterizedType.getRawType())) {
-//                        Class actualTypeArgument = (Class) parameterizedType.getActualTypeArguments()[0];
-//                        return actualTypeArgument;
-//                    }
-//                }
-//            }
-//        }
-//        return null;
-//    }
-    public static Class<?> getType(Type type) {
 
+    /**
+     * 获取 baseDao 的泛型类型 Class
+     * @param type 接口或类
+     * @return 泛型 Class
+     */
+    public static Class<?> getType(Type type) {
         if (type instanceof Class) {
             Class<?> clazz = (Class<?>) type;
             for (Type genericInterface : clazz.getGenericInterfaces()) {
@@ -55,7 +39,11 @@ public class BaseDaoUtil {
         return null;
     }
 
-
+    /**
+     * 获取表id名
+     * @param clazz clazz对象
+     * @return table id 的字段名
+     */
     public static String getTableId(Class<?> clazz) {
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(TableId.class)) {
@@ -65,6 +53,11 @@ public class BaseDaoUtil {
         return "id";
     }
 
+    /**
+     * 获取表名
+     * @param clazz 类型class
+     * @return 表名称
+     */
     public static String getTableName(Class<?> clazz) {
         TableName tableName = clazz.getAnnotation(TableName.class);
         if (tableName != null) {

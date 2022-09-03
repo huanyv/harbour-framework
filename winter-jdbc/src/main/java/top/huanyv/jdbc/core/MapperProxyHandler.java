@@ -27,7 +27,7 @@ public class MapperProxyHandler implements InvocationHandler {
 
 //    private Connection connection = ConnectionHolder.getCurConnection();
 
-    private QueryRunner queryRunner = new QueryRunner();
+//    private QueryRunner queryRunner = new QueryRunner();
 
     private SqlContext sqlContext;
 
@@ -56,7 +56,7 @@ public class MapperProxyHandler implements InvocationHandler {
             return doUpdate(delete.value(), method, args);
         }
 
-        ConnectionHolder.autoClose();
+//        ConnectionHolder.autoClose();
 
         return null;
     }

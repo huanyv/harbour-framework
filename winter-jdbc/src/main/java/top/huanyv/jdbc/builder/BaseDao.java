@@ -1,6 +1,5 @@
 package top.huanyv.jdbc.builder;
 
-import javafx.beans.binding.ObjectExpression;
 import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.SqlContextFactory;
 import top.huanyv.jdbc.util.BaseDaoUtil;
@@ -15,28 +14,48 @@ import java.util.*;
  */
 public interface BaseDao<T> {
 
+    /**
+     * 查询所有
+     * @return list
+     */
     default List<T> selectAll() {
         Class<?> beanType = BaseDaoUtil.getType(this.getClass());
-        SqlContext sqlContext = SqlContextFactory.getSqlContext();
+        Assert.notNull(beanType, "BaseDao not set <generic>!");
+
         List objects = new Select().from(beanType).selectList();
         return objects;
     }
 
+    /**
+     * 根据ID查询一个对象
+     * @param id id
+     * @return T
+     */
     default T selectById(Number id) {
         Class<?> beanType = BaseDaoUtil.getType(this.getClass());
+        Assert.notNull(beanType, "BaseDao not set <generic>!");
+
         String tableId = BaseDaoUtil.getTableId(beanType);
         Object o = new Select().from(beanType).where().append(tableId + " = ?", id).selectRow();
         return (T) o;
     }
 
+    /**
+     * 根据对象实体，插入一条数据
+     * @param t T
+     * @return 插入成功的条数
+     */
     default int insert(T t) {
-        Map<String, Object> data = new HashMap<>();
+        Class<?> clazz = t.getClass();
+        // 参数
         List<Object> args = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("insert into ").append(BaseDaoUtil.getTableName(t.getClass()));
+        StringBuilder sql = new StringBuilder("insert into ").append(BaseDaoUtil.getTableName(clazz));
+        // (column1, column2, column3, .....)
         StringJoiner columns = new StringJoiner(", ", "(", ")");
+        // (?, ?, ?, ......)
         StringJoiner values = new StringJoiner(", ", "(", ")");
         try {
-            for (Field field : t.getClass().getDeclaredFields()) {
+            for (Field field : clazz.getDeclaredFields()) {
                 field.setAccessible(true);
                 Object o = field.get(t);
                 if (o != null) {
@@ -47,6 +66,7 @@ public interface BaseDao<T> {
                 }
             }
             sql.append(columns).append(" values").append(values);
+
             SqlContext sqlContext = SqlContextFactory.getSqlContext();
             return sqlContext.update(sql.toString(), args.toArray());
         } catch (IllegalAccessException e) {
@@ -55,6 +75,11 @@ public interface BaseDao<T> {
         return 0;
     }
 
+    /**
+     * 根据实体对象，用ID更新一条数据。只更新属性不为 null 的字段，ID不可为空
+     * @param t T
+     * @return 更新成功的条数
+     */
     default int updateById(T t) {
         try {
             Class<?> clazz = t.getClass();
@@ -92,8 +117,15 @@ public interface BaseDao<T> {
         return 0;
     }
 
+    /**
+     * 根据ID删除一条数据
+     * @param id ID
+     * @return 删除成功的条数
+     */
     default int deleteById(Number id) {
         Class<?> type = BaseDaoUtil.getType(this.getClass());
+        Assert.notNull(type, "BaseDao not set <generic>!");
+
         String tableId = BaseDaoUtil.getTableId(type);
         String tableName = BaseDaoUtil.getTableName(type);
         StringBuilder sql = new StringBuilder("delete from ").append(tableName)

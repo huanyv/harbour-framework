@@ -1,16 +1,10 @@
 package top.huanyv.jdbc.builder;
 
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.apache.commons.dbutils.handlers.ScalarHandler;
-import top.huanyv.jdbc.core.ConnectionHolder;
 import top.huanyv.jdbc.core.Page;
 import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.SqlContextFactory;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 /**

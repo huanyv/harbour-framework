@@ -27,17 +27,17 @@ public class SqlSessionTest {
 
     @Test
     public void test2() {
-        UserDao userDao = new UserDaoImpl();
+        UserDaoImpl userDao = new UserDaoImpl();
         InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
         JdbcConfigurer.create(inputStream);
 
-        User user = userDao.selectById(1);
+        Object user = userDao.selectById(1);
         System.out.println(user);
     }
 
     @Test
     public void test3() {
-        UserDao userDao = new UserDaoImpl();
+        UserDaoImpl userDao = new UserDaoImpl();
         InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
         JdbcConfigurer.create(inputStream);
 
@@ -53,7 +53,7 @@ public class SqlSessionTest {
 
     @Test
     public void test4() {
-        UserDao userDao = new UserDaoImpl();
+        UserDaoImpl userDao = new UserDaoImpl();
         InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
         JdbcConfigurer.create(inputStream);
 
@@ -67,7 +67,7 @@ public class SqlSessionTest {
     }
     @Test
     public void test5() {
-        UserDao userDao = new UserDaoImpl();
+        UserDaoImpl userDao = new UserDaoImpl();
         InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
         JdbcConfigurer.create(inputStream);
 
