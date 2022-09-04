@@ -1,17 +1,20 @@
 package top.huanyv.jdbc.core;
+import java.io.PrintWriter;
 
+import com.mysql.jdbc.Driver;
 import junit.framework.TestCase;
+import top.huanyv.jdbc.core.entity.Menu;
 import top.huanyv.jdbc.core.entity.User;
 import top.huanyv.jdbc.extend.SimpleDataSource;
-import top.huanyv.jdbc.handler.BeanHandler;
-import top.huanyv.jdbc.handler.BeanListHandler;
-import top.huanyv.jdbc.handler.ScalarHandler;
+import top.huanyv.jdbc.handler.*;
+import top.huanyv.utils.StringUtil;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class JdbcTemplateTest extends TestCase {
@@ -58,4 +61,23 @@ public class JdbcTemplateTest extends TestCase {
         int update = jdbcTemplate.update(connection, sql, "lisi", 7);
         System.out.println("update = " + update);
     }
+
+    public void test01() throws Exception {
+        SimpleDataSource dataSource = new SimpleDataSource();
+        dataSource.setDriverClassName(Driver.class.getName());
+        dataSource.setUrl("jdbc:mysql://localhost:3306/db_blog?useSSL=false");
+        dataSource.setUsername("root");
+        dataSource.setPassword("2233");
+
+        Connection connection = dataSource.getConnection();
+
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        String sql = "select * from sys_menu where id = 100";
+        Menu menu = jdbcTemplate.query(connection, sql, new BeanHandler<>(Menu.class));
+        System.out.println("menu = " + menu);
+
+        List<Map<String, Object>> mapList = jdbcTemplate.query(connection, "select * from sys_menu", new MapListHandler());
+        System.out.println("mapList = " + mapList);
+    }
+
 }

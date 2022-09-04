@@ -16,8 +16,15 @@ public class BeanListHandler<T> implements ResultSetHandler<List<T>> {
 
     private Class<T> type;
 
+    private boolean mapUnderscoreToCamelCase = true;
+
     public BeanListHandler(Class<T> type) {
         this.type = type;
+    }
+
+    public BeanListHandler(Class<T> type, boolean mapUnderscoreToCamelCase) {
+        this.type = type;
+        this.mapUnderscoreToCamelCase = mapUnderscoreToCamelCase;
     }
 
     @Override
@@ -29,7 +36,7 @@ public class BeanListHandler<T> implements ResultSetHandler<List<T>> {
                 // 创建实例
                 t = type.getConstructor().newInstance();
                 // 填充
-                populateBean(rs, t);
+                populateBean(rs, t, mapUnderscoreToCamelCase);
                 // 到list
                 result.add(t);
             }

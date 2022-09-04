@@ -1,7 +1,5 @@
 package top.huanyv.jdbc.core;
 
-import javax.sql.DataSource;
-
 /**
  * @author huanyv
  * @date 2022/9/1 15:19

@@ -1,5 +1,7 @@
 package top.huanyv.jdbc.handler;
 
+import top.huanyv.utils.StringUtil;
+
 import java.lang.invoke.VolatileCallSite;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -15,12 +17,16 @@ public interface ResultSetHandler<T> {
 
     T handle(ResultSet rs) throws SQLException;
 
-    default void populateBean(ResultSet rs, Object t) {
+    default void populateBean(ResultSet rs, Object t, boolean mapUnderscoreToCamelCase) {
         for (Field field : t.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             Object val = null;
             try {
-                val = rs.getObject(field.getName());
+                String columnName = field.getName();
+                if (mapUnderscoreToCamelCase) {
+                    columnName = StringUtil.camelCaseToUnderscore(columnName);
+                }
+                val = rs.getObject(columnName);
             } catch (SQLException throwables) {
                 val = null;
             }

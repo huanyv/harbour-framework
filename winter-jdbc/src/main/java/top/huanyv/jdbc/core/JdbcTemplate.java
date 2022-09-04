@@ -19,20 +19,38 @@ public class JdbcTemplate {
     }
 
     public <T> T query(Connection connection, String sql, ResultSetHandler<T> resultSetHandler, Object... args) throws SQLException {
-        PreparedStatement ps = connection.prepareStatement(sql);
-        for (int i = 1; i <= args.length; i++) {
-            ps.setString(i, args[i - 1].toString());
+        ResultSet resultSet = null;
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(sql);
+            for (int i = 1; i <= args.length; i++) {
+                ps.setString(i, args[i - 1].toString());
+            }
+            resultSet = ps.executeQuery();
+            return resultSetHandler.handle(resultSet);
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            if (ps != null) {
+                ps.close();
+            }
         }
-        ResultSet resultSet = ps.executeQuery();
-        return resultSetHandler.handle(resultSet);
     }
 
     public int update(Connection connection, String sql, Object... args) throws SQLException {
-        PreparedStatement ps = connection.prepareStatement(sql);
-        for (int i = 1; i <= args.length; i++) {
-            ps.setString(i, args[i - 1].toString());
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(sql);
+            for (int i = 1; i <= args.length; i++) {
+                ps.setString(i, args[i - 1].toString());
+            }
+            return ps.executeUpdate();
+        } finally {
+            if (ps != null) {
+                ps.close();
+            }
         }
-        return ps.executeUpdate();
     }
 
 }
