@@ -23,19 +23,9 @@ import java.util.List;
  * @author admin
  * @date 2022/7/23 15:05
  */
-public class MapperProxyHandler implements InvocationHandler {
+public class DaoProxyHandler implements InvocationHandler {
 
-//    private Connection connection = ConnectionHolder.getCurConnection();
-
-//    private QueryRunner queryRunner = new QueryRunner();
-
-    private SqlContext sqlContext;
-
-    public MapperProxyHandler() {
-    }
-
-    public MapperProxyHandler(SqlContext sqlContext) {
-        this.sqlContext = sqlContext;
+    public DaoProxyHandler() {
     }
 
     @Override
@@ -56,14 +46,13 @@ public class MapperProxyHandler implements InvocationHandler {
             return doUpdate(delete.value(), method, args);
         }
 
-//        ConnectionHolder.autoClose();
-
         return null;
     }
 
     public Object doSelect(Method method, Object[] args) throws SQLException {
-        String sql = method.getAnnotation(Select.class).value();
+        SqlContext sqlContext = SqlContextFactory.getSqlContext();
 
+        String sql = method.getAnnotation(Select.class).value();
         Object queryResult = null;
         // 获取方法返回值类型
         Class<?> returnType = method.getReturnType();
@@ -87,6 +76,7 @@ public class MapperProxyHandler implements InvocationHandler {
     }
 
     public int doUpdate(String sql, Method method, Object[] args) throws SQLException {
+        SqlContext sqlContext = SqlContextFactory.getSqlContext();
         return sqlContext.update(sql, args);
     }
 

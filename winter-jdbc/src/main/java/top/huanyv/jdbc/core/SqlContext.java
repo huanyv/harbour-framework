@@ -34,32 +34,14 @@ public class SqlContext {
     // 是否自动关闭连接，事务开启后会 false
     private boolean isAutoClose = true;
 
-    private Map<String, Object> daos = new ConcurrentHashMap<>();
+    // Dao接口扫描器
+    private DaoScanner daoScanner;
 
     public SqlContext() {
         this.dataSource = config.getDataSource();
         String scanPackages = config.getScanPackages();
         // 扫描包
-        Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(scanPackages, Dao.class);
-        for (Class<?> clazz : classes) {
-            // 接口名首字母小写
-            String mapperName = StringUtil.firstLetterLower(clazz.getSimpleName());
-            Object mapperInstance = null;
-            if (clazz.isInterface()) {
-                // 代理实现
-                mapperInstance = ProxyFactory.getImpl(clazz, new MapperProxyHandler(this));
-            } else {
-                try {
-                    mapperInstance = clazz.getConstructor().newInstance();
-                } catch (NoSuchMethodException | IllegalAccessException
-                        | InstantiationException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (StringUtil.hasText(mapperName) && mapperInstance != null) {
-                this.daos.put(mapperName, mapperInstance);
-            }
-        }
+        daoScanner = new DaoScanner(scanPackages);
     }
 
     public <T> List<T> selectList(Class<T> type, String sql, Object... args) {
@@ -182,13 +164,7 @@ public class SqlContext {
      * @return 代理
      */
     public <T> T getDao(Class<T> type) {
-        for (Map.Entry<String, Object> entry : daos.entrySet()) {
-            Object mapper = entry.getValue();
-            if (type.isInstance(mapper)) {
-                return (T) mapper;
-            }
-        }
-        return null;
+        return daoScanner.getDao(type);
     }
 
     /**
@@ -196,14 +172,16 @@ public class SqlContext {
      * @return map key为name, value为dao对象
      */
     public Map<String, Object> getDaos() {
-        Map<String, Object> result = new HashMap<>();
-        for (Map.Entry<String, Object> entry : this.daos.entrySet()) {
-            result.put(entry.getKey(), entry.getValue());
-        }
-        return result;
+        return daoScanner.getDaos();
     }
 
 
+    /**
+     * 获得连接
+     *
+     * @return {@link Connection}
+     * @throws SQLException sqlexception异常
+     */
     public Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
             this.connection = this.dataSource.getConnection();

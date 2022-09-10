@@ -37,9 +37,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         proxyBean();
 
         // 配置bean
-        for (String scanPackage : scanPackages) {
-            configBean(scanPackage);
-        }
+        configBean(scanPackages);
 
         // 外部注入的bean
         extendBean();
@@ -93,8 +91,8 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         }
     }
 
-    private void configBean(String basePack) {
-        Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(basePack, Configuration.class);
+    private void configBean(String... basePack) {
+        Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(Configuration.class, basePack);
         // 遍历配置类
         for (Class<?> clazz : classes) {
             try {
