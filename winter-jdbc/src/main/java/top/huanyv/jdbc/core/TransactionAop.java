@@ -2,6 +2,7 @@ package top.huanyv.jdbc.core;
 
 import top.huanyv.ioc.aop.AdvicePoint;
 import top.huanyv.ioc.aop.AspectAdvice;
+import top.huanyv.ioc.aop.JoinPoint;
 
 /**
  * 事务管理器
@@ -9,7 +10,7 @@ import top.huanyv.ioc.aop.AspectAdvice;
 public class TransactionAop implements AspectAdvice {
 
     @Override
-    public Object aroundAdvice(AdvicePoint point)  {
+    public Object aroundAdvice(JoinPoint point)  {
 
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
 

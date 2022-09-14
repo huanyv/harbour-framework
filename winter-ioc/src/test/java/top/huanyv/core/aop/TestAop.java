@@ -2,6 +2,7 @@ package top.huanyv.core.aop;
 
 import top.huanyv.ioc.aop.AdvicePoint;
 import top.huanyv.ioc.aop.AspectAdvice;
+import top.huanyv.ioc.aop.JoinPoint;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -22,7 +23,7 @@ public class TestAop implements AspectAdvice {
 
 
     @Override
-    public Object aroundAdvice(AdvicePoint point) throws InvocationTargetException, IllegalAccessException {
+    public Object aroundAdvice(JoinPoint point) throws InvocationTargetException, IllegalAccessException {
         System.out.println("aroud ....");
         Object result = point.invoke();
         System.out.println("aroud ....");

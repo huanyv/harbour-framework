@@ -13,10 +13,10 @@ import java.util.Arrays;
  * @date 2022/7/19 10:40
  */
 @Component("userDao")
-//@Aop(TestAop.class)
+@Aop(TestAop.class)
 public class UserDaoImpl implements UserDao {
 
-    @Aop(TestAop.class)
+    @Aop({TestAop.class, Test02Aop.class})
     @Override
     public void getUser() {
         System.out.println("getuser");

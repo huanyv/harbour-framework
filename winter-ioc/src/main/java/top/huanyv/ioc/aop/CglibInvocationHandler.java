@@ -6,6 +6,7 @@ import top.huanyv.ioc.core.BeanDefinitionRegistry;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author admin
@@ -13,6 +14,38 @@ import java.lang.reflect.Method;
  */
 public class CglibInvocationHandler<T> implements MethodInterceptor {
 
+    private T target;
+
+    private AopContext aopContext;
+
+    public CglibInvocationHandler(T target, AopContext aopContext) {
+        this.target = target;
+        this.aopContext = aopContext;
+    }
+
+    @Override
+    public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+        Object result = null;
+        Method targetMethod = target.getClass().getMethod(method.getName(), method.getParameterTypes());
+        if (aopContext.hasProxy(targetMethod)) {
+            // 获取当前方法的切面链
+            List<AspectAdvice> advices = aopContext.getAspectAdvice(targetMethod);
+
+            JoinPoint joinPoint = new JoinPoint();
+            joinPoint.setTarget(target);
+            joinPoint.setMethod(method);
+            joinPoint.setArgs(args);
+            joinPoint.setChain(advices);
+
+            result = joinPoint.run();
+        } else {
+            method.setAccessible(true);
+            result = method.invoke(target, args);
+        }
+        return result;
+    }
+
+    /*
     private T target;
 
     private BeanDefinitionRegistry beanDefinitionRegistry;
@@ -85,7 +118,7 @@ public class CglibInvocationHandler<T> implements MethodInterceptor {
         }
         return null;
     }
-
+*/
 
 
 }

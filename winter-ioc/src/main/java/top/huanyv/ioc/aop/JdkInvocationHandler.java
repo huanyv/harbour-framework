@@ -5,6 +5,8 @@ import top.huanyv.ioc.core.BeanDefinitionRegistry;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author admin
@@ -12,6 +14,37 @@ import java.lang.reflect.Method;
  */
 public class JdkInvocationHandler<T> implements InvocationHandler {
 
+    private T target;
+
+    private AopContext aopContext;
+
+    public JdkInvocationHandler(T target, AopContext aopContext) {
+        this.target = target;
+        this.aopContext = aopContext;
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        Object result = null;
+        Method targetMethod = target.getClass().getMethod(method.getName(), method.getParameterTypes());
+        if (aopContext.hasProxy(targetMethod)) {
+            // 获取当前方法的切面链
+            List<AspectAdvice> advices = aopContext.getAspectAdvice(targetMethod);
+
+            JoinPoint joinPoint = new JoinPoint();
+            joinPoint.setTarget(target);
+            joinPoint.setMethod(method);
+            joinPoint.setArgs(args);
+            joinPoint.setChain(advices);
+
+            result = joinPoint.run();
+        } else {
+            method.setAccessible(true);
+            result = method.invoke(target, args);
+        }
+        return result;
+    }
+/*
     private T target;
 
     private BeanDefinitionRegistry beanDefinitionRegistry;
@@ -84,5 +117,8 @@ public class JdkInvocationHandler<T> implements InvocationHandler {
         }
         return null;
     }
+*/
+
+
 
 }

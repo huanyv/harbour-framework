@@ -2,8 +2,10 @@ package top.huanyv.ioc.core;
 
 
 import top.huanyv.ioc.anno.*;
+import top.huanyv.ioc.aop.AopContext;
 import top.huanyv.ioc.aop.ProxyFactory;
 import top.huanyv.ioc.exception.BeanTypeNonUniqueException;
+import top.huanyv.ioc.utils.BeanFactoryUtil;
 import top.huanyv.utils.ClassUtil;
 import top.huanyv.utils.StringUtil;
 
@@ -11,13 +13,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AnnotationConfigApplicationContext implements ApplicationContext {
+
+    private AopContext aopContext = new AopContext();
 
     private BeanDefinitionRegistry beanDefinitionRegistry = new BeanDefinitionRegistry();
 
@@ -29,24 +30,89 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     public AnnotationConfigApplicationContext(String... scanPackages) {
 
-        // 1、找到所有的原材料
-        findBeanDefinitions(scanPackages);
-        // 2、根据原材料创建bean实例,放到二级缓存中
-        createBean();
-        // 3、代理对要的bean代理
-        proxyBean();
-
         // 配置bean
         configBean(scanPackages);
 
+        List<ApplicationContextWeave> weaves = getWeave(scanPackages);
+
+        for (ApplicationContextWeave weave : weaves) {
+            weave.findBeanBefore(this);
+        }
+
+        // 1、找到所有的原材料
+        findBeanDefinitions(scanPackages);
+
+        for (ApplicationContextWeave weave : weaves) {
+            weave.createBeanBefore(this);
+        }
+
+        // 2、根据原材料创建bean实例,放到二级缓存中
+        createBean();
+
+        // 3、代理对要的bean代理
+        proxyBean();
+
+
         // 外部注入的bean
-        extendBean();
+//        extendBean();
+
+        for (ApplicationContextWeave weave : weaves) {
+            weave.injectBeanBefore(this);
+        }
 
         // 4、bean注入属性
-        autowiredBean();
+        injectBean();
+
+        for (ApplicationContextWeave weave : weaves) {
+            weave.injectBeanAfter(this);
+        }
     }
 
+    /**
+     * 获取所有织入类，并实例化，
+     *
+     * @param scanPackages 扫描包
+     * @return {@link List}<{@link ApplicationContextWeave}>
+     */
+    public List<ApplicationContextWeave> getWeave(String... scanPackages) {
+        Set<Class<?>> classes = ClassUtil.getClassesByType(ApplicationContextWeave.class, scanPackages);
+        List<ApplicationContextWeave> weaveList = new ArrayList<>();
+        try {
+            for (Class<?> cls : classes) {
+                Object val = cls.getConstructor().newInstance();
+                if (val instanceof ApplicationContextWeave) {
+                    weaveList.add((ApplicationContextWeave) val);
+                }
+            }
+        } catch (InstantiationException | InvocationTargetException
+                | NoSuchMethodException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
+        for (Map.Entry<String, Object> entry : this.beanPool.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof ApplicationContextWeave) {
+                weaveList.add((ApplicationContextWeave) value);
+            }
+        }
+
+        // 排序
+        weaveList.sort((o1, o2) -> {
+            Order o2Order = o2.getClass().getAnnotation(Order.class);
+            Order o1Order = o1.getClass().getAnnotation(Order.class);
+            if (o2Order != null && o1Order != null) {
+                return o1Order.value() - o2Order.value();
+            }
+            return o1.getOrder() - o2.getOrder();
+        });
+        return weaveList;
+    }
+
+    /**
+     * 找到所有的Bean定义
+     *
+     * @param basePack 基本包
+     */
     private void findBeanDefinitions(String... basePack) {
         //获取basePack包下所有的class类
         Set<Class<?>> classes = ClassUtil.getClasses(basePack);
@@ -58,10 +124,14 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
                     beanName = StringUtil.firstLetterLower(clazz.getSimpleName());
                 }
                 beanDefinitionRegistry.register(beanName, new BeanDefinition(beanName, clazz));
+                aopContext.add(clazz);
             }
         }
     }
 
+    /**
+     * 创建bean实例
+     */
     private void createBean() {
         for (String beanDefinitionName : beanDefinitionRegistry.getBeanDefinitionNames()) {
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
@@ -77,13 +147,16 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         }
     }
 
+    /**
+     * 代理bean
+     */
     private void proxyBean() {
         for (String beanDefinitionName : beanDefinitionRegistry.getBeanDefinitionNames()) {
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
             String beanName = beanDefinition.getBeanName();
             Object bean = this.earlyBeans.get(beanName);
             if (beanDefinition.isNeedProxy()) {
-                Object proxy = ProxyFactory.getProxy(bean, beanDefinitionRegistry);
+                Object proxy = ProxyFactory.getProxy(bean, aopContext);
                 this.beanPool.put(beanName, proxy);
             } else {
                 this.beanPool.put(beanName, bean);
@@ -101,6 +174,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
                 // 遍历类中的方法，哪个方法有@Bean注解
                 Method[] methods = clazz.getDeclaredMethods();
                 for (Method method : methods) {
+                    method.setAccessible(true);
                     if (method.isAnnotationPresent(Bean.class)) {
                         String beanName = method.getName();
                         Object beanInstance = method.invoke(configBean);
@@ -124,7 +198,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         }
     }
 
-    private void autowiredBean() {
+    private void injectBean() {
         for (String beanDefinitionName : beanDefinitionRegistry.getBeanDefinitionNames()) {
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
             String beanName = beanDefinition.getBeanName();

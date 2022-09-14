@@ -1,7 +1,9 @@
 package com.book.aspect;
 
+import jdk.nashorn.internal.runtime.regexp.JoniRegExp;
 import top.huanyv.ioc.aop.AdvicePoint;
 import top.huanyv.ioc.aop.AspectAdvice;
+import top.huanyv.ioc.aop.JoinPoint;
 import top.huanyv.utils.WebUtil;
 import top.huanyv.web.core.HttpRequest;
 import top.huanyv.web.core.HttpResponse;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public class LogAop implements AspectAdvice {
     @Override
-    public Object aroundAdvice(AdvicePoint point) throws InvocationTargetException, IllegalAccessException {
+    public Object aroundAdvice(JoinPoint point) throws InvocationTargetException, IllegalAccessException {
         Object[] args = point.getArgs();
         HttpRequest request = null;
         HttpResponse response = null;

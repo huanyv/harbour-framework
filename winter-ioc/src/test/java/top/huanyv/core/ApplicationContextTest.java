@@ -1,6 +1,7 @@
 package top.huanyv.core;
 
 
+import com.sun.imageio.spi.OutputStreamImageOutputStreamSpi;
 import org.junit.Test;
 import top.huanyv.core.dao.UserDao;
 import top.huanyv.core.service.BookService;
@@ -17,12 +18,9 @@ public class ApplicationContextTest {
     public void test02() throws Exception {
         ApplicationContext app = new AnnotationConfigApplicationContext(ApplicationContextTest.class.getPackage().getName());
         UserService userService = app.getBean(UserService.class);
-        userService.getBookService();
         userService.getUser();
-        BookService bookService = app.getBean(BookService.class);
-        bookService.getUserService();
-
-//        UserDao userDao = app.getBean(UserDao.class);
+        System.out.println("==================================================");
+        userService.getUserById();
 
     }
 

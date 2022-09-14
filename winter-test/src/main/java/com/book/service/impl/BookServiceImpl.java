@@ -39,6 +39,8 @@ public class BookServiceImpl implements BookService {
 //        bookMapper.updateBook(book.getBname(), book.getAuthor(), book.getPubcomp(), book.getPubdate(), book.getBcount(), book.getPrice(), book.getId());
 //        int i = 10 / 0;
 //        return bookMapper.updateBook(book.getBname(), book.getAuthor(), book.getPubcomp(), book.getPubdate(), book.getBcount(), book.getPrice(), book.getId());
+        bookMapper.updateById(book);
+        int i = 10 / 0;
         return bookMapper.updateById(book);
     }
 

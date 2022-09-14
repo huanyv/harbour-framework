@@ -26,34 +26,34 @@ public class BeanDefinitionRegistry {
 
     public void register(String beanName, BeanDefinition beanDefinition) {
         beanDefinitionMap.put(beanName, beanDefinition);
-        try {
-            Class<?> clazz = beanDefinition.getBeanClass();
-            Aop classAop = clazz.getAnnotation(Aop.class);
-            AspectAdvice classAdvice = null;
-            if (classAop != null) {
-                classAdvice = classAop.value().getConstructor().newInstance();
-            }
-            for (Method method : clazz.getDeclaredMethods()) {
-                Aop aop = method.getAnnotation(Aop.class);
-                if (aop != null) {
-                    Class<? extends AspectAdvice> value = aop.value();
-                    AspectAdvice advice = value.getConstructor().newInstance();
-                    aopMethodMapping.put(method, advice);
-                } else {
-                    if (classAop != null) {
-                        aopMethodMapping.put(method, classAdvice);
-                    }
-                }
-            }
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException exception) {
-            exception.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Class<?> clazz = beanDefinition.getBeanClass();
+//            Aop classAop = clazz.getAnnotation(Aop.class);
+//            AspectAdvice classAdvice = null;
+//            if (classAop != null) {
+//                classAdvice = classAop.value().getConstructor().newInstance();
+//            }
+//            for (Method method : clazz.getDeclaredMethods()) {
+//                Aop aop = method.getAnnotation(Aop.class);
+//                if (aop != null) {
+//                    Class<? extends AspectAdvice> value = aop.value();
+//                    AspectAdvice advice = value.getConstructor().newInstance();
+//                    aopMethodMapping.put(method, advice);
+//                } else {
+//                    if (classAop != null) {
+//                        aopMethodMapping.put(method, classAdvice);
+//                    }
+//                }
+//            }
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        } catch (InvocationTargetException exception) {
+//            exception.printStackTrace();
+//        } catch (NoSuchMethodException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public AspectAdvice getBeanAspect(Method method) {

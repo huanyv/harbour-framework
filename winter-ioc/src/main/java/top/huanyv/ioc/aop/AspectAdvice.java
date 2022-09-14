@@ -19,7 +19,7 @@ public interface AspectAdvice {
 
     }
 
-    default Object aroundAdvice(AdvicePoint point) throws InvocationTargetException, IllegalAccessException {
+    default Object aroundAdvice(JoinPoint point) throws InvocationTargetException, IllegalAccessException {
         return point.invoke();
     }
 
