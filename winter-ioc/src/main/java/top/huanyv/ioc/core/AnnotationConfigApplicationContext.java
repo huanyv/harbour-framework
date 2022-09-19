@@ -52,10 +52,6 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         // 3、代理对要的bean代理
         proxyBean();
 
-
-        // 外部注入的bean
-//        extendBean();
-
         for (ApplicationContextWeave weave : weaves) {
             weave.injectBeanBefore(this);
         }
@@ -184,16 +180,6 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
             } catch (InstantiationException | IllegalAccessException
                     | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
-            }
-        }
-    }
-
-    private void extendBean() {
-        for (Map.Entry<String, Object> beanEntry : this.beanPool.entrySet()) {
-            Object bean = beanEntry.getValue();
-            if (bean instanceof BeanRegistry) {
-                BeanRegistry beanRegistry = (BeanRegistry) bean;
-                beanRegistry.set(this);
             }
         }
     }

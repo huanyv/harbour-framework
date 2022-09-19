@@ -30,6 +30,9 @@ public class DaoProxyHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if (Object.class.equals(method.getDeclaringClass())) {
+            return method.invoke(this, args);
+        }
         if (method.isAnnotationPresent(Select.class)) {
             return doSelect(method, args);
         }

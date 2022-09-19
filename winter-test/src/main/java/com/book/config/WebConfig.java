@@ -43,25 +43,6 @@ public class WebConfig implements WebConfigurer {
         registry.addMapping("/**").defaultRule();
     }
 
-//    @Bean
-//    public DataSource dataSource() {
-//        SimpleDataSource simpleDataSource = new SimpleDataSource();
-//        simpleDataSource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
-//        simpleDataSource.setDriverClassName(Driver.class.getName());
-//        simpleDataSource.setUsername("root");
-//        simpleDataSource.setPassword("2233");
-//        return simpleDataSource;
-//    }
-//
-//    @Bean
-//    public MapperScanner mapperScanner() {
-//        return new MapperScanner("com.book");
-//    }
-//
-//    @Bean
-//    public SqlSessionFactoryBean sqlSessionFactoryBean() {
-//        return new SqlSessionFactoryBean();
-//    }
 
     @Bean
     public SqlContextFactoryBean sqlContextFactoryBean() {

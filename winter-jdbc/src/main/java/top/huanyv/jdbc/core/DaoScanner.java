@@ -28,7 +28,8 @@ public class DaoScanner {
             Object mapperInstance = null;
             if (clazz.isInterface()) {
                 // 代理实现
-                mapperInstance = ProxyFactory.getImpl(clazz, new DaoProxyHandler());
+                DaoProxyHandler daoProxyHandler = new DaoProxyHandler();
+                mapperInstance = ProxyFactory.getImpl(clazz, daoProxyHandler);
             } else {
                 // 如果不是接口，直接使用实例，不代理
                 try {

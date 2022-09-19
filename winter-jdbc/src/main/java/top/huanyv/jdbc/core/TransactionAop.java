@@ -1,6 +1,5 @@
 package top.huanyv.jdbc.core;
 
-import top.huanyv.ioc.aop.AdvicePoint;
 import top.huanyv.ioc.aop.AspectAdvice;
 import top.huanyv.ioc.aop.JoinPoint;
 

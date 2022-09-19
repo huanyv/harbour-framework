@@ -54,11 +54,13 @@ public interface BaseDao<T> {
         StringJoiner columns = new StringJoiner(", ", "(", ")");
         // (?, ?, ?, ......)
         StringJoiner values = new StringJoiner(", ", "(", ")");
+
+        String tableId = BaseDaoUtil.getTableId(clazz);
         try {
             for (Field field : clazz.getDeclaredFields()) {
                 field.setAccessible(true);
                 Object o = field.get(t);
-                if (o != null) {
+                if (o != null && !field.getName().equals(tableId)) {
                     String columnName = field.getName();
                     columns.add(columnName);
                     values.add("?");
@@ -89,6 +91,7 @@ public interface BaseDao<T> {
             StringBuilder sql = new StringBuilder("update ").append(tableName).append(" set ");
             // column1 = ?, column2 = ?, ......
             StringJoiner columns = new StringJoiner(", ");
+            // 参数
             List<Object> args = new ArrayList<>();
             String tableIdName = BaseDaoUtil.getTableId(clazz);
             Object tableId = null;

@@ -267,12 +267,12 @@ public class HttpRequest {
 
 
     public void login(String username, String password) throws ServletException {
-
+        this.servletRequest.login(username, password);
     }
 
 
     public void logout() throws ServletException {
-
+        this.servletRequest.logout();
     }
 
 
@@ -307,7 +307,7 @@ public class HttpRequest {
 
 
     public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
-
+        this.servletRequest.setCharacterEncoding(env);
     }
 
 
@@ -375,11 +375,11 @@ public class HttpRequest {
     }
 
     public void setAttribute(String name, Object o) {
-
+        this.servletRequest.setAttribute(name, o);
     }
 
     public void removeAttribute(String name) {
-
+        this.servletRequest.removeAttribute(name);
     }
 
     public Locale getLocale() {

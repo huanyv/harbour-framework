@@ -40,26 +40,31 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
                         // 拼接上子路由
                         String path = basePath + methodRoute.value();
                         requestRegistry.register(path, bean, method);
+                        continue;
                     }
                     Get get = method.getAnnotation(Get.class);
                     if (get != null) {
                         String path = basePath + get.value();
                         requestRegistry.register(path, RequestMethod.GET, bean, method);
+                        continue;
                     }
                     Post post = method.getAnnotation(Post.class);
                     if (post != null) {
                         String path = basePath + post.value();
                         requestRegistry.register(path, RequestMethod.POST, bean, method);
+                        continue;
                     }
                     Put put = method.getAnnotation(Put.class);
                     if (put != null) {
                         String path = basePath + put.value();
                         requestRegistry.register(path, RequestMethod.PUT, bean, method);
+                        continue;
                     }
                     Delete delete = method.getAnnotation(Delete.class);
                     if (delete != null) {
                         String path = basePath + delete.value();
                         requestRegistry.register(path, RequestMethod.DELETE, bean, method);
+                        continue;
                     }
                 }
             }

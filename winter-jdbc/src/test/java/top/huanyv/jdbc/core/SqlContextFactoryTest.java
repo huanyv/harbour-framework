@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import top.huanyv.jdbc.builder.Delete;
 import top.huanyv.jdbc.builder.Select;
 import top.huanyv.jdbc.builder.Update;
+import top.huanyv.jdbc.core.dao.BookDao;
 import top.huanyv.jdbc.core.dao.UserDao;
 import top.huanyv.jdbc.core.entity.User;
 
@@ -39,8 +40,11 @@ public class SqlContextFactoryTest extends TestCase {
         JdbcConfigurer.create(inputStream);
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         UserDao userDao = sqlContext.getDao(UserDao.class);
-        List<User> users = userDao.getUser();
-        users.stream().forEach(System.out::println);
+        System.out.println("userDao = " + userDao);
+        BookDao bookDao = sqlContext.getDao(BookDao.class);
+        System.out.println("bookDao = " + bookDao);
+//        List<User> users = userDao.getUser();
+//        users.stream().forEach(System.out::println);
     }
 
     public void test03() {
