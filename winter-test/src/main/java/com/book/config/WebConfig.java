@@ -25,6 +25,7 @@ public class WebConfig implements WebConfigurer {
     @Override
     public void addResourceMapping(ResourceMappingRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:static/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:META-INF/resources/webjars/");
     }
 
     @Override

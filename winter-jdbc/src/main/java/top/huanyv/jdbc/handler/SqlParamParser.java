@@ -35,7 +35,7 @@ public class SqlParamParser {
         for (Object param : params) {
             Class<?> clazz = param.getClass();
             // 是否常用类型: 包装类， 基本数据类型， string
-            if (NumberUtil.isCommonType(clazz)) {
+            if (ClassUtil.isCommonType(clazz)) {
                 sqlParamMapping.put("arg" + index, param);
                 index++;
             }

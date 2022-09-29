@@ -1,7 +1,6 @@
 package top.huanyv.web.view;
 
 import org.junit.Test;
-import top.huanyv.jdbc.anno.Mapper;
 import top.huanyv.utils.IoUtil;
 
 import java.io.InputStream;

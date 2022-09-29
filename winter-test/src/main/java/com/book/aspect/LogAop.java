@@ -1,7 +1,6 @@
 package com.book.aspect;
 
 import jdk.nashorn.internal.runtime.regexp.JoniRegExp;
-import top.huanyv.ioc.aop.AdvicePoint;
 import top.huanyv.ioc.aop.AspectAdvice;
 import top.huanyv.ioc.aop.JoinPoint;
 import top.huanyv.utils.WebUtil;

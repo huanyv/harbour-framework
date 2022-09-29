@@ -5,7 +5,6 @@ import top.huanyv.ioc.anno.*;
 import top.huanyv.ioc.aop.AopContext;
 import top.huanyv.ioc.aop.ProxyFactory;
 import top.huanyv.ioc.exception.BeanTypeNonUniqueException;
-import top.huanyv.ioc.utils.BeanFactoryUtil;
 import top.huanyv.utils.ClassUtil;
 import top.huanyv.utils.StringUtil;
 
@@ -33,7 +32,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         // 配置bean
         configBean(scanPackages);
 
-        List<ApplicationContextWeave> weaves = getWeave(scanPackages);
+        List<ApplicationContextWeave> weaves = getWeave();
 
         for (ApplicationContextWeave weave : weaves) {
             weave.findBeanBefore(this);
@@ -67,24 +66,18 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     /**
      * 获取所有织入类，并实例化，
      *
-     * @param scanPackages 扫描包
      * @return {@link List}<{@link ApplicationContextWeave}>
      */
-    public List<ApplicationContextWeave> getWeave(String... scanPackages) {
-        Set<Class<?>> classes = ClassUtil.getClassesByType(ApplicationContextWeave.class, scanPackages);
+    public List<ApplicationContextWeave> getWeave() {
         List<ApplicationContextWeave> weaveList = new ArrayList<>();
-        try {
-            for (Class<?> cls : classes) {
-                Object val = cls.getConstructor().newInstance();
-                if (val instanceof ApplicationContextWeave) {
-                    weaveList.add((ApplicationContextWeave) val);
-                }
-            }
-        } catch (InstantiationException | InvocationTargetException
-                | NoSuchMethodException | IllegalAccessException e) {
-            e.printStackTrace();
+
+        // SPI 使用JDK的SPI机制
+        ServiceLoader<ApplicationContextWeave> serviceLoader = ServiceLoader.load(ApplicationContextWeave.class);
+        for (ApplicationContextWeave weave : serviceLoader) {
+            weaveList.add(weave);
         }
 
+        // 添加所有的配置织入
         for (Map.Entry<String, Object> entry : this.beanPool.entrySet()) {
             Object value = entry.getValue();
             if (value instanceof ApplicationContextWeave) {
@@ -151,7 +144,9 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
             String beanName = beanDefinition.getBeanName();
             Object bean = this.earlyBeans.get(beanName);
-            if (beanDefinition.isNeedProxy()) {
+            // 是否需要代理
+            if (AopContext.isNeedProxy(beanDefinition.getBeanClass())) {
+                // 代理注入
                 Object proxy = ProxyFactory.getProxy(bean, aopContext);
                 this.beanPool.put(beanName, proxy);
             } else {
@@ -160,6 +155,11 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         }
     }
 
+    /**
+     * 配置bean
+     *
+     * @param basePack 扫描包
+     */
     private void configBean(String... basePack) {
         Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(Configuration.class, basePack);
         // 遍历配置类
@@ -184,13 +184,19 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         }
     }
 
+    /**
+     * 注入Bean
+     */
     private void injectBean() {
         for (String beanDefinitionName : beanDefinitionRegistry.getBeanDefinitionNames()) {
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
             String beanName = beanDefinition.getBeanName();
             Class<?> beanClass = beanDefinition.getBeanClass();
+            // 从源bean中获取注入，因为 BeanPool 中有代理类
             Object instance = this.earlyBeans.get(beanName);
+            // 遍历属性
             for (Field field : beanClass.getDeclaredFields()) {
+                field.setAccessible(true);
                 Inject inject = field.getAnnotation(Inject.class);
                 Object val = null;
                 if (inject != null) {
@@ -199,9 +205,9 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
                         // 名称注入
                         val = getBean(injectName);
                     } else {
+                        // 类型注入
                         val = getBean(field.getType());
                     }
-                    field.setAccessible(true);
                     try {
                         field.set(instance, val);
                     } catch (IllegalAccessException e) {
@@ -250,7 +256,6 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         T result = null;
         int count = 0;
         for (Map.Entry<String, Object> entry : this.beanPool.entrySet()) {
-            String beanName = entry.getKey();
             Object instance = entry.getValue();
             if (clazz.isInstance(instance)) {
                 count++;

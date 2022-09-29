@@ -1,8 +1,10 @@
 package top.huanyv.ioc.aop;
 
-import java.lang.reflect.InvocationTargetException;
+import top.huanyv.utils.ReflectUtil;
+
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author huanyv
@@ -13,7 +15,7 @@ public class AopContext {
     /**
      * aop映射
      */
-    private Map<Method, List<AspectAdvice>> aopMapping = new HashMap<>();
+    private Map<Method, List<AspectAdvice>> aopMapping = new ConcurrentHashMap<>();
 
     /**
      * 获取切面通知
@@ -66,15 +68,14 @@ public class AopContext {
      * @param advices 建议
      */
     public AopContext addMapping(Method method, Class<? extends AspectAdvice>... advices) {
-        List<AspectAdvice> list = new ArrayList<>();
+        List<AspectAdvice> list = this.aopMapping.get(method);
+        if (list == null) {
+            // 如果不存在，创建新的
+            list = new ArrayList<>();
+        }
         for (Class<? extends AspectAdvice> advice : advices) {
-            AspectAdvice aspectAdvice = null;
-            try {
-                aspectAdvice = advice.getConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException
-                    | InvocationTargetException | NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+            // 创建切面实例
+            AspectAdvice aspectAdvice = ReflectUtil.newInstance(advice);
             if (aspectAdvice != null) {
                 list.add(aspectAdvice);
             }
@@ -90,18 +91,14 @@ public class AopContext {
         if (classAop != null) {
             advices.addAll(Arrays.asList(classAop.value()));
         }
+        // 方法上的切面
         for (Method method : cls.getDeclaredMethods()) {
-            List<Class<? extends AspectAdvice>> methodAdvices = new ArrayList<>(advices);
-            Aop aop = method.getAnnotation(Aop.class);
+            Aop methodAop = method.getAnnotation(Aop.class);
             // 如果方法上有aop注解
-            if (aop != null) {
-                methodAdvices.addAll(Arrays.asList(aop.value()));
-                this.addMapping(method, methodAdvices.toArray(new Class[0]));
-            } else {
-                if (classAop != null) {
-                    this.addMapping(method, methodAdvices.toArray(new Class[0]));
-                }
+            if (methodAop != null) {
+                advices.addAll(Arrays.asList(methodAop.value()));
             }
+            this.addMapping(method, advices.toArray(new Class[0]));
         }
     }
 

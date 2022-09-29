@@ -1,10 +1,5 @@
 package top.huanyv.ioc.core;
 
-
-import top.huanyv.ioc.aop.Aop;
-
-import java.lang.reflect.Method;
-
 public class BeanDefinition {
     private String beanName;
     private Class<?> beanClass;
@@ -32,19 +27,5 @@ public class BeanDefinition {
     public void setBeanClass(Class<?> beanClass) {
         this.beanClass = beanClass;
     }
-
-    public boolean isNeedProxy() {
-        Class<?> beanClass = this.getBeanClass();
-        if (beanClass.isAnnotationPresent(Aop.class)) {
-            return true;
-        }
-        for (Method method : beanClass.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(Aop.class)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
 }

@@ -12,7 +12,9 @@ package top.huanyv.ioc.core;
  */
 public interface ApplicationContextWeave {
 
-    int getOrder();
+    default int getOrder() {
+        return 0;
+    }
 
     default void findBeanBefore(ApplicationContext applicationContext) {
 
