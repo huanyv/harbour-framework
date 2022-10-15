@@ -2,6 +2,7 @@ package top.huanyv.web.view;
 
 import top.huanyv.enums.MimeTypeEnum;
 import top.huanyv.utils.*;
+import top.huanyv.web.config.ResourceMappingRegistry;
 import top.huanyv.web.config.WebMvcGlobalConfig;
 
 import javax.servlet.ServletOutputStream;
@@ -19,17 +20,16 @@ import java.util.*;
  */
 public class ResourceHandler {
 
-    public static final String CLASSPATH_PREFIX = "classpath:";
-
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    private List<ResourceMapping> resourceMappings = new ArrayList<>();
+    private ResourceMappingRegistry resourceMappingRegistry;
 
-    // 默认的静态资源前缀
+    private ResourceHolder resourceHolder;
+
     public ResourceHandler() {
-        add("/**").addResourceLocations("classpath:static/");
+        resourceHolder = new ResourceHolderManager();
+        resourceMappingRegistry = new ResourceMappingRegistry();
     }
-
 
     /**
      * 从ServletContext中获取资源流
@@ -53,23 +53,15 @@ public class ResourceHandler {
      */
     public InputStream getInputStream(String uri) {
         InputStream inputStream = null;
-        for (ResourceMapping mapping : this.resourceMappings) {
+        List<ResourceMapping> resourceMappings = resourceMappingRegistry.getResourceMappings();
+        for (ResourceMapping mapping : resourceMappings) {
             String urlPattern = mapping.getUrlPattern();
             // 请求地址与pattern是否匹配
             if (pathMatcher.match(urlPattern, uri)) {
                 // 获取通配符处的path
                 String relativePath = pathMatcher.extractPathWithinPattern(urlPattern, uri);
                 for (String location : mapping.getLocations()) {
-                    if (location.startsWith(CLASSPATH_PREFIX)) {
-                        inputStream = ClassLoaderUtil
-                                .getInputStream(StringUtil.removePrefix(location, CLASSPATH_PREFIX) + relativePath);
-                    } else {
-                        try {
-                            inputStream = new FileInputStream(location + relativePath);
-                        } catch (FileNotFoundException e) {
-                            inputStream = null;
-                        }
-                    }
+                    inputStream = resourceHolder.getInputStream(location + relativePath);
                     if (inputStream != null) {
                         return inputStream;
                     }
@@ -79,79 +71,9 @@ public class ResourceHandler {
         return null;
     }
 
-    /**
-     * 是否存在这个资源
-     * @param req 请求对象
-     * @return bool
-     */
-    public boolean hasResource(HttpServletRequest req) {
-        return getInputStream(req) != null;
+    public void setResourceMappingRegistry(ResourceMappingRegistry resourceMappingRegistry) {
+        this.resourceMappingRegistry = resourceMappingRegistry;
+        resourceMappingRegistry.addResourceHandler("/**").addResourceLocations("classpath:static/");
     }
 
-    /**
-     * 添加一个资源映射
-     * @param urlPattern pattern地址
-     * @return mapping
-     */
-    public ResourceMapping add(String urlPattern) {
-        ResourceMapping resourceMapping = new ResourceMapping();
-        this.resourceMappings.add(resourceMapping);
-        resourceMapping.setUrlPattern(urlPattern);
-        return resourceMapping;
-    }
-
-    /**
-     * 获取一个资源映射, 如果不存在新建一个
-     * @return mapping
-     */
-    public ResourceMapping getMapping(String urlPattern) {
-        for (ResourceMapping mapping : this.resourceMappings) {
-            if (mapping.getUrlPattern().equals(urlPattern)) {
-                return mapping;
-            }
-        }
-        ResourceMapping resourceMapping = new ResourceMapping();
-        resourceMapping.setUrlPattern(urlPattern);
-        return resourceMapping;
-    }
-
-    /**
-     * 添加一个资源映射， 如果已经存在对应的地址pattern，追加
-     * @param mapping 映射对象
-     */
-    public void addMapping(ResourceMapping mapping) {
-        ResourceMapping resourceMapping = getMapping(mapping.getUrlPattern());
-        resourceMapping.addResourceLocations(mapping.getLocations().toArray(new String[0]));
-        this.resourceMappings.add(resourceMapping);
-    }
-
-    /**
-     * 批量添加多个资源映射
-     * @param resourceMappings list集合
-     */
-    public void addMappings(List<ResourceMapping> resourceMappings) {
-        for (ResourceMapping resourceMapping : resourceMappings) {
-            addMapping(resourceMapping);
-        }
-    }
-
-    public void handle(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-        // 获取资源后缀
-        String extension = StringUtil.getExtension(WebUtil.getRequestURI(req));
-        // 设置响应头
-        resp.setContentType(MimeTypeEnum.getContentType(extension));
-
-        InputStream inputStream = getInputStream(req);
-        ServletOutputStream outputStream = resp.getOutputStream();
-
-        IoUtil.copy(inputStream, outputStream);
-    }
-
-    @Override
-    public String toString() {
-        return "ResourceHandler{" +
-                "resourceMappings=" + resourceMappings +
-                '}';
-    }
 }

@@ -1,6 +1,7 @@
 package top.huanyv.web.servlet;
 
 import top.huanyv.ioc.utils.AopUtil;
+import top.huanyv.utils.IoUtil;
 import top.huanyv.utils.WebUtil;
 import top.huanyv.web.anno.*;
 import top.huanyv.web.core.HttpRequest;
@@ -12,8 +13,10 @@ import top.huanyv.web.exception.ExceptionHandler;
 import top.huanyv.web.guard.NavigationGuardChain;
 import top.huanyv.web.guard.NavigationGuardMapping;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -45,11 +48,16 @@ public class RouterServlet extends InitProxyRouterServlet {
         // 处理请求
         if (!this.requestRegistry.containsRequest(uri)) {
             // 处理静态资源
-            if (resourceHandler.hasResource(req)) {
-                resourceHandler.handle(req, resp);
-                return;
+            InputStream inputStream = resourceHandler.getInputStream(req);
+            if (inputStream != null) {
+                String mimeType = req.getServletContext().getMimeType(uri);
+                resp.setContentType(mimeType);
+                ServletOutputStream outputStream = resp.getOutputStream();
+                IoUtil.copy(inputStream, outputStream);
+            } else {
+                // 静态资源不存在
+                resp.sendError(404,"resources not found.");
             }
-            resp.sendError(404,"resources not found.");
             return;
         }
 
@@ -79,12 +87,13 @@ public class RouterServlet extends InitProxyRouterServlet {
     void doException(HttpRequest req, HttpResponse resp, Exception ex) {
         Method exceptionMethod = null;
         exceptionHandler = (ExceptionHandler) AopUtil.getTargetObject(exceptionHandler);
-        for (Method method : exceptionHandler.getClass().getDeclaredMethods()) {
+        point:for (Method method : exceptionHandler.getClass().getDeclaredMethods()) {
             ExceptionPoint exceptionPoint = method.getAnnotation(ExceptionPoint.class);
             if (exceptionPoint != null) {
                 for (Class<? extends Throwable> clazz : exceptionPoint.value()) {
                     if (clazz.isInstance(ex)) {
                         exceptionMethod = method;
+                        break point;
                     }
                 }
             }

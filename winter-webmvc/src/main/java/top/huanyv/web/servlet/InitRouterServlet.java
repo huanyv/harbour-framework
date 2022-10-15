@@ -98,7 +98,8 @@ public abstract class InitRouterServlet extends TemplateServlet {
         // 静态资源配置
         ResourceMappingRegistry resourceMappingRegistry = new ResourceMappingRegistry();
         webConfigurer.addResourceMapping(resourceMappingRegistry);
-        this.resourceHandler.addMappings(resourceMappingRegistry.getResourceMappings());
+//        this.resourceHandler.addMappings(resourceMappingRegistry.getResourceMappings());
+        this.resourceHandler.setResourceMappingRegistry(resourceMappingRegistry);
     }
 
     @Override
