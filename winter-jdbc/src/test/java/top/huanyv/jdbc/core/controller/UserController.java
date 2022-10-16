@@ -24,6 +24,7 @@ public class UserController {
 
         System.out.println("userService.getUserById(1) = " + userService.getUserById(1));
 
+        userService.getUsers().stream().forEach(System.out::println);
 
 //        System.out.println("userService.updateUsernameById(1, \"admin1\") = "
 //                + userService.updateUsernameById("admin", 1));

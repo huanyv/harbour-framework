@@ -5,6 +5,8 @@ import top.huanyv.ioc.anno.Inject;
 import top.huanyv.jdbc.core.entity.User;
 import top.huanyv.jdbc.core.dao.UserDao;
 
+import java.util.List;
+
 /**
  * @author admin
  * @date 2022/7/23 16:37
@@ -22,6 +24,10 @@ public class UserService {
 
     public int updateUsernameById(String username, Integer id) {
         return userDao.updateUsernameById(username, id);
+    }
+
+    public List<User> getUsers() {
+        return userDao.getUser();
     }
 
 }

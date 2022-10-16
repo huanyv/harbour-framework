@@ -15,8 +15,6 @@ public class QueryBuilder<T> {
     protected SqlBuilder<T> sqlBuilder;
     private QueryRunner queryRunner = new QueryRunner();
 
-    private SqlContext sqlContext = SqlContextFactory.getSqlContext();
-
     public QueryBuilder() {
         this.sqlBuilder = new SqlBuilder<>();
     }
@@ -93,6 +91,7 @@ public class QueryBuilder<T> {
      * @return 对象
      */
     public T selectRow() {
+        SqlContext sqlContext = SqlContextFactory.getSqlContext();
         return sqlContext.selectRow(this.sqlBuilder.tableClass, sql(), getArguments());
     }
 
@@ -101,6 +100,7 @@ public class QueryBuilder<T> {
      * @return list
      */
     public List<T> selectList() {
+        SqlContext sqlContext = SqlContextFactory.getSqlContext();
         return sqlContext.selectList(this.sqlBuilder.tableClass, sql(), getArguments());
     }
 
@@ -111,6 +111,7 @@ public class QueryBuilder<T> {
      * @return 数据
      */
     public <E> E selectOne(Class<E> clazz) {
+        SqlContext sqlContext = SqlContextFactory.getSqlContext();
         return (E) sqlContext.selectValue(sql(), getArguments());
     }
 
@@ -130,6 +131,7 @@ public class QueryBuilder<T> {
      */
     public Page<T> page(int pageNum, int pageSize) {
         Page<T> page = new Page<>();
+        SqlContext sqlContext = SqlContextFactory.getSqlContext();
 
 //        Long count = new Select("count(*)").from(this.sqlBuilder.tableClass).count();
         String tableName = getTableName();
@@ -174,8 +176,8 @@ public class QueryBuilder<T> {
      * @return 改动成功的条数，> 0 表示修改成功
      */
     public int update() {
+        SqlContext sqlContext = SqlContextFactory.getSqlContext();
         return sqlContext.update(sql(), getArguments());
     }
-
 
 }
