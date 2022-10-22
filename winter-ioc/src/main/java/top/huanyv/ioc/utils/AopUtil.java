@@ -25,15 +25,17 @@ public class AopUtil {
         } else if (ProxyUtil.isCglibPoxy(proxy)) {
             proxy = getCglibTargetObject(proxy);
         }
-
         return getTargetObject(proxy);
     }
 
     public static Object getJdkTargetObject(Object proxy) {
+        // 获取代理回调对象 JdkInvocationHandler<T> implements InvocationHandler
         InvocationHandler invocationHandler = Proxy.getInvocationHandler(proxy);
         try {
+            // 获取源对象属性
             Field field = invocationHandler.getClass().getDeclaredField("target");
             field.setAccessible(true);
+            // 源对象值
             return field.get(invocationHandler);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
@@ -43,11 +45,15 @@ public class AopUtil {
 
     public static Object getCglibTargetObject(Object proxy) {
         try {
+            // 获取代理回调对象属性 CglibInvocationHandler<T> implements MethodInterceptor
             Field field = proxy.getClass().getDeclaredField("CGLIB$CALLBACK_0");
             field.setAccessible(true);
+            // 获取代理回调对象属性值
             Object invokeHandler = field.get(proxy);
+            // 获取源对象
             Field targetField = invokeHandler.getClass().getDeclaredField("target");
             targetField.setAccessible(true);
+            // 源对象值
             return targetField.get(invokeHandler);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();

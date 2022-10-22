@@ -56,7 +56,9 @@ public class AopContext {
      */
     public boolean hasProxy(Class<?> cls) {
         for (Method method : cls.getDeclaredMethods()) {
-            return aopMapping.containsKey(method);
+            if (aopMapping.containsKey(method)) {
+                return true;
+            }
         }
         return false;
     }
@@ -85,20 +87,28 @@ public class AopContext {
     }
 
     public void add(Class<?> cls) {
-        List<Class<? extends AspectAdvice>> advices = new ArrayList<>();
+        List<Class<? extends AspectAdvice>> baseAdvices = null;
         // 如果类上有aop注解
         Aop classAop = cls.getAnnotation(Aop.class);
         if (classAop != null) {
-            advices.addAll(Arrays.asList(classAop.value()));
+            baseAdvices = Arrays.asList(classAop.value());
         }
         // 方法上的切面
+        List<Class<? extends AspectAdvice>> advices = new ArrayList<>();
         for (Method method : cls.getDeclaredMethods()) {
+            advices.clear();
+            if (baseAdvices != null) {
+                advices.addAll(baseAdvices);
+            }
+
             Aop methodAop = method.getAnnotation(Aop.class);
             // 如果方法上有aop注解
             if (methodAop != null) {
                 advices.addAll(Arrays.asList(methodAop.value()));
             }
-            this.addMapping(method, advices.toArray(new Class[0]));
+            if (classAop != null || methodAop != null) {
+                this.addMapping(method, advices.toArray(new Class[0]));
+            }
         }
     }
 

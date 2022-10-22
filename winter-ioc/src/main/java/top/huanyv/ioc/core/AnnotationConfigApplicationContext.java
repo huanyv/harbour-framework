@@ -6,9 +6,9 @@ import top.huanyv.ioc.aop.AopContext;
 import top.huanyv.ioc.aop.ProxyFactory;
 import top.huanyv.ioc.exception.BeanTypeNonUniqueException;
 import top.huanyv.utils.ClassUtil;
+import top.huanyv.utils.ReflectUtil;
 import top.huanyv.utils.StringUtil;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,37 +29,65 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     public AnnotationConfigApplicationContext(String... scanPackages) {
 
-        // 配置bean
-        configBean(scanPackages);
+        // 扫描配置类，注入方法Bean
+        findConfiguration(scanPackages);
 
         List<ApplicationContextWeave> weaves = getWeave();
 
         for (ApplicationContextWeave weave : weaves) {
-            weave.findBeanBefore(this);
+            weave.findConfigurationAfter(this);
         }
 
-        // 1、找到所有的原材料
-        findBeanDefinitions(scanPackages);
+        // 创建所有的组件Bean
+        createComponent(scanPackages);
 
         for (ApplicationContextWeave weave : weaves) {
-            weave.createBeanBefore(this);
+            weave.createComponentAfter(this);
         }
 
-        // 2、根据原材料创建bean实例,放到二级缓存中
-        createBean();
-
-        // 3、代理对要的bean代理
+        // 对需要代理的Bean进行代理
         proxyBean();
 
         for (ApplicationContextWeave weave : weaves) {
-            weave.injectBeanBefore(this);
+            weave.populateBeanBefore(this);
         }
 
-        // 4、bean注入属性
-        injectBean();
+        // Bean注入属性
+        populateBean();
 
         for (ApplicationContextWeave weave : weaves) {
-            weave.injectBeanAfter(this);
+            weave.populateBeanAfter(this);
+        }
+    }
+
+    /**
+     * 配置bean
+     *
+     * @param basePack 扫描包
+     */
+    private void findConfiguration(String... basePack) {
+        Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(Configuration.class, basePack);
+        // 遍历配置类
+        for (Class<?> clazz : classes) {
+            try {
+                // 创建配置类实例，要执行里面的方法获取bean实例
+                Object configBean = clazz.getConstructor().newInstance();
+                // 遍历类中的方法，哪个方法有@Bean注解
+                Method[] methods = clazz.getDeclaredMethods();
+                for (Method method : methods) {
+                    method.setAccessible(true);
+                    if (method.isAnnotationPresent(Bean.class)) {
+                        String beanName = method.getName();
+                        Object beanInstance = method.invoke(configBean);
+                        this.earlyBeans.put(beanName, beanInstance);
+
+                        this.beanDefinitionRegistry.register(beanName, new BeanDefinition(beanName, beanInstance.getClass()));
+                    }
+                }
+            } catch (InstantiationException | IllegalAccessException
+                    | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -78,7 +106,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         }
 
         // 添加所有的配置织入
-        for (Map.Entry<String, Object> entry : this.beanPool.entrySet()) {
+        for (Map.Entry<String, Object> entry : this.earlyBeans.entrySet()) {
             Object value = entry.getValue();
             if (value instanceof ApplicationContextWeave) {
                 weaveList.add((ApplicationContextWeave) value);
@@ -86,14 +114,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         }
 
         // 排序
-        weaveList.sort((o1, o2) -> {
-            Order o2Order = o2.getClass().getAnnotation(Order.class);
-            Order o1Order = o1.getClass().getAnnotation(Order.class);
-            if (o2Order != null && o1Order != null) {
-                return o1Order.value() - o2Order.value();
-            }
-            return o1.getOrder() - o2.getOrder();
-        });
+        weaveList.sort((o1, o2) -> o1.getOrder() - o2.getOrder());
         return weaveList;
     }
 
@@ -102,7 +123,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
      *
      * @param basePack 基本包
      */
-    private void findBeanDefinitions(String... basePack) {
+    private void createComponent(String... basePack) {
         //获取basePack包下所有的class类
         Set<Class<?>> classes = ClassUtil.getClasses(basePack);
         for (Class<?> clazz : classes) {
@@ -113,25 +134,10 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
                     beanName = StringUtil.firstLetterLower(clazz.getSimpleName());
                 }
                 beanDefinitionRegistry.register(beanName, new BeanDefinition(beanName, clazz));
-                aopContext.add(clazz);
-            }
-        }
-    }
-
-    /**
-     * 创建bean实例
-     */
-    private void createBean() {
-        for (String beanDefinitionName : beanDefinitionRegistry.getBeanDefinitionNames()) {
-            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
-            try {
-                Constructor<?> constructor = beanDefinition.getBeanClass().getConstructor();
-                constructor.setAccessible(true);
-                Object instance = constructor.newInstance();
-                this.earlyBeans.put(beanDefinition.getBeanName(), instance);
-            } catch (NoSuchMethodException | IllegalAccessException
-                    | InstantiationException | InvocationTargetException e) {
-                e.printStackTrace();
+//                aopContext.add(clazz);
+                // 创建组件实例
+                Object instance = ReflectUtil.newInstance(clazz);
+                this.earlyBeans.put(beanName, instance);
             }
         }
     }
@@ -140,46 +146,18 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
      * 代理bean
      */
     private void proxyBean() {
-        for (String beanDefinitionName : beanDefinitionRegistry.getBeanDefinitionNames()) {
-            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
-            String beanName = beanDefinition.getBeanName();
-            Object bean = this.earlyBeans.get(beanName);
+        for (Map.Entry<String, Object> beanEntry : this.earlyBeans.entrySet()) {
+            String beanName = beanEntry.getKey();
+            Object beanInstance = beanEntry.getValue();
+            Class<?> beanClass = beanInstance.getClass();
             // 是否需要代理
-            if (AopContext.isNeedProxy(beanDefinition.getBeanClass())) {
-                // 代理注入
-                Object proxy = ProxyFactory.getProxy(bean, aopContext);
-                this.beanPool.put(beanName, proxy);
+            if (AopContext.isNeedProxy(beanClass)) {
+                // 代理对象放到 bean 池中
+                this.beanPool.put(beanName, ProxyFactory.getProxy(beanInstance, aopContext));
+                aopContext.add(beanClass);
             } else {
-                this.beanPool.put(beanName, bean);
-            }
-        }
-    }
-
-    /**
-     * 配置bean
-     *
-     * @param basePack 扫描包
-     */
-    private void configBean(String... basePack) {
-        Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(Configuration.class, basePack);
-        // 遍历配置类
-        for (Class<?> clazz : classes) {
-            try {
-                // 创建配置类实例，要执行里面的方法获取bean实例
-                Object configBean = clazz.getConstructor().newInstance();
-                // 遍历类中的方法，哪个方法有@Bean注解
-                Method[] methods = clazz.getDeclaredMethods();
-                for (Method method : methods) {
-                    method.setAccessible(true);
-                    if (method.isAnnotationPresent(Bean.class)) {
-                        String beanName = method.getName();
-                        Object beanInstance = method.invoke(configBean);
-                        this.beanPool.put(beanName, beanInstance);
-                    }
-                }
-            } catch (InstantiationException | IllegalAccessException
-                    | InvocationTargetException | NoSuchMethodException e) {
-                e.printStackTrace();
+                // 不需要代理的对象
+                this.beanPool.put(beanName, beanInstance);
             }
         }
     }
@@ -187,29 +165,26 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     /**
      * 注入Bean
      */
-    private void injectBean() {
-        for (String beanDefinitionName : beanDefinitionRegistry.getBeanDefinitionNames()) {
-            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
-            String beanName = beanDefinition.getBeanName();
-            Class<?> beanClass = beanDefinition.getBeanClass();
-            // 从源bean中获取注入，因为 BeanPool 中有代理类
-            Object instance = this.earlyBeans.get(beanName);
-            // 遍历属性
+    private void populateBean() {
+        // 给bean原实例填充
+        for (Map.Entry<String, Object> beanEntry : this.earlyBeans.entrySet()) {
+            Object beanInstance = beanEntry.getValue();
+            Class<?> beanClass = beanInstance.getClass();
             for (Field field : beanClass.getDeclaredFields()) {
                 field.setAccessible(true);
                 Inject inject = field.getAnnotation(Inject.class);
-                Object val = null;
                 if (inject != null) {
                     String injectName = inject.value();
+                    Object val = null;
+                    // 名称注入
                     if (StringUtil.hasText(injectName)) {
-                        // 名称注入
                         val = getBean(injectName);
                     } else {
                         // 类型注入
                         val = getBean(field.getType());
                     }
                     try {
-                        field.set(instance, val);
+                        field.set(beanInstance, val);
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -218,16 +193,23 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         }
     }
 
-
     @Override
-    public void register(Object o) {
-        String beanName = StringUtil.firstLetterLower(o.getClass().getSimpleName());
-        register(beanName, o);
+    public void registerBean(Object bean) {
+        String beanName = StringUtil.firstLetterLower(bean.getClass().getSimpleName());
+        registerBean(beanName, bean);
     }
 
     @Override
-    public void register(String beanName, Object o) {
-        this.beanPool.put(beanName, o);
+    public void registerBean(String beanName, Object beanInstance) {
+        this.earlyBeans.put(beanName, beanInstance);
+        Class<?> beanClass = beanInstance.getClass();
+        beanDefinitionRegistry.register(beanName, new BeanDefinition(beanName, beanClass));
+        // 是否需要代理
+        if (AopContext.isNeedProxy(beanClass)) {
+            this.beanPool.put(beanName, ProxyFactory.getProxy(beanInstance, aopContext));
+        } else {
+            this.beanPool.put(beanName, beanInstance);
+        }
     }
 
 
@@ -252,17 +234,17 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     }
 
     @Override
-    public <T> T getBean(Class<T> clazz) {
+    public <T> T getBean(Class<T> type) throws BeanTypeNonUniqueException {
         T result = null;
         int count = 0;
         for (Map.Entry<String, Object> entry : this.beanPool.entrySet()) {
-            Object instance = entry.getValue();
-            if (clazz.isInstance(instance)) {
+            Object beanInstance = entry.getValue();
+            if (type.isInstance(beanInstance)) {
                 count++;
                 if (count > 1) {
-                    throw new BeanTypeNonUniqueException(clazz);
+                    throw new BeanTypeNonUniqueException(type);
                 }
-                result = (T) instance;
+                result = (T) beanInstance;
             }
         }
         return result;

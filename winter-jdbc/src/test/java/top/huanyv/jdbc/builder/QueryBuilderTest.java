@@ -17,7 +17,7 @@ public class QueryBuilderTest extends TestCase {
         System.out.println(user);
         List<User> users = new Select().from(User.class).selectList();
         System.out.println("users = " + users);
-        Long count = new Select("count(*)").from(User.class).selectOne(Long.class);
+        Long count = new Select("count(*)").from(User.class).selectValue(Long.class);
         System.out.println("count = " + count);
     }
 

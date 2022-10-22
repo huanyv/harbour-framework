@@ -49,14 +49,14 @@ public class SqlContext {
         try {
             conn = getConnection();
             return queryRunner.query(conn, sql, new BeanListHandler<T>(type), args);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             if (isAutoClose && conn != null) {
                 try {
                     conn.close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -68,14 +68,14 @@ public class SqlContext {
         try {
             conn = getConnection();
             return queryRunner.query(conn, sql, new BeanHandler<T>(type), args);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             if (isAutoClose && conn != null) {
                 try {
                     conn.close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -87,14 +87,14 @@ public class SqlContext {
         try {
             conn = getConnection();
             return queryRunner.query(conn, sql, new ScalarHandler<>(), args);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             if (isAutoClose && conn != null) {
                 try {
                     conn.close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -106,14 +106,14 @@ public class SqlContext {
         try {
             conn = getConnection();
             return queryRunner.update(conn, sql, args);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             if (isAutoClose && conn != null) {
                 try {
                     conn.close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -130,8 +130,8 @@ public class SqlContext {
             // 确保连接不为null
             getConnection();
             this.connection.setAutoCommit(false);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -141,8 +141,8 @@ public class SqlContext {
     public void commit() {
         try {
             this.connection.commit();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -152,8 +152,8 @@ public class SqlContext {
     public void rollback() {
         try {
             this.connection.rollback();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

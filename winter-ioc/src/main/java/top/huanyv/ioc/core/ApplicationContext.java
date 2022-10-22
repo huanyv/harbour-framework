@@ -9,9 +9,9 @@ import java.util.Set;
  */
 public interface ApplicationContext extends BeanFactory{
 
-    void register(Object o);
+    void registerBean(Object o);
 
-    void register(String beanName, Object o);
+    void registerBean(String beanName, Object o);
 
     String[] getBeanDefinitionNames();
 

@@ -1,6 +1,5 @@
 package top.huanyv.jdbc.builder;
 
-import org.apache.commons.dbutils.QueryRunner;
 import top.huanyv.jdbc.core.Page;
 import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.SqlContextFactory;
@@ -13,7 +12,6 @@ import java.util.List;
  */
 public class QueryBuilder<T> {
     protected SqlBuilder<T> sqlBuilder;
-    private QueryRunner queryRunner = new QueryRunner();
 
     public QueryBuilder() {
         this.sqlBuilder = new SqlBuilder<>();
@@ -38,7 +36,7 @@ public class QueryBuilder<T> {
      * @return this
      */
     public QueryBuilder<T> append(String sql, Object... args) {
-        append(sql);
+        this.sqlBuilder.append(sql);
         setArguments(args);
         return this;
     }
@@ -110,7 +108,7 @@ public class QueryBuilder<T> {
      * @param <E> 数据类型
      * @return 数据
      */
-    public <E> E selectOne(Class<E> clazz) {
+    public <E> E selectValue(Class<E> clazz) {
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         return (E) sqlContext.selectValue(sql(), getArguments());
     }
@@ -120,7 +118,7 @@ public class QueryBuilder<T> {
      * @return long
      */
     public Long count() {
-        return selectOne(Long.class);
+        return selectValue(Long.class);
     }
 
     /**
@@ -130,44 +128,15 @@ public class QueryBuilder<T> {
      * @return page对象
      */
     public Page<T> page(int pageNum, int pageSize) {
-        Page<T> page = new Page<>();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
-
-//        Long count = new Select("count(*)").from(this.sqlBuilder.tableClass).count();
         String tableName = getTableName();
-
         Long count = (Long) sqlContext.selectValue("select count(*) from " + tableName);
 
-        int pages = (int) (count / pageSize);
-        if (count % pageSize > 0) {
-            pages++;
-        }
-        int prePage = pageNum - 1;
-        int nextPage = pageNum + 1;
-        if (pageNum < 1) {
-            pageNum = 1;
-            prePage = 1;
-            nextPage = pageNum + 1;
-        } else if (pageNum > pages) {
-            pageNum = pages;
-            nextPage = pages;
-            prePage = pageNum - 1;
-        }
-        page.setPageNum(pageNum);
-        page.setPageSize(pageSize);
-        page.setTotal(count);
-        page.setPages(pages);
-        page.setPrePage(prePage);
-        page.setNextPage(nextPage);
-
+        Page<T> page = new Page<>(pageNum, pageSize, count);
         int start = (pageNum - 1) * pageSize;
-        int len = pageSize;
-
-        List<T> data = append("limit").append(String.valueOf(start)).append(",").append(String.valueOf(len)).selectList();
-
+        List<T> data = append("limit").append(String.valueOf(start)).append(",").append(String.valueOf(pageSize)).selectList();
         page.setData(data);
         page.setSize(data.size());
-
         return page;
     }
 

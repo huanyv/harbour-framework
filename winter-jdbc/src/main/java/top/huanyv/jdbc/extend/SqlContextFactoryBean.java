@@ -29,7 +29,7 @@ public class SqlContextFactoryBean implements ApplicationContextWeave {
     }
 
     @Override
-    public void injectBeanBefore(ApplicationContext applicationContext) {
+    public void populateBeanBefore(ApplicationContext applicationContext) {
         if (configLocation != null) {
             InputStream inputStream = ClassLoaderUtil.getInputStream(configLocation);
             // 加载配置
@@ -41,7 +41,8 @@ public class SqlContextFactoryBean implements ApplicationContextWeave {
         for (Map.Entry<String, Object> entry : sqlContext.getDaos().entrySet()) {
             String beanName = entry.getKey();
             Object beanInstance = entry.getValue();
-            applicationContext.register(beanName, beanInstance);
+            applicationContext.registerBean(beanName, beanInstance);
         }
     }
+
 }

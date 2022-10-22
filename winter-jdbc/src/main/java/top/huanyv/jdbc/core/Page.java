@@ -16,6 +16,30 @@ public class Page<T> {
     private int nextPage; // 下一页
     private List<T> data; // 数据
 
+    public Page(int pageNum, int pageSize, long total) {
+        int pages = (int) (total / pageSize);
+        if (total % pageSize > 0) {
+            pages++;
+        }
+        int prePage = pageNum - 1;
+        int nextPage = pageNum + 1;
+        if (pageNum < 1) {
+            pageNum = 1;
+            prePage = 1;
+            nextPage = pageNum + 1;
+        } else if (pageNum > pages) {
+            pageNum = pages;
+            nextPage = pages;
+            prePage = pageNum - 1;
+        }
+        this.setPageNum(pageNum);
+        this.setPageSize(pageSize);
+        this.setTotal(total);
+        this.setPages(pages);
+        this.setPrePage(prePage);
+        this.setNextPage(nextPage);
+    }
+
     public int getPageNum() {
         return pageNum;
     }

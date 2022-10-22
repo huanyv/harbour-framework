@@ -7,9 +7,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import top.huanyv.ioc.anno.Bean;
 import top.huanyv.ioc.anno.Component;
 import top.huanyv.ioc.anno.Configuration;
-import top.huanyv.jdbc.core.MapperScanner;
 import top.huanyv.jdbc.extend.SimpleDataSource;
-import top.huanyv.jdbc.extend.SqlSessionFactoryBean;
 import top.huanyv.utils.PropertiesUtil;
 import top.huanyv.web.config.WebConfigurer;
 import top.huanyv.web.view.ThymeleafViewResolver;
@@ -50,18 +48,6 @@ public class WebConfig implements WebConfigurer {
         simpleDataSource.setPassword("2233");
         simpleDataSource.setDriverClassName(Driver.class.getName());
         return simpleDataSource;
-    }
-
-//    @Bean
-    public MapperScanner mapperScanner () {
-        MapperScanner mapperScanner = new MapperScanner();
-        mapperScanner.setScanPack("org.example");
-        return mapperScanner;
-    }
-
-//    @Bean
-    public SqlSessionFactoryBean mapperRegister() {
-        return new SqlSessionFactoryBean();
     }
 
 }
