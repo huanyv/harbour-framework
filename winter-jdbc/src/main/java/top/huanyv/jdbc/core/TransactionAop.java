@@ -4,6 +4,9 @@ import top.huanyv.ioc.aop.AspectAdvice;
 import top.huanyv.ioc.aop.JoinPoint;
 import top.huanyv.utils.ClassUtil;
 import top.huanyv.utils.NumberUtil;
+import top.huanyv.utils.ReflectUtil;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * 事务管理器
@@ -27,6 +30,7 @@ public class TransactionAop implements AspectAdvice {
         } catch (Exception e) {
             // 事务回滚
             sqlContext.rollback();
+
             // 处理事务返回值
             Class<?> returnType = point.getMethod().getReturnType();
             // 如果是数字类型
@@ -40,7 +44,11 @@ public class TransactionAop implements AspectAdvice {
                 result = null;
             }
 
-            e.printStackTrace();
+            Exception targetException = e;
+            if (e instanceof InvocationTargetException) {
+                targetException = ReflectUtil.getTargetException((InvocationTargetException) e);
+            }
+            targetException.printStackTrace();
         } finally {
             return result;
         }

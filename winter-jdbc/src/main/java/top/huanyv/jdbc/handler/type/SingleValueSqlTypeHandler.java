@@ -8,22 +8,20 @@ import java.lang.reflect.Method;
  * @author huanyv
  * @date 2022/10/15 20:42
  */
-public class SingleValueSqlTypeHandler extends AbstractSqlTypeHandler{
+public class SingleValueSqlTypeHandler implements SqlTypeHandler {
 
-    public SingleValueSqlTypeHandler(String sql, Object[] args, Method method) {
-        super(sql, args, method);
+
+    @Override
+    public Object handle(String sql, Object[] args, Method method) {
+        return SqlContextFactory.getSqlContext().selectValue(sql, args);
     }
 
     @Override
-    public boolean isType() {
+    public boolean isType(Method method) {
         Class<?> returnType = method.getReturnType();
         return Number.class.isAssignableFrom(returnType)
                 || String.class.equals(returnType)
                 || (returnType.isPrimitive() && !returnType.equals(void.class));
     }
 
-    @Override
-    public Object handle() {
-        return SqlContextFactory.getSqlContext().selectValue(sql, args);
-    }
 }

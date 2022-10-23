@@ -10,20 +10,16 @@ import java.util.List;
  * @author huanyv
  * @date 2022/10/15 20:34
  */
-public class ListSqlTypeHandler extends AbstractSqlTypeHandler{
-
-    public ListSqlTypeHandler(String sql, Object[] args, Method method) {
-        super(sql, args, method);
-    }
+public class ListSqlTypeHandler implements SqlTypeHandler {
 
     @Override
-    public Object handle() {
+    public Object handle(String sql, Object[] args, Method method) {
         Class<?> type = (Class) MethodUtil.getMethodReturnGenerics(method)[0];
-        return SqlContextFactory.getSqlContext().selectList(type, this.sql, this.args);
+        return SqlContextFactory.getSqlContext().selectList(type, sql, args);
     }
 
     @Override
-    public boolean isType() {
+    public boolean isType(Method method) {
         return List.class.isAssignableFrom(method.getReturnType());
     }
 }

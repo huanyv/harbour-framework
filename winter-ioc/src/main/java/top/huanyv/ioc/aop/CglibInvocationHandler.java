@@ -17,6 +17,8 @@ public class CglibInvocationHandler<T> extends AbstractInvocationHandler<T> impl
 
     public CglibInvocationHandler(T target, AopContext aopContext) {
         super(target, aopContext);
+        this.target = target;
+        this.aopContext = aopContext;
     }
 
     @Override

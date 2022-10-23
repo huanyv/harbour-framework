@@ -4,8 +4,8 @@ import top.huanyv.jdbc.anno.Delete;
 import top.huanyv.jdbc.anno.Insert;
 import top.huanyv.jdbc.anno.Select;
 import top.huanyv.jdbc.anno.Update;
-import top.huanyv.jdbc.handler.type.AbstractSqlTypeHandler;
-import top.huanyv.jdbc.handler.type.SqlTypeHandlerManager;
+import top.huanyv.jdbc.handler.type.SqlTypeHandler;
+import top.huanyv.jdbc.handler.type.SqlTypeHandlerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -45,8 +45,8 @@ public class DaoProxyHandler implements InvocationHandler {
 
     public Object doSelect(Method method, Object[] args) throws SQLException {
         String sql = method.getAnnotation(Select.class).value();
-        AbstractSqlTypeHandler typeHandler = new SqlTypeHandlerManager(sql, args, method);
-        return typeHandler.handle();
+        SqlTypeHandler sqlTypeHandler = SqlTypeHandlerFactory.getSqlTypeHandler(method);
+        return sqlTypeHandler.handle(sql, args, method);
     }
 
     public int doUpdate(String sql, Method method, Object[] args) throws SQLException {

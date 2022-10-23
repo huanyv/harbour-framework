@@ -11,20 +11,17 @@ import java.lang.reflect.Method;
  * @author huanyv
  * @date 2022/10/15 20:45
  */
-public class CustomSqlTypeHandler extends AbstractSqlTypeHandler{
+public class CustomSqlTypeHandler implements SqlTypeHandler{
 
-    public CustomSqlTypeHandler(String sql, Object[] args, Method method) {
-        super(sql, args, method);
+    @Override
+    public Object handle(String sql, Object[] args, Method method) {
+        return SqlContextFactory.getSqlContext().selectRow(method.getReturnType(), sql, args);
     }
 
     @Override
-    public boolean isType() {
+    public boolean isType(Method method) {
         Class<?> returnType = method.getReturnType();
         return ClassUtil.isCustomClass(returnType);
     }
 
-    @Override
-    public Object handle() {
-        return SqlContextFactory.getSqlContext().selectRow(method.getReturnType(), sql, args);
-    }
 }

@@ -16,6 +16,8 @@ public class JdkInvocationHandler<T> extends AbstractInvocationHandler<T> implem
 
     public JdkInvocationHandler(T target, AopContext aopContext) {
         super(target, aopContext);
+        this.target = target;
+        this.aopContext = aopContext;
     }
 
     @Override
