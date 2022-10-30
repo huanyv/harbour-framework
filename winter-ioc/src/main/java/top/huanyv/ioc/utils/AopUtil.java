@@ -20,12 +20,20 @@ public class AopUtil {
         if (!ProxyUtil.isProxyClass(proxy.getClass())) {
             return proxy;
         }
+
+        Object target = null;
         if (ProxyUtil.isJdkProxy(proxy)) {
-            proxy = getJdkTargetObject(proxy);
+            target = getJdkTargetObject(proxy);
         } else if (ProxyUtil.isCglibPoxy(proxy)) {
-            proxy = getCglibTargetObject(proxy);
+            target = getCglibTargetObject(proxy);
         }
-        return getTargetObject(proxy);
+
+        // 不是AOP代理类
+        if (target == null) {
+            return proxy;
+        }
+
+        return getTargetObject(target);
     }
 
     public static Object getJdkTargetObject(Object proxy) {
@@ -33,12 +41,11 @@ public class AopUtil {
         InvocationHandler invocationHandler = Proxy.getInvocationHandler(proxy);
         try {
             // 获取源对象属性
-            Field field = invocationHandler.getClass().getDeclaredField("target");
-            field.setAccessible(true);
+            Field targetField = invocationHandler.getClass().getDeclaredField("target");
+            targetField.setAccessible(true);
             // 源对象值
-            return field.get(invocationHandler);
+            return targetField.get(invocationHandler);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -56,10 +63,8 @@ public class AopUtil {
             // 源对象值
             return targetField.get(invokeHandler);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
         }
         return null;
     }
-
 
 }
