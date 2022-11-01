@@ -9,8 +9,8 @@ public class Delete extends QueryBuilder{
         super(new SqlBuilder());
         append("delete");
     }
-    public From from(Class<?> table) {
+    public <T> From<T> from(Class<T> table) {
         this.sqlBuilder.setTableClass(table);
-        return new From(this.sqlBuilder);
+        return new From<T>(this.sqlBuilder);
     }
 }

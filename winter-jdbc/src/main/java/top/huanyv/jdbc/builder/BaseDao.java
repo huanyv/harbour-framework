@@ -36,7 +36,8 @@ public interface BaseDao<T> {
         Assert.notNull(beanType, "BaseDao not set <generic>!");
 
         String tableId = BaseDaoUtil.getTableId(beanType);
-        Object o = new Select().from(beanType).where().append(tableId + " = ?", id).selectRow();
+        Object o = new Select().from(beanType).where(condition -> condition.append(tableId + " = ?", id))
+                .selectRow();
         return (T) o;
     }
 

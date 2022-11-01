@@ -13,7 +13,9 @@ public class QueryBuilderTest extends TestCase {
     public void testSelectOne() {
         InputStream inputStream = ClassLoaderUtil.getInputStream("jdbc.properties");
 //        SqlSession sqlSession = SqlSessionFactory.openSession(inputStream);
-        User user = new Select().from(User.class).where().and("uid = ?", 1).selectRow();
+        User user = new Select().from(User.class).where(q -> q.and("uid = ?", 1))
+//                .and("uid = ?", 1)
+                .selectRow();
         System.out.println(user);
         List<User> users = new Select().from(User.class).selectList();
         System.out.println("users = " + users);

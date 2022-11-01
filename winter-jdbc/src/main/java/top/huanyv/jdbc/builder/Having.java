@@ -6,55 +6,14 @@ package top.huanyv.jdbc.builder;
  */
 public class Having<T> extends QueryBuilder<T>{
 
-    public Having(SqlBuilder<T> sqlBuilder) {
+    public Having(SqlBuilder<T> sqlBuilder, ConditionBuilder conditionBuilder) {
         super(sqlBuilder);
-        append("having");
-    }
-
-    public Having<T> append(String sql, Object... args) {
-        append(sql);
-        setArguments(args);
-        return this;
-    }
-
-    public Having<T> and(String sql, Object... args) {
-        if (!endKeyWord().equalsIgnoreCase("having")) {
-            append("and");
+        if (!conditionBuilder.isEmpty()) {
+            append("having");
+            append(conditionBuilder.toString());
+            setArguments(conditionBuilder.getArgs());
         }
-        setArguments(args);
-        append(sql);
-        return this;
     }
-
-    public Having<T> or(String sql, Object... args) {
-        if (!endKeyWord().equalsIgnoreCase("having")) {
-            append("or");
-        }
-        setArguments(args);
-        append(sql);
-        return this;
-    }
-
-    public Having<T> append(boolean condition, String sql, Object... args) {
-        if (condition) {
-            append(sql, args);
-        }
-        return this;
-    }
-    public Having<T> and(boolean condition, String sql, Object... args) {
-        if (condition) {
-            and(sql, args);
-        }
-        return this;
-    }
-
-    public Having or(boolean condition, String sql, Object... args) {
-        if (condition) {
-            or(sql, args);
-        }
-        return this;
-    }
-
 
     public OrderBy orderBy() {
         return new OrderBy(this.sqlBuilder);

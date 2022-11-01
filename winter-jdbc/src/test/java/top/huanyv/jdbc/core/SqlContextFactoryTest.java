@@ -1,6 +1,7 @@
 package top.huanyv.jdbc.core;
 
 import junit.framework.TestCase;
+import top.huanyv.jdbc.builder.ConditionBuilder;
 import top.huanyv.jdbc.builder.Delete;
 import top.huanyv.jdbc.builder.Select;
 import top.huanyv.jdbc.builder.Update;
@@ -10,6 +11,7 @@ import top.huanyv.jdbc.core.entity.User;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SqlContextFactoryTest extends TestCase {
 
@@ -59,13 +61,16 @@ public class SqlContextFactoryTest extends TestCase {
 
             int update = new Update(User.class)
                     .append("username = ?", "lisi2233")
-                    .where().append("uid = ?", 7)
+                    .where(q -> q.append("uid = ?", 7))
+//                    .append("uid = ?", 7)
                     .update();
             System.out.println("update = " + update);
 
 //            int i = 10 / 0;
 
-            int delete = new Delete().from(User.class).where().append("uid = ?", 12).update();
+            int delete = new Delete().from(User.class).where(conditionBuilder -> conditionBuilder.and("uid = ?", 12))
+//                    .append("uid = ?", 12)
+                    .update();
             System.out.println("delete = " + delete);
 
             sqlContext.commit();

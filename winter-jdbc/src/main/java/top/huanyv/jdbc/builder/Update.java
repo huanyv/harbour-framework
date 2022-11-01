@@ -1,5 +1,7 @@
 package top.huanyv.jdbc.builder;
 
+import java.util.function.Consumer;
+
 /**
  * @author admin
  * @date 2022/8/2 17:36
@@ -10,8 +12,6 @@ public class Update extends QueryBuilder {
         this.sqlBuilder.setTableClass(table);
         append("update").append(getTableName()).append("set");
     }
-
-
 
     public Update append(String sql, Object... args) {
         if (!endKeyWord().equalsIgnoreCase("set")) {
@@ -29,8 +29,9 @@ public class Update extends QueryBuilder {
         return this;
     }
 
-
-    public Where where() {
-        return new Where(this.sqlBuilder);
+    public Where where(Consumer<ConditionBuilder> consumer) {
+        ConditionBuilder conditionBuilder = new ConditionBuilder();
+        consumer.accept(conditionBuilder);
+        return new Where<>(this.sqlBuilder, conditionBuilder);
     }
 }
