@@ -3,7 +3,6 @@ package top.huanyv.jdbc.core;
 
 import org.junit.Test;
 import top.huanyv.jdbc.core.entity.User;
-import top.huanyv.jdbc.dao.UserDao;
 import top.huanyv.jdbc.dao.UserDaoImpl;
 
 import java.io.InputStream;

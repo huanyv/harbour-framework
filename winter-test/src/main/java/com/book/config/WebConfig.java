@@ -6,7 +6,7 @@ import top.huanyv.ioc.anno.Bean;
 import top.huanyv.ioc.anno.Component;
 import top.huanyv.ioc.anno.Configuration;
 import top.huanyv.jdbc.core.JdbcConfigurer;
-import top.huanyv.jdbc.extend.SimpleDataSource;
+import top.huanyv.jdbc.core.datasource.SimpleDataSource;
 import top.huanyv.jdbc.extend.SqlContextFactoryBean;
 import top.huanyv.web.config.CorsRegistry;
 import top.huanyv.web.config.ResourceMappingRegistry;

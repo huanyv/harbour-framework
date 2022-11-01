@@ -1,4 +1,4 @@
-package top.huanyv.jdbc.extend;
+package top.huanyv.jdbc.core.datasource;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -11,15 +11,18 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
- * @author admin
- * @date 2022/7/21 17:51
+ * @author huanyv
+ * @date 2022/10/11 19:14
  */
+
 public class SimpleDataSource implements DataSource {
 
     private String driverClassName;
     private String url;
     private String username;
     private String password;
+
+    private ConnectionPool connectionPool;
 
     public SimpleDataSource() {
     }
@@ -32,17 +35,23 @@ public class SimpleDataSource implements DataSource {
         String url = (String) map.get("url");
         String username = (String) map.get("username");
         String password = (String) map.get("password");
+
         SimpleDataSource dataSource = new SimpleDataSource();
         dataSource.setDriverClassName(driverClassName);
         dataSource.setUrl(url);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
+
+        dataSource.setConnectionPool(new ConnectionPool(url, username, password));
         return dataSource;
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, this.username, this.password);
+        if (connectionPool == null) {
+            connectionPool = new ConnectionPool(this.url, this.username, this.password);
+        }
+        return connectionPool.getConnection();
     }
 
     @Override
@@ -85,16 +94,25 @@ public class SimpleDataSource implements DataSource {
         return null;
     }
 
-    public String getDriverClassName() {
-        return driverClassName;
-    }
-
-    public void setDriverClassName(String driverClassName) {
+    /**
+     * 加载数据库驱动程序
+     *
+     * @param driverClassName 驱动程序类名称
+     */
+    public void loadDriver(String driverClassName) {
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getDriverClassName() {
+        return driverClassName;
+    }
+
+    public void setDriverClassName(String driverClassName) {
+        loadDriver(driverClassName);
         this.driverClassName = driverClassName;
     }
 
@@ -120,5 +138,13 @@ public class SimpleDataSource implements DataSource {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public ConnectionPool getConnectionPool() {
+        return connectionPool;
+    }
+
+    public void setConnectionPool(ConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
     }
 }

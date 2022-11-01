@@ -1,21 +1,9 @@
 package top.huanyv.jdbc.builder;
 
-import com.mysql.jdbc.Driver;
 import junit.framework.TestCase;
 import top.huanyv.jdbc.core.entity.User;
-import top.huanyv.jdbc.extend.SimpleDataSource;
-import top.huanyv.utils.ClassLoaderUtil;
-import top.huanyv.utils.IoUtil;
-import top.huanyv.utils.ResourceUtil;
 
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Properties;
 
 public class SelectTest extends TestCase {
 

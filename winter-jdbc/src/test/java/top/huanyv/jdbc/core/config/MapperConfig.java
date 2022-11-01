@@ -4,12 +4,7 @@ import com.mysql.jdbc.Driver;
 import top.huanyv.ioc.anno.Bean;
 import top.huanyv.ioc.anno.Configuration;
 import top.huanyv.jdbc.core.JdbcConfigurer;
-import top.huanyv.jdbc.extend.SimpleDataSource;
 import top.huanyv.jdbc.extend.SqlContextFactoryBean;
-
-import javax.sql.DataSource;
-import java.io.InputStream;
-import java.util.Properties;
 
 /**
  * @author admin

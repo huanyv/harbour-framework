@@ -1,17 +1,14 @@
 package top.huanyv.jdbc.core;
-import java.io.PrintWriter;
 
 import com.mysql.jdbc.Driver;
 import junit.framework.TestCase;
+import top.huanyv.jdbc.core.datasource.SimpleDataSource;
 import top.huanyv.jdbc.core.entity.Menu;
 import top.huanyv.jdbc.core.entity.User;
-import top.huanyv.jdbc.extend.SimpleDataSource;
 import top.huanyv.jdbc.handler.*;
-import top.huanyv.utils.StringUtil;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;

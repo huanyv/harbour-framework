@@ -3,7 +3,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import top.huanyv.jdbc.extend.SimpleDataSource;
+import top.huanyv.jdbc.core.datasource.ConnectionPool;
+import top.huanyv.jdbc.core.datasource.SimpleDataSource;
 import top.huanyv.utils.Assert;
 
 import javax.sql.DataSource;

@@ -4,6 +4,7 @@ import top.huanyv.jdbc.anno.Delete;
 import top.huanyv.jdbc.anno.Dao;
 import top.huanyv.jdbc.anno.Select;
 import top.huanyv.jdbc.anno.Update;
+import top.huanyv.jdbc.builder.BaseDao;
 import top.huanyv.jdbc.core.entity.User;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * @date 2022/7/21 17:09
  */
 @Dao
-public interface UserDao {
+public interface UserDao extends BaseDao<User> {
 
     @Select("select * from user where uid = ?")
     User getUserById(Integer id);
