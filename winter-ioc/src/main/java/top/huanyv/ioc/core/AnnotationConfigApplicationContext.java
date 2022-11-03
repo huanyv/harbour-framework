@@ -4,7 +4,13 @@ package top.huanyv.ioc.core;
 import top.huanyv.ioc.anno.*;
 import top.huanyv.ioc.aop.AopContext;
 import top.huanyv.ioc.aop.ProxyFactory;
+import top.huanyv.ioc.core.definition.BeanDefinition;
+import top.huanyv.ioc.core.definition.ClassBeanDefinition;
+import top.huanyv.ioc.core.definition.FactoryBeanDefinition;
+import top.huanyv.ioc.exception.BeanCurrentlyInCreationException;
 import top.huanyv.ioc.exception.BeanTypeNonUniqueException;
+import top.huanyv.ioc.exception.NoSuchBeanDefinitionException;
+import top.huanyv.utils.Assert;
 import top.huanyv.utils.ClassUtil;
 import top.huanyv.utils.ReflectUtil;
 import top.huanyv.utils.StringUtil;
@@ -14,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 public class AnnotationConfigApplicationContext implements ApplicationContext {
 
@@ -27,22 +34,21 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     // 二级缓存，创建的bean实例放到这个map中，然后再判断代理不代理放到一级缓存中
     private Map<String, Object> earlyBeans = new ConcurrentHashMap<>();
 
+    // 当前正在加载的 Bean ，避免循环依赖
+    private Map<String, Object> currentBeans = new ConcurrentHashMap<>();
+
     public AnnotationConfigApplicationContext(String... scanPackages) {
 
-        // 扫描配置类，注入方法Bean
-        findConfiguration(scanPackages);
+        // 加载所有的 BeanDefinition
+        beanDefinitionRegistry.loadBeanDefinition(scanPackages);
+
+        // 创建 Bean 实例
+        createBeanInstance();
 
         List<ApplicationContextWeave> weaves = getWeave();
 
         for (ApplicationContextWeave weave : weaves) {
-            weave.findConfigurationAfter(this);
-        }
-
-        // 创建所有的组件Bean
-        createComponent(scanPackages);
-
-        for (ApplicationContextWeave weave : weaves) {
-            weave.createComponentAfter(this);
+            weave.createBeanInstanceAfter(this);
         }
 
         // 对需要代理的Bean进行代理
@@ -61,35 +67,20 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     }
 
     /**
-     * 配置bean
-     *
-     * @param basePack 扫描包
+     * 创建bean实例
      */
-    private void findConfiguration(String... basePack) {
-        Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(Configuration.class, basePack);
-        // 遍历配置类
-        for (Class<?> clazz : classes) {
-            try {
-                // 创建配置类实例，要执行里面的方法获取bean实例
-                Object configBean = clazz.getConstructor().newInstance();
-                // 遍历类中的方法，哪个方法有@Bean注解
-                Method[] methods = clazz.getDeclaredMethods();
-                for (Method method : methods) {
-                    method.setAccessible(true);
-                    if (method.isAnnotationPresent(Bean.class)) {
-                        String beanName = method.getName();
-                        Object beanInstance = method.invoke(configBean);
-                        this.earlyBeans.put(beanName, beanInstance);
-
-                        this.beanDefinitionRegistry.register(beanName, new BeanDefinition(beanName, beanInstance.getClass()));
-                    }
-                }
-            } catch (InstantiationException | IllegalAccessException
-                    | InvocationTargetException | NoSuchMethodException e) {
-                e.printStackTrace();
+    private void createBeanInstance() {
+        for (String beanDefinitionName : beanDefinitionRegistry.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
+            // 创建单例实例
+            if (BeanDefinition.SCOPE_SINGLETON.equals(beanDefinition.getScope())
+                    && !this.earlyBeans.containsKey(beanDefinitionName)) {
+                Object beanInstance = beanDefinition.newInstance();
+                this.earlyBeans.put(beanDefinitionName, beanInstance);
             }
         }
     }
+
 
     /**
      * 获取所有织入类，并实例化，
@@ -118,29 +109,6 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         return weaveList;
     }
 
-    /**
-     * 找到所有的Bean定义
-     *
-     * @param basePack 基本包
-     */
-    private void createComponent(String... basePack) {
-        //获取basePack包下所有的class类
-        Set<Class<?>> classes = ClassUtil.getClasses(basePack);
-        for (Class<?> clazz : classes) {
-            Component component = clazz.getAnnotation(Component.class);
-            if (component != null) {
-                String beanName = component.value();
-                if (!StringUtil.hasText(beanName)) {
-                    beanName = StringUtil.firstLetterLower(clazz.getSimpleName());
-                }
-                beanDefinitionRegistry.register(beanName, new BeanDefinition(beanName, clazz));
-//                aopContext.add(clazz);
-                // 创建组件实例
-                Object instance = ReflectUtil.newInstance(clazz);
-                this.earlyBeans.put(beanName, instance);
-            }
-        }
-    }
 
     /**
      * 代理bean
@@ -168,50 +136,69 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     private void populateBean() {
         // 给bean原实例填充
         for (Map.Entry<String, Object> beanEntry : this.earlyBeans.entrySet()) {
-            Object beanInstance = beanEntry.getValue();
-            Class<?> beanClass = beanInstance.getClass();
-            for (Field field : beanClass.getDeclaredFields()) {
-                field.setAccessible(true);
-                Inject inject = field.getAnnotation(Inject.class);
-                if (inject != null) {
-                    String injectName = inject.value();
-                    Object val = null;
-                    // 名称注入
-                    if (StringUtil.hasText(injectName)) {
-                        val = getBean(injectName);
-                    } else {
-                        // 类型注入
-                        val = getBean(field.getType());
-                    }
-                    try {
-                        field.set(beanInstance, val);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
+            populateBean(beanEntry.getValue());
+        }
+    }
+
+    /**
+     * 注入一个bean
+     * @param bean Bean实例
+     */
+    public void populateBean(Object bean) {
+        Class<?> beanClass = bean.getClass();
+        for (Field field : beanClass.getDeclaredFields()) {
+            field.setAccessible(true);
+            Inject inject = field.getAnnotation(Inject.class);
+            if (inject != null) {
+                String injectName = inject.value();
+                Object val = null;
+                // 名称注入
+                if (StringUtil.hasText(injectName)) {
+                    val = getBean(injectName);
+                } else {
+                    // 类型注入
+                    val = getBean(field.getType());
+                }
+                try {
+                    field.set(bean, val);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
                 }
             }
         }
     }
 
+
     @Override
-    public void registerBean(Object bean) {
-        String beanName = StringUtil.firstLetterLower(bean.getClass().getSimpleName());
-        registerBean(beanName, bean);
+    public void refresh() {
+        createBeanInstance();
+
+        proxyBean();
+
+        populateBean();
     }
 
     @Override
-    public void registerBean(String beanName, Object beanInstance) {
-        this.earlyBeans.put(beanName, beanInstance);
-        Class<?> beanClass = beanInstance.getClass();
-        beanDefinitionRegistry.register(beanName, new BeanDefinition(beanName, beanClass));
-        // 是否需要代理
-        if (AopContext.isNeedProxy(beanClass)) {
-            this.beanPool.put(beanName, ProxyFactory.getProxy(beanInstance, aopContext));
-        } else {
-            this.beanPool.put(beanName, beanInstance);
+    public void register(Class<?>... componentClasses) {
+        for (Class<?> cls : componentClasses) {
+            register(cls);
         }
     }
 
+    @Override
+    public void register(Class<?> beanClass, Object... constructorArgs) {
+        this.register(StringUtil.firstLetterLower(beanClass.getSimpleName()), beanClass, constructorArgs);
+    }
+
+    @Override
+    public void register(String beanName, Class<?> beanClass, Object... constructorArgs) {
+        this.beanDefinitionRegistry.register(beanName, beanClass, constructorArgs);
+    }
+
+    @Override
+    public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
+        this.beanDefinitionRegistry.register(beanName, beanDefinition);
+    }
 
     @Override
     public String[] getBeanDefinitionNames() {
@@ -230,24 +217,46 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     @Override
     public Object getBean(String beanName) {
+        BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+        if (beanDefinition == null) {
+            throw new NoSuchBeanDefinitionException("No bean named '" + beanName + "' available");
+        }
+
+        // 多实例Bean
+        if (BeanDefinition.SCOPE_PROTOTYPE.equals(beanDefinition.getScope())) {
+            // 判断Bean是否在创建中
+            if (this.currentBeans.containsKey(beanName)) {
+                throw new BeanCurrentlyInCreationException(beanName);
+            }
+            Object beanInstance = beanDefinition.newInstance();
+
+            this.currentBeans.put(beanName, beanInstance);
+
+            // 对Bean进行填充
+            populateBean(beanInstance);
+
+            this.currentBeans.remove(beanName);
+
+            // 是否需要代理
+            if (AopContext.isNeedProxy(beanDefinition.getBeanClass())) {
+                beanInstance = ProxyFactory.getProxy(beanInstance, aopContext);
+                aopContext.add(beanDefinition.getBeanClass());
+            }
+
+            return beanInstance;
+        }
+
+        // 单例Bean
         return this.beanPool.get(beanName);
     }
 
     @Override
     public <T> T getBean(Class<T> type) throws BeanTypeNonUniqueException {
-        T result = null;
-        int count = 0;
-        for (Map.Entry<String, Object> entry : this.beanPool.entrySet()) {
-            Object beanInstance = entry.getValue();
-            if (type.isInstance(beanInstance)) {
-                count++;
-                if (count > 1) {
-                    throw new BeanTypeNonUniqueException(type);
-                }
-                result = (T) beanInstance;
-            }
+        String beanName = beanDefinitionRegistry.getBeanName(type);
+        if (beanName == null) {
+            throw new NoSuchBeanDefinitionException("No qualifying bean of type '" + type.getName() + "' available");
         }
-        return result;
+        return (T) getBean(beanName);
     }
 
     @Override

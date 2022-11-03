@@ -1,22 +1,26 @@
 package top.huanyv.ioc.core;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
+import top.huanyv.ioc.core.definition.BeanDefinition;
 
 /**
  * @author admin
  * @date 2022/7/24 15:06
  */
-public interface ApplicationContext extends BeanFactory{
+public interface ApplicationContext extends BeanFactory {
 
-    void registerBean(Object o);
+    void refresh();
 
-    void registerBean(String beanName, Object o);
+    void register(Class<?>... componentClass);
+
+    void register(Class<?> beanClass, Object... constructorArgs);
+
+    void register(String beanName, Class<?> beanClass, Object... constructorArgs);
+
+    void registerBeanDefinition(String beanName, BeanDefinition beanDefinition);
 
     String[] getBeanDefinitionNames();
 
     int getBeanDefinitionCount();
 
     BeanDefinition getBeanDefinition(String beanName);
-
 }

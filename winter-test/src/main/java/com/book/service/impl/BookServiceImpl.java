@@ -17,7 +17,7 @@ public class BookServiceImpl implements BookService {
     @Inject
     private BookMapper bookMapper;
 
-    @Inject
+//    @Inject
     private DataSource dataSource;
 
     @Override

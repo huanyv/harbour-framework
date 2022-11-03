@@ -4,7 +4,9 @@ import top.huanyv.core.test.controller.UserController;
 import top.huanyv.core.test.service.UserService;
 import top.huanyv.ioc.anno.Bean;
 import top.huanyv.ioc.anno.Configuration;
+import top.huanyv.ioc.anno.Scope;
 import top.huanyv.ioc.core.ApplicationContextWeave;
+import top.huanyv.ioc.core.definition.BeanDefinition;
 
 /**
  * @author huanyv
@@ -18,7 +20,8 @@ public class CustomConfig {
         return new Weave();
     }
 
-    @Bean
+//    @Bean
+//    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public UserController userController() {
         return new UserController();
     }

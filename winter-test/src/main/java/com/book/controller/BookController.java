@@ -6,7 +6,9 @@ import com.book.pojo.ResponseResult;
 import com.book.service.BookService;
 import top.huanyv.ioc.anno.Component;
 import top.huanyv.ioc.anno.Inject;
+import top.huanyv.ioc.anno.Scope;
 import top.huanyv.ioc.aop.Aop;
+import top.huanyv.ioc.core.definition.BeanDefinition;
 import top.huanyv.jdbc.core.Page;
 import top.huanyv.jdbc.core.TransactionAop;
 import top.huanyv.utils.JsonUtil;
@@ -20,6 +22,7 @@ import java.io.IOException;
 @Component
 @Route("/admin/book")
 @Aop(LogAop.class)
+//@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class BookController {
 
     @Inject
