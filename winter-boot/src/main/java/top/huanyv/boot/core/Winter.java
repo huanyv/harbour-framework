@@ -117,6 +117,7 @@ public class Winter implements Routing {
         RouterServlet routerServlet = new RouterServlet();
         Wrapper router = this.tomcat.addServlet(this.context, WebMvcGlobalConfig.ROUTER_SERVLET_NAME, routerServlet);
         router.addMapping("/");
+        router.setLoadOnStartup(1);
 
         // 获取banner
         String banner = ResourceUtil.readStr(BANNER_FILE_NAME, DEFAULT_BANNER);

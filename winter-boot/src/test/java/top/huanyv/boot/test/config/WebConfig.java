@@ -7,7 +7,6 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import top.huanyv.ioc.anno.Bean;
 import top.huanyv.ioc.anno.Component;
 import top.huanyv.ioc.anno.Configuration;
-import top.huanyv.jdbc.extend.SimpleDataSource;
 import top.huanyv.utils.PropertiesUtil;
 import top.huanyv.web.config.WebConfigurer;
 import top.huanyv.web.view.ThymeleafViewResolver;
@@ -41,13 +40,13 @@ public class WebConfig implements WebConfigurer {
     }
 
 //    @Bean
-    public DataSource dataSource() {
-        SimpleDataSource simpleDataSource = new SimpleDataSource();
-        simpleDataSource.setUrl("jdbc:mysql://localhost:3306/temp?useSSL=false");
-        simpleDataSource.setUsername("root");
-        simpleDataSource.setPassword("2233");
-        simpleDataSource.setDriverClassName(Driver.class.getName());
-        return simpleDataSource;
-    }
+//    public DataSource dataSource() {
+//        SimpleDataSource simpleDataSource = new SimpleDataSource();
+//        simpleDataSource.setUrl("jdbc:mysql://localhost:3306/temp?useSSL=false");
+//        simpleDataSource.setUsername("root");
+//        simpleDataSource.setPassword("2233");
+//        simpleDataSource.setDriverClassName(Driver.class.getName());
+//        return simpleDataSource;
+//    }
 
 }

@@ -8,4 +8,5 @@ import top.huanyv.jdbc.anno.Dao;
  */
 @Dao
 public interface BookDao {
+
 }

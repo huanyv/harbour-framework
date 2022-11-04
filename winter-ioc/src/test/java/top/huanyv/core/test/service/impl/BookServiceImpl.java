@@ -12,7 +12,7 @@ import top.huanyv.ioc.core.definition.BeanDefinition;
  * @author huanyv
  * @date 2022/11/3 10:02
  */
-@Component
+@Component("bookService")
 //@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class BookServiceImpl implements BookService {
 

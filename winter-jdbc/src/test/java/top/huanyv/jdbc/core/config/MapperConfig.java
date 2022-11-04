@@ -4,7 +4,8 @@ import com.mysql.jdbc.Driver;
 import top.huanyv.ioc.anno.Bean;
 import top.huanyv.ioc.anno.Configuration;
 import top.huanyv.jdbc.core.JdbcConfigurer;
-import top.huanyv.jdbc.extend.SqlContextFactoryBean;
+import top.huanyv.jdbc.support.DaoScanner;
+import top.huanyv.jdbc.support.SqlContextFactoryBean;
 
 /**
  * @author admin
@@ -26,7 +27,7 @@ public class MapperConfig {
 //    }
 
     @Bean
-    public SqlContextFactoryBean sqlSessionFactoryBean() throws Exception {
+    public DaoScanner daoScanner() throws Exception {
         // 类配置
         JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
         jdbcConfigurer.setDriverClassName(Driver.class.getName());
@@ -35,10 +36,9 @@ public class MapperConfig {
         jdbcConfigurer.setPassword("2233");
         jdbcConfigurer.setScanPackages("com.huanyv.jdbc.core");
 
-        SqlContextFactoryBean sqlSessionFactoryBean = new SqlContextFactoryBean();
         // 文件配置
 //        sqlSessionFactoryBean.setConfigLocation("jdbc.properties");
-        return sqlSessionFactoryBean;
+        return new DaoScanner();
     }
 
 }

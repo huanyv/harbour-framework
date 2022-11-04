@@ -12,7 +12,7 @@ import top.huanyv.ioc.core.definition.BeanDefinition;
  * @author huanyv
  * @date 2022/10/20 21:02
  */
-@Component
+@Component("userService")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UserServiceImpl implements UserService {
 

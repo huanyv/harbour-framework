@@ -1,13 +1,14 @@
 package com.book.config;
 
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.mysql.jdbc.Driver;
 import top.huanyv.ioc.anno.Bean;
 import top.huanyv.ioc.anno.Component;
 import top.huanyv.ioc.anno.Configuration;
 import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.jdbc.core.datasource.SimpleDataSource;
-import top.huanyv.jdbc.extend.SqlContextFactoryBean;
+import top.huanyv.jdbc.support.DaoScanner;
 import top.huanyv.web.config.CorsRegistry;
 import top.huanyv.web.config.ResourceMappingRegistry;
 import top.huanyv.web.config.ViewControllerRegistry;
@@ -45,10 +46,33 @@ public class WebConfig implements WebConfigurer {
     }
 
 
+//    @Bean
+//    public SqlContextFactoryBean sqlContextFactoryBean() {
+//        // 加载配置
+//        JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
+//
+//        SimpleDataSource simpleDataSource = new SimpleDataSource();
+//        simpleDataSource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
+//        simpleDataSource.setDriverClassName(Driver.class.getName());
+//        simpleDataSource.setUsername("root");
+//        simpleDataSource.setPassword("2233");
+//
+//        jdbcConfigurer.setDataSource(simpleDataSource);
+//        jdbcConfigurer.setScanPackages("com.book");
+//
+//        return new SqlContextFactoryBean();
+//    }
+
     @Bean
-    public SqlContextFactoryBean sqlContextFactoryBean() {
+    public DaoScanner daoScanner() {
         // 加载配置
         JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
+
+        DruidDataSource druidDataSource = new DruidDataSource();
+        druidDataSource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
+        druidDataSource.setDriverClassName(Driver.class.getName());
+        druidDataSource.setUsername("root");
+        druidDataSource.setPassword("2233");
 
         SimpleDataSource simpleDataSource = new SimpleDataSource();
         simpleDataSource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
@@ -56,10 +80,9 @@ public class WebConfig implements WebConfigurer {
         simpleDataSource.setUsername("root");
         simpleDataSource.setPassword("2233");
 
-        jdbcConfigurer.setDataSource(simpleDataSource);
+        jdbcConfigurer.setDataSource(druidDataSource);
         jdbcConfigurer.setScanPackages("com.book");
 
-        return new SqlContextFactoryBean();
+        return new DaoScanner();
     }
-
 }

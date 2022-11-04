@@ -16,20 +16,13 @@ public class FactoryBeanDefinition implements BeanDefinition {
 
     private String scope;
 
-    private ClassBeanDefinition classBeanDefinition;
-
     private FactoryBean<?> factoryInstance;
 
-    public FactoryBeanDefinition(Class<?> factoryClass, Object... constructorArgs) {
-        this(new ClassBeanDefinition(factoryClass, constructorArgs));
-    }
-
-    public FactoryBeanDefinition(ClassBeanDefinition classBeanDefinition) {
-        this.classBeanDefinition = classBeanDefinition;
-        this.factoryInstance = (FactoryBean<?>) this.classBeanDefinition.newInstance();
+    public FactoryBeanDefinition(FactoryBean<?> factoryBeanInstance) {
+        this.factoryInstance = factoryBeanInstance;
+        this.beanName = StringUtil.firstLetterLower(this.factoryInstance.getClass().getSimpleName());
         this.beanClass = this.factoryInstance.getObjectType();
         this.scope = this.factoryInstance.isSingleton() ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE;
-        this.beanName = this.classBeanDefinition.getBeanName();
     }
 
     @Override

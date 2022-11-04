@@ -5,22 +5,14 @@ import top.huanyv.ioc.anno.*;
 import top.huanyv.ioc.aop.AopContext;
 import top.huanyv.ioc.aop.ProxyFactory;
 import top.huanyv.ioc.core.definition.BeanDefinition;
-import top.huanyv.ioc.core.definition.ClassBeanDefinition;
-import top.huanyv.ioc.core.definition.FactoryBeanDefinition;
 import top.huanyv.ioc.exception.BeanCurrentlyInCreationException;
 import top.huanyv.ioc.exception.BeanTypeNonUniqueException;
 import top.huanyv.ioc.exception.NoSuchBeanDefinitionException;
-import top.huanyv.utils.Assert;
-import top.huanyv.utils.ClassUtil;
-import top.huanyv.utils.ReflectUtil;
 import top.huanyv.utils.StringUtil;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 public class AnnotationConfigApplicationContext implements ApplicationContext {
 
@@ -118,14 +110,16 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
             String beanName = beanEntry.getKey();
             Object beanInstance = beanEntry.getValue();
             Class<?> beanClass = beanInstance.getClass();
-            // 是否需要代理
-            if (AopContext.isNeedProxy(beanClass)) {
-                // 代理对象放到 bean 池中
-                this.beanPool.put(beanName, ProxyFactory.getProxy(beanInstance, aopContext));
-                aopContext.add(beanClass);
-            } else {
-                // 不需要代理的对象
-                this.beanPool.put(beanName, beanInstance);
+            if (!this.beanPool.containsKey(beanName)) {
+                // 是否需要代理
+                if (AopContext.isNeedProxy(beanClass)) {
+                    // 代理对象放到 bean 池中
+                    this.beanPool.put(beanName, ProxyFactory.getProxy(beanInstance, aopContext));
+                    aopContext.add(beanClass);
+                } else {
+                    // 不需要代理的对象
+                    this.beanPool.put(beanName, beanInstance);
+                }
             }
         }
     }
@@ -144,7 +138,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
      * 注入一个bean
      * @param bean Bean实例
      */
-    public void populateBean(Object bean) {
+    private void populateBean(Object bean) {
         Class<?> beanClass = bean.getClass();
         for (Field field : beanClass.getDeclaredFields()) {
             field.setAccessible(true);
@@ -181,17 +175,17 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     @Override
     public void register(Class<?>... componentClasses) {
         for (Class<?> cls : componentClasses) {
-            register(cls);
+            registerBean(cls);
         }
     }
 
     @Override
-    public void register(Class<?> beanClass, Object... constructorArgs) {
-        this.register(StringUtil.firstLetterLower(beanClass.getSimpleName()), beanClass, constructorArgs);
+    public void registerBean(Class<?> beanClass, Object... constructorArgs) {
+        this.registerBean(StringUtil.firstLetterLower(beanClass.getSimpleName()), beanClass, constructorArgs);
     }
 
     @Override
-    public void register(String beanName, Class<?> beanClass, Object... constructorArgs) {
+    public void registerBean(String beanName, Class<?> beanClass, Object... constructorArgs) {
         this.beanDefinitionRegistry.register(beanName, beanClass, constructorArgs);
     }
 
@@ -266,7 +260,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     @Override
     public boolean containsBean(String name) {
-        return this.beanPool.containsKey(name);
+        return beanDefinitionRegistry.containsBeanDefinition(name);
     }
 }
 

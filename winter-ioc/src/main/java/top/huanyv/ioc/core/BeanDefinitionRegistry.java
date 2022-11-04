@@ -53,16 +53,16 @@ public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
 
     public void register(String beanName, Class<?> cls, Object... constructorArgs) {
         // 组件Bean
-        ClassBeanDefinition beanDefinition = new ClassBeanDefinition(cls, constructorArgs);
-        beanName = StringUtil.hasText(beanName) ? beanName : beanDefinition.getBeanName();
+        ClassBeanDefinition classBeanDefinition = new ClassBeanDefinition(cls, constructorArgs);
+        beanName = StringUtil.hasText(beanName) ? beanName : classBeanDefinition.getBeanName();
         if (FactoryBean.class.isAssignableFrom(cls)) {
             // 工厂Bean注册
-            BeanDefinition factoryBeanDefinition = new FactoryBeanDefinition(beanDefinition);
+            BeanDefinition factoryBeanDefinition = new FactoryBeanDefinition((FactoryBean<?>) classBeanDefinition.newInstance());
             this.beanDefinitionMap.put(beanName, factoryBeanDefinition);
 
             beanName = "&" + beanName;
         }
-        this.beanDefinitionMap.put(beanName, beanDefinition);
+        this.beanDefinitionMap.put(beanName, classBeanDefinition);
     }
 
     public void register(BeanDefinition beanDefinition) {
@@ -115,6 +115,10 @@ public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
             }
         }
         return beanName;
+    }
+
+    public boolean containsBeanDefinition(String beanName) {
+        return this.beanDefinitionMap.containsKey(beanName);
     }
 
     @Override

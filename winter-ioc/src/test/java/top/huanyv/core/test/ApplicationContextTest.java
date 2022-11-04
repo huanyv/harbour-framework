@@ -38,7 +38,7 @@ public class ApplicationContextTest {
 
         System.out.println("app.getBeanDefinitionNames() = " + Arrays.toString(app.getBeanDefinitionNames()));
 
-        app.register(UserFactory.class, "lisi");
+        app.registerBean(UserFactory.class, "lisi");
         app.refresh();
 
         System.out.println("app.getBeanDefinitionNames() = " + Arrays.toString(app.getBeanDefinitionNames()));

@@ -9,7 +9,6 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author huanyv
@@ -27,14 +26,8 @@ public class SqlContext {
     // 是否自动关闭连接，事务开启后会 false
     private boolean isAutoClose = true;
 
-    // Dao接口扫描器
-    private DaoScanner daoScanner;
-
     public SqlContext() {
         this.dataSource = config.getDataSource();
-        String scanPackages = config.getScanPackages();
-        // 扫描包
-        daoScanner = new DaoScanner(scanPackages);
     }
 
     public <T> List<T> selectList(Class<T> type, String sql, Object... args) {
@@ -157,17 +150,8 @@ public class SqlContext {
      * @return 代理
      */
     public <T> T getDao(Class<T> type) {
-        return daoScanner.getDao(type);
+        return ProxyFactory.getImpl(type, new DaoProxyHandler());
     }
-
-    /**
-     * 获取所有的dao 实例
-     * @return map key为name, value为dao对象
-     */
-    public Map<String, Object> getDaos() {
-        return daoScanner.getDaos();
-    }
-
 
     /**
      * 获得连接

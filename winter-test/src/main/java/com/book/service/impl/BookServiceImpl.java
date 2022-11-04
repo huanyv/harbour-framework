@@ -33,7 +33,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Aop(TransactionAop.class)
+//    @Aop(TransactionAop.class)
     public int updateBook(Book book) {
 //         事务测试
 //        bookMapper.updateBook(book.getBname(), book.getAuthor(), book.getPubcomp(), book.getPubdate(), book.getBcount(), book.getPrice(), book.getId());
@@ -45,7 +45,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Aop(TransactionAop.class)
+//    @Aop(TransactionAop.class)
     public int deleteBookById(Integer id) {
 //        bookMapper.deleteBookById(id);
 //        int i = 10 / 0;

@@ -1,7 +1,6 @@
 package top.huanyv.web.servlet;
 
 import top.huanyv.ioc.core.ApplicationContext;
-import top.huanyv.ioc.core.BeanDefinition;
 import top.huanyv.ioc.utils.AopUtil;
 import top.huanyv.ioc.utils.BeanFactoryUtil;
 import top.huanyv.web.anno.*;

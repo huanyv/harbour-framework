@@ -19,7 +19,7 @@ import top.huanyv.ioc.core.definition.BeanDefinition;
 //@Scope("prototype")
 public class UserController {
 
-    @Inject
+    @Inject("userService")
     private UserService userService;
 
     public void getUser() {

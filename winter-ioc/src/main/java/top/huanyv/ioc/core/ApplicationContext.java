@@ -12,9 +12,9 @@ public interface ApplicationContext extends BeanFactory {
 
     void register(Class<?>... componentClass);
 
-    void register(Class<?> beanClass, Object... constructorArgs);
+    void registerBean(Class<?> beanClass, Object... constructorArgs);
 
-    void register(String beanName, Class<?> beanClass, Object... constructorArgs);
+    void registerBean(String beanName, Class<?> beanClass, Object... constructorArgs);
 
     void registerBeanDefinition(String beanName, BeanDefinition beanDefinition);
 

@@ -3,6 +3,7 @@ package top.huanyv.jdbc.builder;
 import javafx.util.Builder;
 import junit.framework.TestCase;
 import top.huanyv.jdbc.core.entity.User;
+import top.huanyv.utils.StringUtil;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -22,20 +23,14 @@ public class SelectTest extends TestCase {
 
     }
 
-
-
-    ThreadLocal<String> stringThreadLocal = new ThreadLocal<>();
-
     public void test03() {
-        stringThreadLocal.set("123");
-        System.out.println("main = " + stringThreadLocal.get());
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-//                stringThreadLocal.set("abd");
-                System.out.println("thread = " + stringThreadLocal.get());
-            }
-        }).start();
+        Limit<User> sql = new Select().from(User.class)
+                .where(condition -> condition
+                        .append(StringUtil.hasText(""), "username = ?", "zhangsan")
+                        .and(StringUtil.hasText(""), "password = ?", "1234556"))
+                .orderBy().asc("age")
+                .limit(1, 5);
+        System.out.println("sql.sql() = " + sql.sql());
+        System.out.println("sql.getArguments() = " + Arrays.toString(sql.getArguments()));
     }
 }
