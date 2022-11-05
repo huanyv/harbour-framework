@@ -210,7 +210,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     }
 
     @Override
-    public Object getBean(String beanName) {
+    public synchronized Object getBean(String beanName) throws RuntimeException {
         BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
         if (beanDefinition == null) {
             throw new NoSuchBeanDefinitionException("No bean named '" + beanName + "' available");
@@ -245,7 +245,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     }
 
     @Override
-    public <T> T getBean(Class<T> type) throws BeanTypeNonUniqueException {
+    public <T> T getBean(Class<T> type) throws NoSuchBeanDefinitionException {
         String beanName = beanDefinitionRegistry.getBeanName(type);
         if (beanName == null) {
             throw new NoSuchBeanDefinitionException("No qualifying bean of type '" + type.getName() + "' available");

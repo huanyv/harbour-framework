@@ -17,6 +17,10 @@ public class AopContext {
      */
     private Map<Method, List<AspectAdvice>> aopMapping = new ConcurrentHashMap<>();
 
+    // 已经添加过代理映射的缓存，防止重复添加
+    private static final Object OBJECT = new Object();
+    private Map<String, Object> adviceCache = new ConcurrentHashMap<>();
+
     /**
      * 获取切面通知
      *
@@ -87,6 +91,9 @@ public class AopContext {
     }
 
     public void add(Class<?> cls) {
+        if (this.adviceCache.containsKey(cls.getName())) {
+            return;
+        }
         List<Class<? extends AspectAdvice>> baseAdvices = null;
         // 如果类上有aop注解
         Aop classAop = cls.getAnnotation(Aop.class);
@@ -110,6 +117,7 @@ public class AopContext {
                 this.addMapping(method, advices.toArray(new Class[0]));
             }
         }
+        this.adviceCache.put(cls.getName(), OBJECT);
     }
 
     /**

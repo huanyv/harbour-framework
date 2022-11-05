@@ -22,12 +22,13 @@ import java.util.Properties;
 
 import static top.huanyv.boot.config.BootGlobalConfig.*;
 
-public class Winter implements Routing {
+public class Winter implements Routing, WebServer {
 
     /**
      * 单例
      */
     private Winter() { }
+
     private static class SingleHolder {
         private static final Winter INSTANCE = new Winter();
     }
@@ -110,13 +111,15 @@ public class Winter implements Routing {
 
         // 注册
         String scanPackages = mainClass.getPackage().getName() + ", top.huanyv.boot";
-        this.context.addParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES, scanPackages);
-        this.context.addApplicationListener(WebApplicationListener.class.getName());
+//        this.context.addParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES, scanPackages);
+//        this.context.addApplicationListener(WebApplicationListener.class.getName());
 
         // 请求注册到tomcat容器中
         RouterServlet routerServlet = new RouterServlet();
         Wrapper router = this.tomcat.addServlet(this.context, WebMvcGlobalConfig.ROUTER_SERVLET_NAME, routerServlet);
         router.addMapping("/");
+        // 扫描包
+        router.addInitParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES, scanPackages);
         router.setLoadOnStartup(1);
 
         // 获取banner
@@ -130,11 +133,16 @@ public class Winter implements Routing {
             this.tomcat.getServer().await();
         } catch (LifecycleException e) {
             e.printStackTrace();
-            try {
-                this.tomcat.stop();
-            } catch (LifecycleException lifecycleException) {
-                lifecycleException.printStackTrace();
-            }
+            stop();
+        }
+    }
+
+    @Override
+    public void stop() {
+        try {
+            this.tomcat.stop();
+        } catch (LifecycleException e) {
+            e.printStackTrace();
         }
     }
 

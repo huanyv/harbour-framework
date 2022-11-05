@@ -1,6 +1,7 @@
 package top.huanyv.web.servlet;
 
 import top.huanyv.ioc.core.ApplicationContext;
+import top.huanyv.ioc.exception.NoSuchBeanDefinitionException;
 import top.huanyv.ioc.utils.AopUtil;
 import top.huanyv.ioc.utils.BeanFactoryUtil;
 import top.huanyv.web.anno.*;
@@ -79,9 +80,10 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
     @Override
     void initExceptionHandler(ApplicationContext applicationContext) {
         // 从容器中找到异常处理器
-        this.exceptionHandler = applicationContext.getBean(ExceptionHandler.class);
-        // 如果容器中没有，使用默认的
-        if (this.exceptionHandler == null) {
+        try {
+            this.exceptionHandler = applicationContext.getBean(ExceptionHandler.class);
+        } catch (NoSuchBeanDefinitionException e) {
+            // 如果容器中没有，使用默认的
             this.exceptionHandler = new DefaultExceptionHandler();
         }
     }
@@ -89,16 +91,19 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
     @Override
     void initViewResolver(ApplicationContext applicationContext) {
         // 视图解析器配置
-        this.viewResolver = applicationContext.getBean(ViewResolver.class);
-
-        // 视图控制器配置
-        if (this.viewResolver != null) {
-            ViewControllerRegistry viewControllerRegistry = new ViewControllerRegistry();
-            webConfigurer.addViewController(viewControllerRegistry);
-            for (Map.Entry<String, String> entry : viewControllerRegistry.getViewController().entrySet()) {
-                this.requestRegistry.register(entry.getKey(), (req, resp) -> req.view(entry.getValue()));
+        try {
+            this.viewResolver = applicationContext.getBean(ViewResolver.class);
+            // 视图控制器配置
+            if (this.viewResolver != null) {
+                ViewControllerRegistry viewControllerRegistry = new ViewControllerRegistry();
+                webConfigurer.addViewController(viewControllerRegistry);
+                for (Map.Entry<String, String> entry : viewControllerRegistry.getViewController().entrySet()) {
+                    this.requestRegistry.register(entry.getKey(), (req, resp) -> req.view(entry.getValue()));
+                }
             }
+        } catch (NoSuchBeanDefinitionException e) {
         }
+
     }
 
     @Override

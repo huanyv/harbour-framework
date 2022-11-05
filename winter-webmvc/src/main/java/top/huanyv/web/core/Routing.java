@@ -45,8 +45,4 @@ public interface Routing {
         return this;
     }
 
-    default void start(Class<?> mainClass, String[] args) {
-
-    }
-
 }

@@ -1,6 +1,8 @@
 package top.huanyv.web.servlet;
 
+import top.huanyv.ioc.core.AnnotationConfigApplicationContext;
 import top.huanyv.ioc.core.ApplicationContext;
+import top.huanyv.ioc.exception.NoSuchBeanDefinitionException;
 import top.huanyv.utils.ReflectUtil;
 import top.huanyv.web.config.DefaultWebConfigurer;
 import top.huanyv.web.config.WebConfigurer;
@@ -27,6 +29,12 @@ import java.util.List;
  * @date 2022/7/29 9:11
  */
 public abstract class TemplateServlet extends HttpServlet {
+
+    /**
+     * IOC容器
+     */
+    protected ApplicationContext applicationContext;
+
     /**
      * 请求注册容器
      */
@@ -62,14 +70,16 @@ public abstract class TemplateServlet extends HttpServlet {
         requestRegistry = RequestHandlerRegistry.single();
         resourceHandler = new ResourceHandler();
 
-        // 获取IOC容器
-        ServletContext servletContext = getServletContext();
-        ApplicationContext applicationContext
-                = (ApplicationContext)servletContext.getAttribute(WebMvcGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME);
+        String scanPackages = getServletConfig().getInitParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES);
+        this.applicationContext = new AnnotationConfigApplicationContext(scanPackages.split(","));
+
+        // IOC容器存到上下文中
+        getServletContext().setAttribute(WebMvcGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME, applicationContext);
 
         // 获取配置类
-        webConfigurer = applicationContext.getBean(WebConfigurer.class);
-        if (webConfigurer == null) {
+        try {
+            webConfigurer = applicationContext.getBean(WebConfigurer.class);
+        } catch (NoSuchBeanDefinitionException e) {
             // 如果容器中没有配置类，用默认的
             webConfigurer = new DefaultWebConfigurer();
         }
@@ -109,11 +119,6 @@ public abstract class TemplateServlet extends HttpServlet {
             // 路由分发
             doRouting(req, resp);
         } catch (InvocationTargetException e) {
-//            Throwable throwable = e.getTargetException();
-//            if (throwable instanceof Exception) {
-//                Exception targetEx = (Exception) throwable;
-//                doException(httpRequest, httpResponse, targetEx);
-//            }
             Exception targetException = ReflectUtil.getTargetException(e);
             doException(httpRequest, httpResponse, targetException);
         } catch (Exception e) {
