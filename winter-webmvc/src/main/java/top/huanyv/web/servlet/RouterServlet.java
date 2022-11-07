@@ -6,10 +6,7 @@ import top.huanyv.utils.IoUtil;
 import top.huanyv.utils.WebUtil;
 import top.huanyv.web.anno.*;
 import top.huanyv.web.config.WebMvcGlobalConfig;
-import top.huanyv.web.core.HttpRequest;
-import top.huanyv.web.core.HttpResponse;
-import top.huanyv.web.core.RequestHandler;
-import top.huanyv.web.core.RequestMapping;
+import top.huanyv.web.core.*;
 import top.huanyv.web.enums.RequestMethod;
 import top.huanyv.web.exception.ExceptionHandler;
 import top.huanyv.web.guard.NavigationGuardChain;
@@ -76,9 +73,10 @@ public class RouterServlet extends InitProxyRouterServlet {
         // 判断处理器是否存在
         if (requestHandler != null) {
             // 如果是Controller从容器中获取，多例
-            if (!(requestHandler.getAdapter() instanceof ServletHandler)) {
-                Object bean = applicationContext.getBean(requestHandler.getHandler().getDeclaringClass());
-                requestHandler.setAdapter(bean);
+            if (requestHandler instanceof MethodRequestHandler) {
+                MethodRequestHandler methodRequestHandler = (MethodRequestHandler) requestHandler;
+                Object bean = applicationContext.getBean(methodRequestHandler.getController());
+                methodRequestHandler.setControllerInstance(bean);
             }
 
             // 处理请求

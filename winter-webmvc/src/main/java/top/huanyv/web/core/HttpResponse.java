@@ -35,6 +35,10 @@ public class HttpResponse {
     }
 
     public void redirect(String location) throws IOException {
+        if (location.startsWith("/")) {
+            servletResponse.sendRedirect(servletRequest.getContextPath() + location);
+            return;
+        }
         servletResponse.sendRedirect(location);
     }
 
@@ -49,6 +53,7 @@ public class HttpResponse {
     public void json(Object content) throws IOException {
         if (content instanceof CharSequence) {
             write((CharSequence) content, "application/json");
+            return;
         }
         String json = JsonUtil.toJson(content);
         write(json, "application/json");

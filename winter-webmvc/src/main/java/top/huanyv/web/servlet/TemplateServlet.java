@@ -70,11 +70,14 @@ public abstract class TemplateServlet extends HttpServlet {
         requestRegistry = RequestHandlerRegistry.single();
         resourceHandler = new ResourceHandler();
 
+        ServletContext servletContext = getServletContext();
+        ServletHolder.setServletContext(servletContext);
+
         String scanPackages = getServletConfig().getInitParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES);
         this.applicationContext = new AnnotationConfigApplicationContext(scanPackages.split(","));
 
         // IOC容器存到上下文中
-        getServletContext().setAttribute(WebMvcGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME, applicationContext);
+        servletContext.setAttribute(WebMvcGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME, applicationContext);
 
         // 获取配置类
         try {
@@ -108,6 +111,9 @@ public abstract class TemplateServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) {
+        ServletHolder.setRequest(req);
+        ServletHolder.setResponse(resp);
+
         HttpRequest httpRequest = null;
         HttpResponse httpResponse = null;
         try {
@@ -123,6 +129,9 @@ public abstract class TemplateServlet extends HttpServlet {
             doException(httpRequest, httpResponse, targetException);
         } catch (Exception e) {
             doException(httpRequest, httpResponse, e);
+        } finally {
+            ServletHolder.removeRequest();
+            ServletHolder.removeResponse();
         }
     }
 

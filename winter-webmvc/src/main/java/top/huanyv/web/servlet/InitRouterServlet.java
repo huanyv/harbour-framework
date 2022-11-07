@@ -1,5 +1,6 @@
 package top.huanyv.web.servlet;
 
+import top.huanyv.ioc.anno.Order;
 import top.huanyv.ioc.core.ApplicationContext;
 import top.huanyv.ioc.utils.BeanFactoryUtil;
 import top.huanyv.web.anno.*;
@@ -10,7 +11,6 @@ import top.huanyv.web.exception.DefaultExceptionHandler;
 import top.huanyv.web.exception.ExceptionHandler;
 import top.huanyv.web.guard.NavigationGuard;
 import top.huanyv.web.guard.NavigationGuardMapping;
-import top.huanyv.web.view.ResourceMapping;
 import top.huanyv.web.view.ViewResolver;
 
 import java.lang.reflect.Method;
@@ -31,32 +31,39 @@ public abstract class InitRouterServlet extends TemplateServlet {
                 for (Method method : bean.getClass().getDeclaredMethods()) {
                     // 基路由
                     String basePath = route.value();
+                    RequestHandler requestHandler = new MethodRequestHandler(bean.getClass(), method);
                     Route methodRoute = method.getAnnotation(Route.class);
                     if (methodRoute != null) {
                         // 拼接上子路由
                         String path = basePath + methodRoute.value();
-                        requestRegistry.register(path, bean, method);
+                        requestRegistry.registerHandler(path, requestHandler);
+                        continue;
                     }
                     Get get = method.getAnnotation(Get.class);
                     if (get != null) {
                         String path = basePath + get.value();
-                        requestRegistry.register(path, RequestMethod.GET, bean, method);
+                        requestRegistry.registerHandler(path, RequestMethod.GET, requestHandler);
+                        continue;
                     }
                     Post post = method.getAnnotation(Post.class);
                     if (post != null) {
                         String path = basePath + post.value();
-                        requestRegistry.register(path, RequestMethod.POST, bean, method);
+                        requestRegistry.registerHandler(path, RequestMethod.POST, requestHandler);
+                        continue;
                     }
                     Put put = method.getAnnotation(Put.class);
                     if (put != null) {
                         String path = basePath + put.value();
-                        requestRegistry.register(path, RequestMethod.PUT, bean, method);
+                        requestRegistry.registerHandler(path, RequestMethod.PUT, requestHandler);
+                        continue;
                     }
                     Delete delete = method.getAnnotation(Delete.class);
                     if (delete != null) {
                         String path = basePath + delete.value();
-                        requestRegistry.register(path, RequestMethod.DELETE, bean, method);
+                        requestRegistry.registerHandler(path, RequestMethod.DELETE, requestHandler);
+                        continue;
                     }
+
                 }
             }
         }

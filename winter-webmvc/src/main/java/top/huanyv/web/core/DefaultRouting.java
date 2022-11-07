@@ -16,6 +16,6 @@ public class DefaultRouting implements Routing {
 
     @Override
     public void register(String urlPattern, RequestMethod method, ServletHandler handler) {
-        requestRegistry.register(urlPattern, method, handler);
+        requestRegistry.registerHandler(urlPattern, method, new FunctionRequestHandler(handler));
     }
 }

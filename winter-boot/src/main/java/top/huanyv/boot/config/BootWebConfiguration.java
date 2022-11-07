@@ -19,16 +19,12 @@ public class BootWebConfiguration {
 
     @Bean
     public ViewResolver viewResolver() {
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("templates/");
-        templateResolver.setSuffix(".html");
-        templateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        TemplateEngine templateEngine = new TemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver);
-        ThymeleafViewResolver thymeleafViewResolver = new ThymeleafViewResolver();
-        thymeleafViewResolver.setTemplateEngine(templateEngine);
-        return thymeleafViewResolver;
+        ThymeleafViewResolver viewResolver = new ThymeleafViewResolver(new ClassLoaderTemplateResolver());
+        viewResolver.setPrefix("templates/");
+        viewResolver.setSuffix(".html");
+        viewResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        viewResolver.setTemplateMode(TemplateMode.HTML);
+        return viewResolver;
     }
 
 }

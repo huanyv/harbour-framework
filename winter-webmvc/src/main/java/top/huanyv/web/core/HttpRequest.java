@@ -59,7 +59,7 @@ public class HttpRequest {
      * 转发视图
      * @param name 视图名
      */
-    public void view(String name) throws IOException {
+    public void view(String name) throws IOException, ServletException {
         Assert.notNull(this.viewResolver, () -> {
             try {
                 servletResponse.sendError(500, "View resolver not config!");
@@ -68,7 +68,7 @@ public class HttpRequest {
             }
             return "View resolver not config!";
         });
-        this.viewResolver.process(name, servletRequest, servletResponse);
+        this.viewResolver.render(name, servletRequest, servletResponse);
     }
 
     /**

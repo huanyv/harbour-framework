@@ -10,6 +10,8 @@ import top.huanyv.boot.utils.CommandLineUtil;
 import top.huanyv.utils.PropertiesUtil;
 import top.huanyv.utils.ResourceUtil;
 import top.huanyv.web.config.WebMvcGlobalConfig;
+import top.huanyv.web.core.FunctionRequestHandler;
+import top.huanyv.web.core.MethodRequestHandler;
 import top.huanyv.web.core.RequestHandlerRegistry;
 import top.huanyv.web.core.Routing;
 import top.huanyv.web.enums.RequestMethod;
@@ -82,7 +84,7 @@ public class Winter implements Routing, WebServer {
 
     @Override
     public void register(String urlPattern, RequestMethod method, ServletHandler handler) {
-        this.requestRegistry.register(urlPattern, method, handler);
+        this.requestRegistry.registerHandler(urlPattern, method, new FunctionRequestHandler(handler));
     }
 
     /**

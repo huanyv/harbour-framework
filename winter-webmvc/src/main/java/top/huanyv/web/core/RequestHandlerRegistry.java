@@ -2,13 +2,7 @@ package top.huanyv.web.core;
 
 import top.huanyv.web.enums.RequestMethod;
 import top.huanyv.web.interfaces.ServletHandler;
-import top.huanyv.utils.WebUtil;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +14,13 @@ import java.util.List;
 public class RequestHandlerRegistry {
 
     // 单例
-    private RequestHandlerRegistry() {}
+    private RequestHandlerRegistry() {
+    }
+
     private static class SingletonHolder {
         private static final RequestHandlerRegistry INSTANCE = new RequestHandlerRegistry();
     }
+
     // 提供单例对象
     public static RequestHandlerRegistry single() {
         return SingletonHolder.INSTANCE;
@@ -37,34 +34,17 @@ public class RequestHandlerRegistry {
 
 
     public void register(String urlPattern, ServletHandler servletHandler) {
-        register(urlPattern, RequestMethod.GET, servletHandler);
-        register(urlPattern, RequestMethod.POST, servletHandler);
-        register(urlPattern, RequestMethod.PUT, servletHandler);
-        register(urlPattern, RequestMethod.DELETE, servletHandler);
+        registerHandler(urlPattern, new FunctionRequestHandler(servletHandler));
     }
 
-    public void register(String urlPattern, Object adapter, Method method) {
-        register(urlPattern, RequestMethod.GET, adapter, method);
-        register(urlPattern, RequestMethod.POST, adapter, method);
-        register(urlPattern, RequestMethod.PUT, adapter, method);
-        register(urlPattern, RequestMethod.DELETE, adapter, method);
-    }
-    /**
-     * 请求注册到注册容器中
-     * @param urlPattern 请求地址
-     * @param servletHandler 请求处理器
-     */
-    public void register(String urlPattern, RequestMethod requestMethod, ServletHandler servletHandler) {
-        try {
-            Method method = servletHandler.getClass().getMethod("handle", HttpRequest.class, HttpResponse.class);
-            register(urlPattern, requestMethod, servletHandler, method);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+    public void registerHandler(String urlPattern, RequestHandler requestHandler) {
+        registerHandler(urlPattern, RequestMethod.GET, requestHandler);
+        registerHandler(urlPattern, RequestMethod.POST, requestHandler);
+        registerHandler(urlPattern, RequestMethod.PUT, requestHandler);
+        registerHandler(urlPattern, RequestMethod.DELETE, requestHandler);
     }
 
-    public void register(String urlPattern, RequestMethod requestMethod, Object adapter, Method method) {
-        RequestHandler requestHandler = new RequestHandler(adapter, method);
+    public void registerHandler(String urlPattern, RequestMethod requestMethod, RequestHandler requestHandler) {
         RequestMapping mapping = getMapping(urlPattern);
         mapping.getHandler().put(requestMethod, requestHandler);
     }
@@ -72,6 +52,7 @@ public class RequestHandlerRegistry {
 
     /**
      * 注册容器中是否有该地址
+     *
      * @param urlPattern 地址，一般是精确的
      * @return true/false
      */
@@ -94,6 +75,7 @@ public class RequestHandlerRegistry {
 
     /**
      * 根据地址获取请求映射
+     *
      * @param urlPattern 请求地址，一般是精确的
      * @return RequestMapping
      */
