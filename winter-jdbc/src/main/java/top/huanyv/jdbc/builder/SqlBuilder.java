@@ -1,7 +1,7 @@
 package top.huanyv.jdbc.builder;
 
 import top.huanyv.jdbc.anno.TableName;
-import top.huanyv.utils.StringUtil;
+import top.huanyv.tools.utils.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -4,7 +4,7 @@ import com.book.pojo.Book;
 import top.huanyv.jdbc.anno.Dao;
 import top.huanyv.jdbc.builder.*;
 import top.huanyv.jdbc.core.Page;
-import top.huanyv.utils.StringUtil;
+import top.huanyv.tools.utils.StringUtil;
 
 import java.math.BigDecimal;
 import java.util.Date;

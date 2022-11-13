@@ -1,7 +1,7 @@
 package top.huanyv.jdbc.handler.type;
 
 import top.huanyv.jdbc.core.SqlContextFactory;
-import top.huanyv.utils.MethodUtil;
+import top.huanyv.tools.utils.MethodUtil;
 
 import java.lang.reflect.Method;
 import java.util.List;

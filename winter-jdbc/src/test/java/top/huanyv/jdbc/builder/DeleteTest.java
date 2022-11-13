@@ -3,7 +3,7 @@ package top.huanyv.jdbc.builder;
 import junit.framework.TestCase;
 import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.jdbc.core.entity.User;
-import top.huanyv.utils.ClassLoaderUtil;
+import top.huanyv.tools.utils.ClassLoaderUtil;
 
 import java.io.InputStream;
 import java.util.function.Consumer;

@@ -5,20 +5,18 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
-import top.huanyv.boot.config.BootGlobalConfig;
 import top.huanyv.boot.utils.CommandLineUtil;
-import top.huanyv.utils.PropertiesUtil;
-import top.huanyv.utils.ResourceUtil;
+import top.huanyv.tools.utils.PropertiesUtil;
+import top.huanyv.tools.utils.ResourceUtil;
 import top.huanyv.web.config.WebMvcGlobalConfig;
 import top.huanyv.web.core.FunctionRequestHandler;
-import top.huanyv.web.core.MethodRequestHandler;
 import top.huanyv.web.core.RequestHandlerRegistry;
 import top.huanyv.web.core.Routing;
 import top.huanyv.web.enums.RequestMethod;
 import top.huanyv.web.interfaces.ServletHandler;
 import top.huanyv.web.servlet.RouterServlet;
-import top.huanyv.web.servlet.WebApplicationListener;
 
+import javax.servlet.MultipartConfigElement;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
@@ -116,9 +114,14 @@ public class Winter implements Routing, WebServer {
 //        this.context.addParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES, scanPackages);
 //        this.context.addApplicationListener(WebApplicationListener.class.getName());
 
+        // 文件配置
+        String maxFileSize = properties.getProperty(CONFIG_FILE_MAX_FILE_SIZE, "1048576");
+        String maxRequestSize = properties.getProperty(CONFIG_FILE_MAX_REQUEST_SIZE, "10485760");
+
         // 请求注册到tomcat容器中
         RouterServlet routerServlet = new RouterServlet();
         Wrapper router = this.tomcat.addServlet(this.context, WebMvcGlobalConfig.ROUTER_SERVLET_NAME, routerServlet);
+        router.setMultipartConfigElement(new MultipartConfigElement("", Long.parseLong(maxFileSize), Long.parseLong(maxRequestSize), 0));
         router.addMapping("/");
         // 扫描包
         router.addInitParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES, scanPackages);

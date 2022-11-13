@@ -8,9 +8,9 @@ import top.huanyv.ioc.core.definition.ClassBeanDefinition;
 import top.huanyv.ioc.core.definition.FactoryBeanDefinition;
 import top.huanyv.ioc.core.definition.MethodBeanDefinition;
 import top.huanyv.ioc.exception.BeanTypeNonUniqueException;
-import top.huanyv.utils.ClassUtil;
-import top.huanyv.utils.ReflectUtil;
-import top.huanyv.utils.StringUtil;
+import top.huanyv.tools.utils.ClassUtil;
+import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Method;
 import java.util.Iterator;

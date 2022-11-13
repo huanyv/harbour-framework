@@ -1,13 +1,10 @@
 package top.huanyv.jdbc.builder;
 
-import javafx.util.Builder;
 import junit.framework.TestCase;
 import top.huanyv.jdbc.core.entity.User;
-import top.huanyv.utils.StringUtil;
+import top.huanyv.tools.utils.StringUtil;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 public class SelectTest extends TestCase {
 

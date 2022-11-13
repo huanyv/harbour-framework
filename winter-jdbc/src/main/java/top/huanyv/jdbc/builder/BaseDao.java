@@ -3,7 +3,7 @@ package top.huanyv.jdbc.builder;
 import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.SqlContextFactory;
 import top.huanyv.jdbc.util.BaseDaoUtil;
-import top.huanyv.utils.Assert;
+import top.huanyv.tools.utils.Assert;
 
 import java.lang.reflect.Field;
 import java.util.*;

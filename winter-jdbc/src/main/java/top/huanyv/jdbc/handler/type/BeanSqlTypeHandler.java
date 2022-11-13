@@ -1,7 +1,7 @@
 package top.huanyv.jdbc.handler.type;
 
 import top.huanyv.jdbc.core.SqlContextFactory;
-import top.huanyv.utils.ClassUtil;
+import top.huanyv.tools.utils.BeanUtil;
 
 import java.lang.reflect.Method;
 
@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  * @author huanyv
  * @date 2022/10/15 20:45
  */
-public class CustomSqlTypeHandler implements SqlTypeHandler{
+public class BeanSqlTypeHandler implements SqlTypeHandler{
 
     @Override
     public Object handle(String sql, Object[] args, Method method) {
@@ -21,7 +21,7 @@ public class CustomSqlTypeHandler implements SqlTypeHandler{
     @Override
     public boolean isType(Method method) {
         Class<?> returnType = method.getReturnType();
-        return ClassUtil.isCustomClass(returnType);
+        return BeanUtil.isJavaBean(returnType);
     }
 
 }

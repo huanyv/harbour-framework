@@ -1,8 +1,7 @@
 package top.huanyv.ioc.core.definition;
 
 import top.huanyv.ioc.core.FactoryBean;
-import top.huanyv.utils.ReflectUtil;
-import top.huanyv.utils.StringUtil;
+import top.huanyv.tools.utils.StringUtil;
 
 /**
  * @author huanyv

@@ -3,7 +3,6 @@ package top.huanyv.jdbc.handler.type;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author huanyv
@@ -16,7 +15,7 @@ public class SqlTypeHandlerFactory {
     static {
         SQL_TYPE_HANDLERS.add(new ListSqlTypeHandler());
         SQL_TYPE_HANDLERS.add(new SingleValueSqlTypeHandler());
-        SQL_TYPE_HANDLERS.add(new CustomSqlTypeHandler());
+        SQL_TYPE_HANDLERS.add(new BeanSqlTypeHandler());
     }
 
     public static SqlTypeHandler getSqlTypeHandler(Method method) {
@@ -25,6 +24,6 @@ public class SqlTypeHandlerFactory {
                 return sqlTypeHandler;
             }
         }
-        return new CustomSqlTypeHandler();
+        return new BeanSqlTypeHandler();
     }
 }

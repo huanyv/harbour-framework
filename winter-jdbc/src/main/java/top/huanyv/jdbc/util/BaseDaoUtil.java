@@ -3,7 +3,7 @@ package top.huanyv.jdbc.util;
 import top.huanyv.jdbc.anno.TableId;
 import top.huanyv.jdbc.anno.TableName;
 import top.huanyv.jdbc.builder.BaseDao;
-import top.huanyv.utils.StringUtil;
+import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;

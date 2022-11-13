@@ -1,16 +1,10 @@
 package top.huanyv.web.view;
 
-import top.huanyv.enums.MimeTypeEnum;
-import top.huanyv.utils.*;
+import top.huanyv.tools.utils.AntPathMatcher;
+import top.huanyv.tools.utils.WebUtil;
 import top.huanyv.web.config.ResourceMappingRegistry;
-import top.huanyv.web.config.WebMvcGlobalConfig;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 

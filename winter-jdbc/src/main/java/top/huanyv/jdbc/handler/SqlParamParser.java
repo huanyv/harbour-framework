@@ -1,8 +1,7 @@
 package top.huanyv.jdbc.handler;
 
-import javafx.beans.binding.ObjectExpression;
-import top.huanyv.utils.ClassUtil;
-import top.huanyv.utils.NumberUtil;
+import top.huanyv.tools.utils.BeanUtil;
+import top.huanyv.tools.utils.ClassUtil;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -44,7 +43,7 @@ public class SqlParamParser {
                 sqlParamMapping.putAll((Map<? extends String, ?>) param);
             }
             // 是否自定义类型
-            if (ClassUtil.isCustomClass(clazz)) {
+            if (BeanUtil.isJavaBean(clazz)) {
                 // 获取属性名与值
                 for (Field field : clazz.getDeclaredFields()) {
                     field.setAccessible(true);

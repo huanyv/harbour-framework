@@ -1,6 +1,6 @@
 package top.huanyv.ioc.utils;
 
-import top.huanyv.utils.ProxyUtil;
+import top.huanyv.tools.utils.ProxyUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;

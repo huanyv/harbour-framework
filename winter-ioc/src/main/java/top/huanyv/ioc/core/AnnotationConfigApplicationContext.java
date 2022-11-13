@@ -6,9 +6,8 @@ import top.huanyv.ioc.aop.AopContext;
 import top.huanyv.ioc.aop.ProxyFactory;
 import top.huanyv.ioc.core.definition.BeanDefinition;
 import top.huanyv.ioc.exception.BeanCurrentlyInCreationException;
-import top.huanyv.ioc.exception.BeanTypeNonUniqueException;
 import top.huanyv.ioc.exception.NoSuchBeanDefinitionException;
-import top.huanyv.utils.StringUtil;
+import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Field;
 import java.util.*;

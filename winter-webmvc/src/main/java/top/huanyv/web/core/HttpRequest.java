@@ -3,10 +3,10 @@ package top.huanyv.web.core;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import top.huanyv.utils.Assert;
-import top.huanyv.utils.IoUtil;
+import top.huanyv.tools.utils.Assert;
+import top.huanyv.tools.utils.IoUtil;
+import top.huanyv.tools.utils.WebUtil;
 import top.huanyv.web.enums.RequestMethod;
-import top.huanyv.utils.WebUtil;
 import top.huanyv.web.view.ViewResolver;
 
 import javax.servlet.*;
@@ -227,7 +227,7 @@ public class HttpRequest {
 
 
     public HttpSession getSession(boolean create) {
-        return servletRequest.getSession();
+        return servletRequest.getSession(create);
     }
 
 
@@ -256,6 +256,7 @@ public class HttpRequest {
     }
 
 
+    @Deprecated
     public boolean isRequestedSessionIdFromUrl() {
         return servletRequest.isRequestedSessionIdFromUrl();
     }
@@ -400,7 +401,7 @@ public class HttpRequest {
         return servletRequest.getRequestDispatcher(path);
     }
 
-
+    @Deprecated
     public String getRealPath(String path) {
         return servletRequest.getRealPath(path);
     }
@@ -437,7 +438,7 @@ public class HttpRequest {
 
 
     public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) throws IllegalStateException {
-        return servletRequest.startAsync();
+        return servletRequest.startAsync(servletRequest, servletResponse);
     }
 
 
