@@ -1,3 +1,5 @@
-mvn install -D skipTests
+@ECHO off
+
+CALL mvn install -D skipTests
 
 PAUSE

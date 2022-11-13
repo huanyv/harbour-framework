@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>top.huanyv</groupId>
-    <artifactId>winter</artifactId>
+    <artifactId>harbour-framework</artifactId>
     <version>1.0</version>
 
     <packaging>pom</packaging>
@@ -19,10 +19,10 @@
     </properties>
 
     <modules>
-	    <module>winter-webmvc</module>
-	    <module>winter-ioc</module>
-	    <module>winter-jdbc</module>
-	    <module>winter-boot</module>
+	    <module>harbour-webmvc</module>
+	    <module>harbour-bean</module>
+	    <module>harbour-jdbc</module>
+	    <module>harbour-start</module>
 	</modules>
 
 </project>
