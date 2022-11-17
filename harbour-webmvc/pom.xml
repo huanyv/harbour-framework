@@ -43,27 +43,9 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.4</version>
-        </dependency>
-
-        <dependency>
             <groupId>top.huanyv</groupId>
             <artifactId>harbour-bean</artifactId>
             <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>top.huanyv</groupId>
-            <artifactId>harbour-jdbc</artifactId>
-            <version>1.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>top.huanyv</groupId>
-                    <artifactId>harbour-bean</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
     </dependencies>

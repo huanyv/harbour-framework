@@ -1,4 +1,4 @@
-package top.huanyv.webmvc.view;
+package top.huanyv.webmvc.resource;
 
 import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.ClassLoaderUtil;

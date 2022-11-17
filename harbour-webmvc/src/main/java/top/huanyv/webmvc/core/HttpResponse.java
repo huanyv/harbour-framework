@@ -1,18 +1,15 @@
 package top.huanyv.webmvc.core;
 
 
-import sun.misc.BASE64Encoder;
 import top.huanyv.tools.utils.IoUtil;
 import top.huanyv.tools.utils.JsonUtil;
+import top.huanyv.tools.utils.StringUtil;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -23,17 +20,26 @@ public class HttpResponse {
     private HttpServletRequest servletRequest;
     private HttpServletResponse servletResponse;
 
-
     public HttpResponse(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         this.servletRequest = servletRequest;
         this.servletResponse = servletResponse;
     }
 
-
+    /**
+     * 得到原生的HttpServletRequest
+     *
+     * @return {@link HttpServletResponse}
+     */
     public HttpServletResponse getOriginal() {
         return servletResponse;
     }
 
+    /**
+     * 请求重定向，当location以 / 开头时会自动加上contextPath
+     *
+     * @param location 位置
+     * @throws IOException ioexception
+     */
     public void redirect(String location) throws IOException {
         if (location.startsWith("/")) {
             servletResponse.sendRedirect(servletRequest.getContextPath() + location);
@@ -65,23 +71,40 @@ public class HttpResponse {
 
     public void write(CharSequence content, String contentType) throws IOException {
         servletResponse.setContentType(contentType);
-        servletResponse.getWriter().println(content);
+        servletResponse.getWriter().print(content);
     }
 
     public void file(File file) throws IOException {
-        String fileName = file.getName();
-        if("FireFox".equals(servletRequest.getHeaders("User-Agent"))) { // 如果是火狐浏览器
-            servletResponse.setHeader("Content-Disposition", "attachment; filename==?UTF-8?B?"
-                    + new BASE64Encoder().encode(fileName.getBytes(StandardCharsets.UTF_8)) + "?=");
-        }else {
-            servletResponse.setHeader("Content-Disposition", "attachment; filename="
-                    + URLEncoder.encode(fileName, "UTF-8"));
-        }
-        ServletOutputStream outputStream = servletResponse.getOutputStream();
-        FileInputStream inputStream = new FileInputStream(file);
-        IoUtil.copy(inputStream, outputStream);
+        file("", file);
     }
 
+    public void file(String fileName, File file) throws IOException {
+        if (!StringUtil.hasText(fileName)) {
+            fileName = file.getName();
+        }
+        // 设置请求头
+        servletResponse.setHeader("Content-Disposition", "attachment; filename="
+                + URLEncoder.encode(fileName, StandardCharsets.UTF_8.name()));
+        servletResponse.setHeader("Content-Length", String.valueOf(file.length()));
+        servletResponse.setContentType("application/octet-stream");
+        // 获取输入输出流
+        ServletOutputStream outputStream = servletResponse.getOutputStream();
+        FileInputStream inputStream = new FileInputStream(file);
+        // 数据拷贝
+        IoUtil.copy(inputStream, outputStream);
+        inputStream.close();
+        outputStream.close();
+    }
+
+    public void addCookie(String name, String value) {
+        addCookie(name, value, -1);
+    }
+
+    public void addCookie(String name, String value, int maxAge) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setMaxAge(maxAge);
+        servletResponse.addCookie(cookie);
+    }
 
     // 原生
     public void addCookie(Cookie cookie) {

@@ -39,7 +39,9 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
                     if (methodRoute != null) {
                         // 拼接上子路由
                         String path = basePath + methodRoute.value();
-                        requestRegistry.registerHandler(path, requestHandler);
+                        for (RequestMethod requestMethod : methodRoute.method()) {
+                            requestRegistry.registerHandler(path, requestMethod, requestHandler);
+                        }
                         continue;
                     }
                     Get get = method.getAnnotation(Get.class);

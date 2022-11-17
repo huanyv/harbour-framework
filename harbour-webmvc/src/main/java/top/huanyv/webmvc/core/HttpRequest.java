@@ -1,8 +1,5 @@
 package top.huanyv.webmvc.core;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.IoUtil;
 import top.huanyv.tools.utils.WebUtil;
@@ -12,7 +9,6 @@ import top.huanyv.webmvc.view.ViewResolver;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
-import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.*;
 
@@ -26,6 +22,7 @@ public class HttpRequest {
     private final String uri;
     private final RequestHandlerRegistry registry;
 
+    private byte[] requestBody;
 
     public HttpRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         this.servletRequest = servletRequest;
@@ -43,6 +40,10 @@ public class HttpRequest {
      */
     public HttpServletRequest getOriginal() {
         return servletRequest;
+    }
+
+    public String getUri() {
+        return this.uri;
     }
 
     /**
@@ -77,55 +78,57 @@ public class HttpRequest {
         if (RequestMethod.GET.name().equalsIgnoreCase(method)) {
             return servletRequest.getQueryString();
         }
-        return IoUtil.readStr(servletRequest.getInputStream(), Charset.forName(servletRequest.getCharacterEncoding()));
+        if (requestBody == null) {
+            ServletInputStream inputStream = servletRequest.getInputStream();
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            IoUtil.copy(inputStream, outputStream);
+            this.requestBody = outputStream.toByteArray();
+            outputStream.close();
+            inputStream.close();
+        }
+        return new String(this.requestBody, servletRequest.getCharacterEncoding());
+    }
+
+    public long paramLong(String name) {
+        return Long.parseLong(param(name));
+    }
+
+    public int paramInt(String name) {
+        return Integer.parseInt(param(name));
+    }
+
+    public String param(String name) {
+        return getParameter(name);
+    }
+
+    public long pathLong(String name) {
+        return Long.parseLong(pathVar(name));
+    }
+
+    public int pathInt(String name) {
+        return Integer.parseInt(pathVar(name));
     }
 
     public String pathVar(String name) {
         return registry.getMapping(uri).getPathVar(name);
     }
 
-    /**
-     * 多文件上传
-     */
-    public List<FileItem> getFileItems() {
-        // 判断是否是文件
-        if(ServletFileUpload.isMultipartContent(servletRequest)) {
-            ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());//工厂
-            try {
-                return servletFileUpload.parseRequest(servletRequest);//获取多段数据集合
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-    public FileItem getFileItem() {
-        List<FileItem> fileItems = getFileItems();
-        for (FileItem fileItem : fileItems) {
-            if (!fileItem.isFormField()) {
-                return fileItem;
-            }
+    public String getCookieValue(String name) {
+        Cookie cookie = getCookie(name);
+        if (cookie != null) {
+            return cookie.getValue();
         }
         return null;
     }
 
-    public String getParam(String name) {
-        if (ServletFileUpload.isMultipartContent(servletRequest)) {
-            ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());//工厂
-            try {
-                List<FileItem> fileItems = servletFileUpload.parseRequest(servletRequest);//获取多段数据集合
-                for (FileItem fileItem:fileItems) {
-                    if(fileItem.isFormField()) { //不是文件
-                        if (fileItem.getFieldName().equals(name)) {
-                            return fileItem.getString(servletRequest.getCharacterEncoding());
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+    public Cookie getCookie(String name) {
+        Cookie[] cookies = servletRequest.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(name)) {
+                return cookie;
             }
         }
-        return getParameter(name);
+        return null;
     }
 
 

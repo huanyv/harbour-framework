@@ -15,4 +15,25 @@ public class UrlConvert {
         return baseUrl + url;
     }
 
+
+    /**
+     * 重定向视图
+     *
+     * @param name 视图名
+     * @return {@link String}
+     */
+    public static String redirectView(String name) {
+        return "redirect:" + name;
+    }
+
+    /**
+     * 转发视图
+     *
+     * @param name 视图名
+     * @return {@link String}
+     */
+    public static String forwardView(String name) {
+        return "forward:" + name;
+    }
+
 }

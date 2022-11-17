@@ -12,7 +12,7 @@ import top.huanyv.webmvc.core.HttpResponse;
 import top.huanyv.webmvc.core.RequestHandlerRegistry;
 import top.huanyv.webmvc.exception.ExceptionHandler;
 import top.huanyv.webmvc.guard.NavigationGuardMapping;
-import top.huanyv.webmvc.view.ResourceHandler;
+import top.huanyv.webmvc.resource.ResourceHandler;
 import top.huanyv.webmvc.view.ViewResolver;
 
 import javax.servlet.*;

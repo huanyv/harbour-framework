@@ -3,7 +3,7 @@ package top.huanyv.web.view;
 import org.junit.Test;
 import top.huanyv.tools.utils.IoUtil;
 import top.huanyv.webmvc.config.ResourceMappingRegistry;
-import top.huanyv.webmvc.view.ResourceHandler;
+import top.huanyv.webmvc.resource.ResourceHandler;
 
 import java.io.InputStream;
 

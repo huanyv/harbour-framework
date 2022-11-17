@@ -1,4 +1,4 @@
-package top.huanyv.webmvc.view;
+package top.huanyv.webmvc.resource;
 
 import top.huanyv.tools.utils.AntPathMatcher;
 import top.huanyv.tools.utils.WebUtil;

@@ -19,10 +19,12 @@ public class SqlParamParser {
      */
     public static final String PLACEHOLDER_REGEX = "\\#\\{[0-9a-zA-Z]+\\}";
 
+    private static final Pattern PATTERN = Pattern.compile(PLACEHOLDER_REGEX);
+
     public SqlAndArgs parse(String placeholderSql, Object... params) {
 
         // 如果没有使用占位符
-        if (!Pattern.compile(PLACEHOLDER_REGEX).matcher(placeholderSql).find()) {
+        if (!PATTERN.matcher(placeholderSql).find()) {
             return new SqlAndArgs(placeholderSql, params);
         }
 
@@ -60,8 +62,7 @@ public class SqlParamParser {
         }
         List<Object> args = new ArrayList<>();
         String sql = "";
-        Pattern pattern = Pattern.compile(PLACEHOLDER_REGEX);
-        Matcher matcher = pattern.matcher(placeholderSql);
+        Matcher matcher = PATTERN.matcher(placeholderSql);
         while (matcher.find()) {
             String group = matcher.group();
             String paramName = group.substring(2, group.length() - 1);

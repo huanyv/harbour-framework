@@ -1,4 +1,4 @@
-package top.huanyv.webmvc.view;
+package top.huanyv.webmvc.resource;
 
 import java.io.InputStream;
 import java.util.ArrayList;

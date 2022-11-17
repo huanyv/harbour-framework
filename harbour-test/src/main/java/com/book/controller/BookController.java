@@ -35,9 +35,9 @@ public class BookController {
 //        Object o = null;
 //        System.out.println(o.toString());
 
-        String bname = req.getParam("bname");
-        int pageNum = Integer.parseInt(req.getParam("page"));
-        int pageSize = Integer.parseInt(req.getParam("limit"));
+        String bname = req.param("bname");
+        int pageNum = req.paramInt("page");
+        int pageSize = req.paramInt("limit");
         Page<Book> bookPage = bookService.listBook(bname, pageNum, pageSize);
         resp.json(new ResponseResult(0,"", bookPage.getTotal(), bookPage.getData()));
     }

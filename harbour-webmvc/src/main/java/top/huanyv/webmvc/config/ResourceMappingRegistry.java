@@ -1,6 +1,6 @@
 package top.huanyv.webmvc.config;
 
-import top.huanyv.webmvc.view.ResourceMapping;
+import top.huanyv.webmvc.resource.ResourceMapping;
 
 import java.util.ArrayList;
 import java.util.List;

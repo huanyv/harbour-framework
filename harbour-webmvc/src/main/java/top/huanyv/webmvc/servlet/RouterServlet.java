@@ -60,12 +60,12 @@ public class RouterServlet extends InitProxyRouterServlet {
 
         RequestMethod requestMethod = RequestMethod.valueOf(req.getMethod().toUpperCase());
         // 获取当前uri的对应请求处理器映射
-        RequestMapping mapping = this.requestRegistry.getMapping(uri);
+        RequestMapping requestMapping = this.requestRegistry.getMapping(uri);
         // 获取当前请求方式的处理
-        RequestHandler requestHandler = mapping.getRequestHandler(requestMethod);
+        RequestHandler requestHandler = requestMapping.getRequestHandler(requestMethod);
 
         // 设置pathVar
-        mapping.parsePathVars(uri);
+        requestMapping.parsePathVars(uri);
 
         // 判断处理器是否存在
         if (requestHandler != null) {
