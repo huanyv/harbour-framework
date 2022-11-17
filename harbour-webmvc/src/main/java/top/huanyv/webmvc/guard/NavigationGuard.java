@@ -9,11 +9,11 @@ import top.huanyv.webmvc.core.HttpResponse;
  */
 public interface NavigationGuard {
 
-    default boolean beforeEach(HttpRequest req, HttpResponse resp) {
+    default boolean beforeEach(HttpRequest req, HttpResponse resp) throws Exception {
         return true;
     }
 
-    default void afterEach(HttpRequest req, HttpResponse resp) {
+    default void afterEach(HttpRequest req, HttpResponse resp)  throws Exception {
 
     }
 

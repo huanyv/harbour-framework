@@ -25,7 +25,7 @@ public class NavigationGuardChain {
      * @param response 响应对象
      * @return 是否中断
      */
-    public boolean handleBefore(HttpRequest request, HttpResponse response) {
+    public boolean handleBefore(HttpRequest request, HttpResponse response) throws Exception {
         for (int i = 0; i < this.navigationGuards.size(); i++) {
             NavigationGuardMapping navigationGuardMapping = this.navigationGuards.get(i);
             boolean beforeEach = navigationGuardMapping.getNavigationGuard().beforeEach(request, response);
@@ -41,7 +41,7 @@ public class NavigationGuardChain {
      * @param request 请求对象
      * @param response 响应对象
      */
-    public void handleAfter(HttpRequest request, HttpResponse response) {
+    public void handleAfter(HttpRequest request, HttpResponse response) throws Exception {
         for (int i = this.navigationGuards.size() - 1; i >= 0; i--) {
             NavigationGuardMapping navigationGuardMapping = this.navigationGuards.get(i);
             navigationGuardMapping.getNavigationGuard().afterEach(request, response);

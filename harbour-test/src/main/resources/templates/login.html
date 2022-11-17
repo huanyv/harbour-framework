@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台登录</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <style>
+        #panel{
+            box-shadow: -4px 7px 46px 2px rgb(0 0 0 / 10%);
+            margin-top: 200px;
+        }
+    </style>
+</head>
+<body>
+    <script th:src="@{/jquery/jquery-3.6.0.js}"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+
+    <div class="layui-container">
+        <div class="layui-row">
+            <div class="layui-col-md4 layui-col-md-offset4" id="panel">
+                <div class="layui-row">
+                    <div style="text-align: center;line-height: 8px;color: red; margin-top: 8px" th:text="${msg == null ? '&nbsp;' : msg}"></div>
+                </div>
+                <div class="layui-row">
+                    <h1 style="text-align: center;line-height: 100px;">admin</h1>
+                </div>
+                <div class="layui-row">
+                    <form th:action="@{/admin/user/login}" method="POST" class="layui-form">
+                        <div class="layui-form-item layui-col-md10 layui-col-md-offset1">
+                            <input type="text" name="username" id="username" class="layui-input"
+                            placeholder="用户名">
+                        </div>
+                        <div class="layui-form-item layui-col-md10 layui-col-md-offset1">
+                            <input type="password" name="password" id="password" class="layui-input"
+                            placeholder="密码" autocomplete="off">
+                        </div>
+                        <div class="layui-form-item layui-col-md10 layui-col-md-offset1">
+                            <button class="layui-btn layui-btn-normal layui-btn-fluid">登录</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

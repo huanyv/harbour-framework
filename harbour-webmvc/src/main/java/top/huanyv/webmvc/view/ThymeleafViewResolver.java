@@ -4,7 +4,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.*;
-import top.huanyv.webmvc.servlet.ServletHolder;
+import top.huanyv.webmvc.utils.ServletHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

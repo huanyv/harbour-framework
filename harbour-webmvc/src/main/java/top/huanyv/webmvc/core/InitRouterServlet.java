@@ -1,13 +1,12 @@
-package top.huanyv.webmvc.servlet;
+package top.huanyv.webmvc.core;
 
 import top.huanyv.bean.annotation.Order;
-import top.huanyv.bean.exception.NoSuchBeanDefinitionException;
 import top.huanyv.bean.ioc.ApplicationContext;
-import top.huanyv.bean.utils.AopUtil;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.webmvc.annotation.*;
 import top.huanyv.webmvc.config.*;
-import top.huanyv.webmvc.core.*;
+import top.huanyv.webmvc.core.request.MethodRequestHandler;
+import top.huanyv.webmvc.core.request.RequestHandler;
 import top.huanyv.webmvc.enums.RequestMethod;
 import top.huanyv.webmvc.exception.DefaultExceptionHandler;
 import top.huanyv.webmvc.exception.ExceptionHandler;
@@ -22,26 +21,23 @@ import java.util.Map;
  * @author admin
  * @date 2022/7/29 9:22
  */
-public abstract class InitProxyRouterServlet extends TemplateServlet {
+public abstract class InitRouterServlet extends TemplateServlet {
     @Override
     void initRouting(ApplicationContext applicationContext) {
         // 遍历所有的bean，找到所有的路由
         for (Object bean : BeanFactoryUtil.getBeans(applicationContext)) {
-            Class<?> targetClass = AopUtil.getTargetClass(bean);
-            Route route = targetClass.getAnnotation(Route.class);
+            Route route = bean.getClass().getAnnotation(Route.class);
             if (route != null) {
                 // 遍历方法
-                for (Method method : targetClass.getDeclaredMethods()) {
+                for (Method method : bean.getClass().getDeclaredMethods()) {
                     // 基路由
                     String basePath = route.value();
-                    RequestHandler requestHandler = new MethodRequestHandler(targetClass, method);
+                    RequestHandler requestHandler = new MethodRequestHandler(bean.getClass(), method);
                     Route methodRoute = method.getAnnotation(Route.class);
                     if (methodRoute != null) {
                         // 拼接上子路由
                         String path = basePath + methodRoute.value();
-                        for (RequestMethod requestMethod : methodRoute.method()) {
-                            requestRegistry.registerHandler(path, requestMethod, requestHandler);
-                        }
+                        requestRegistry.registerHandler(path, requestHandler);
                         continue;
                     }
                     Get get = method.getAnnotation(Get.class);
@@ -68,6 +64,7 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
                         requestRegistry.registerHandler(path, RequestMethod.DELETE, requestHandler);
                         continue;
                     }
+
                 }
             }
         }
@@ -82,10 +79,9 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
     @Override
     void initExceptionHandler(ApplicationContext applicationContext) {
         // 从容器中找到异常处理器
-        try {
-            this.exceptionHandler = applicationContext.getBean(ExceptionHandler.class);
-        } catch (NoSuchBeanDefinitionException e) {
-            // 如果容器中没有，使用默认的
+        this.exceptionHandler = applicationContext.getBean(ExceptionHandler.class);
+        // 如果容器中没有，使用默认的
+        if (this.exceptionHandler == null) {
             this.exceptionHandler = new DefaultExceptionHandler();
         }
     }
@@ -93,19 +89,16 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
     @Override
     void initViewResolver(ApplicationContext applicationContext) {
         // 视图解析器配置
-        try {
-            this.viewResolver = applicationContext.getBean(ViewResolver.class);
-            // 视图控制器配置
-            if (this.viewResolver != null) {
-                ViewControllerRegistry viewControllerRegistry = new ViewControllerRegistry();
-                webConfigurer.addViewController(viewControllerRegistry);
-                for (Map.Entry<String, String> entry : viewControllerRegistry.getViewController().entrySet()) {
-                    this.requestRegistry.register(entry.getKey(), (req, resp) -> req.view(entry.getValue()));
-                }
-            }
-        } catch (NoSuchBeanDefinitionException e) {
-        }
+        this.viewResolver = applicationContext.getBean(ViewResolver.class);
 
+        // 视图控制器配置
+        if (this.viewResolver != null) {
+            ViewControllerRegistry viewControllerRegistry = new ViewControllerRegistry();
+            webConfigurer.addViewController(viewControllerRegistry);
+            for (Map.Entry<String, String> entry : viewControllerRegistry.getViewController().entrySet()) {
+                this.requestRegistry.register(entry.getKey(), (req, resp) -> req.view(entry.getValue()));
+            }
+        }
     }
 
     @Override
@@ -113,6 +106,7 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
         // 静态资源配置
         ResourceMappingRegistry resourceMappingRegistry = new ResourceMappingRegistry();
         webConfigurer.addResourceMapping(resourceMappingRegistry);
+//        this.resourceHandler.addMappings(resourceMappingRegistry.getResourceMappings());
         this.resourceHandler.setResourceMappingRegistry(resourceMappingRegistry);
     }
 
@@ -144,17 +138,15 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
 
         // 扫描路由守卫
         for (NavigationGuard navigationGuard : BeanFactoryUtil.getBeansByType(applicationContext, NavigationGuard.class)) {
-            Class<?> targetClass = AopUtil.getTargetClass(navigationGuard);
-            Guard guard = targetClass.getAnnotation(Guard.class);
+            NavigationGuardMapping navigationGuardMapping = new NavigationGuardMapping();
+            Guard guard = navigationGuard.getClass().getAnnotation(Guard.class);
             if (guard != null) {
                 // 获得顺序
-                Order order = targetClass.getAnnotation(Order.class);
+                Order order = navigationGuard.getClass().getAnnotation(Order.class);
                 // 获得匹配路径
                 String[] urlPatterns = guard.value();
                 // 获得排序路径
                 String[] exclude = guard.exclude();
-
-                NavigationGuardMapping navigationGuardMapping = new NavigationGuardMapping();
                 navigationGuardMapping.setNavigationGuard(navigationGuard);
                 navigationGuardMapping.setUrlPatterns(urlPatterns);
                 navigationGuardMapping.setExcludeUrl(exclude);
@@ -166,7 +158,6 @@ public abstract class InitProxyRouterServlet extends TemplateServlet {
                 this.guardMappings.add(navigationGuardMapping);
             }
         }
-
 
     }
 

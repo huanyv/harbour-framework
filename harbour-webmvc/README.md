@@ -8,7 +8,7 @@
 
 <servlet>
 	<servlet-name>routerServlet</servlet-name>
-	<servlet-class>top.huanyv.webmvc.servlet.RouterServlet</servlet-class>
+	<servlet-class>top.huanyv.webmvc.core.RouterServlettop.huanyv.webmvc.core.RouterServlet</servlet-class>
 </servlet>
 <servlet-mapping>
 <servlet-name>routerServlet</servlet-name>

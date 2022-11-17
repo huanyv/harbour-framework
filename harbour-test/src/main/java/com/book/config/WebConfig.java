@@ -21,6 +21,7 @@ public class WebConfig implements WebConfigurer {
     @Override
     public void addViewController(ViewControllerRegistry registry) {
         registry.add("/", "index");
+        registry.add("/login", "login");
     }
 
     @Override

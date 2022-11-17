@@ -1,4 +1,4 @@
-package top.huanyv.webmvc.core;
+package top.huanyv.webmvc.core.request;
 
 import top.huanyv.webmvc.enums.RequestMethod;
 import top.huanyv.webmvc.interfaces.ServletHandler;
