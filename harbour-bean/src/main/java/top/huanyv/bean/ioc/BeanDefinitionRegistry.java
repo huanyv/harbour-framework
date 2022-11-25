@@ -43,7 +43,8 @@ public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
                     method.setAccessible(true);
                     if (method.isAnnotationPresent(Bean.class)) {
                         BeanDefinition beanDefinition = new MethodBeanDefinition(configInstance, method);
-                        this.beanDefinitionMap.put(method.getName(), beanDefinition);
+                        // 注册
+                        register(method.getName(), beanDefinition);
                     }
                 }
             }
@@ -51,25 +52,48 @@ public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
 
     }
 
+    /**
+     * 注册一个@Component注解声明的Bean
+     *
+     * @param beanName        bean名字
+     * @param cls             cls
+     * @param constructorArgs 构造函数参数
+     */
     public void register(String beanName, Class<?> cls, Object... constructorArgs) {
         // 组件Bean
         ClassBeanDefinition classBeanDefinition = new ClassBeanDefinition(cls, constructorArgs);
-        beanName = StringUtil.hasText(beanName) ? beanName : classBeanDefinition.getBeanName();
+        this.register(beanName, classBeanDefinition);
+    }
+
+    /**
+     * 注册一个BeanDefinition
+     *
+     * @param beanDefinition bean定义
+     */
+    public void register(BeanDefinition beanDefinition) {
+        register(beanDefinition.getBeanName(), beanDefinition);
+    }
+
+    /**
+     * 注册一个{@link BeanDefinition}，指定BeanName <br />
+     * 如果是{@link FactoryBean}，{@link FactoryBean#getObject()}获得的Bean与BeanName成对，
+     * FactoryBean实例将把BeanName加上'&'符号,放入容器中
+     *
+     * @param beanName       bean名字
+     * @param beanDefinition bean定义
+     */
+    public void register(String beanName, BeanDefinition beanDefinition) {
+        Class<?> cls = beanDefinition.getBeanClass();
+        // 判断BeanNe是否可用
+        beanName = StringUtil.hasText(beanName) ? beanName : beanDefinition.getBeanName();
+        // FactoryBean
         if (FactoryBean.class.isAssignableFrom(cls)) {
             // 工厂Bean注册
-            BeanDefinition factoryBeanDefinition = new FactoryBeanDefinition((FactoryBean<?>) classBeanDefinition.newInstance());
+            BeanDefinition factoryBeanDefinition = new FactoryBeanDefinition((FactoryBean<?>) beanDefinition.newInstance());
             this.beanDefinitionMap.put(beanName, factoryBeanDefinition);
 
             beanName = "&" + beanName;
         }
-        this.beanDefinitionMap.put(beanName, classBeanDefinition);
-    }
-
-    public void register(BeanDefinition beanDefinition) {
-        beanDefinitionMap.put(beanDefinition.getBeanName(), beanDefinition);
-    }
-
-    public void register(String beanName, BeanDefinition beanDefinition) {
         beanDefinitionMap.put(beanName, beanDefinition);
     }
 

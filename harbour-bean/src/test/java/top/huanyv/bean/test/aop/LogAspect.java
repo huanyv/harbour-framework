@@ -1,4 +1,4 @@
-package top.huanyv.core.test.aop;
+package top.huanyv.bean.test.aop;
 
 import top.huanyv.bean.aop.AspectAdvice;
 import top.huanyv.bean.aop.JoinPoint;
@@ -7,9 +7,9 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author huanyv
- * @date 2022/10/20 21:06
+ * @date 2022/11/18 14:40
  */
-public class Aop01 implements AspectAdvice {
+public class LogAspect implements AspectAdvice {
     @Override
     public void beforeAdvice(Object[] args) {
         System.out.println(this.getClass() + "前置通知");
@@ -22,9 +22,9 @@ public class Aop01 implements AspectAdvice {
 
     @Override
     public Object aroundAdvice(JoinPoint point) throws InvocationTargetException, IllegalAccessException {
-        System.out.println(this.getClass() + "环绕通知之前");
+        System.out.println(this.getClass() + "环绕通知1");
         Object result = point.invoke();
-        System.out.println(this.getClass() + "环绕通知之后");
+        System.out.println(this.getClass() + "环绕通知2");
         return result;
     }
 }

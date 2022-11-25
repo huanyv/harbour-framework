@@ -1,7 +1,5 @@
 package top.huanyv.webmvc.core.request.method;
 
-import top.huanyv.tools.utils.StringUtil;
-import top.huanyv.webmvc.annotation.argument.Param;
 import top.huanyv.webmvc.annotation.argument.Path;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
@@ -11,7 +9,6 @@ import top.huanyv.webmvc.utils.ClassDesc;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.Date;
 
 /**
  * @author huanyv
@@ -27,7 +24,7 @@ public class PathMethodArgumentResolver implements MethodArgumentResolver{
             return null;
         }
         if (String.class.equals(type)) {
-            return key;
+            return value;
         }
         TypeConverter typeConverter = TypeConverterFactory.getTypeConverter(String.class, type);
         return typeConverter == null ? null : typeConverter.convert(value, methodParameterDesc);

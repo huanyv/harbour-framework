@@ -1,6 +1,5 @@
 package top.huanyv.webmvc.core.request.method;
 
-import top.huanyv.webmvc.annotation.argument.Cookie;
 import top.huanyv.webmvc.annotation.argument.Header;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
@@ -16,7 +15,7 @@ import java.io.IOException;
 public class HeaderMethodArgumentResolver implements MethodArgumentResolver{
     @Override
     public Object resolve(HttpRequest req, HttpResponse resp, ClassDesc methodParameterDesc) throws ServletException, IOException {
-        return req.getCookieValue(methodParameterDesc.getAnnotation(Header.class).value());
+        return req.getHeader(methodParameterDesc.getAnnotation(Header.class).value());
     }
 
     @Override
