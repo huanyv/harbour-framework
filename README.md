@@ -7,7 +7,7 @@
 如果觉得这个项目不错可以 [star](https://github.com) 支持或者 [捐赠](https://github.com) 它
 
 * 简洁的：框架设计简单,容易理解,不依赖于更多第三方库。
-* 优雅的：`Blade` 支持 REST 风格路由接口, 提供lambda函数路由。
+* 优雅的：`Harbour` 支持 REST 风格路由接口, 提供lambda函数路由。
 * 易部署：支持 `maven` 打成 `jar` 包直接运行
 
 ## 功能特性
