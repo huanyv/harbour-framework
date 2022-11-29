@@ -4,10 +4,9 @@ import top.huanyv.tools.utils.JsonUtil;
 import top.huanyv.webmvc.annotation.argument.Body;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
+import top.huanyv.webmvc.enums.BodyType;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
@@ -15,7 +14,7 @@ import java.lang.reflect.Method;
  * @author huanyv
  * @date 2022/11/15 16:29
  */
-public class BodyMethodReturnResolver implements MethodReturnResolver {
+public class BodyJsonMethodReturnResolver implements MethodReturnResolver {
 
     @Override
     public void resolve(HttpRequest req, HttpResponse resp, Object returnValue, Method method) throws ServletException, IOException {
@@ -27,7 +26,11 @@ public class BodyMethodReturnResolver implements MethodReturnResolver {
 
     @Override
     public boolean support(Method method) {
-        return method.isAnnotationPresent(Body.class) || method.getDeclaringClass().isAnnotationPresent(Body.class);
+        Body body = method.getAnnotation(Body.class);
+        if (body == null) {
+            body = method.getDeclaringClass().getAnnotation(Body.class);
+        }
+        return body != null && BodyType.JSON.equals(body.value());
     }
 
 }

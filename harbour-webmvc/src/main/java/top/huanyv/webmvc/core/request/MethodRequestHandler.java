@@ -76,7 +76,7 @@ public class MethodRequestHandler implements RequestHandler {
         List<MethodArgumentResolver> result = new ArrayList<>();
         result.add(new ParamMethodArgumentResolver());
         result.add(new ArrayParamMethodArgumentResolver());
-        result.add(new BodyMethodArgumentResolver());
+        result.add(new BodyJsonMethodArgumentResolver());
         result.add(new FormMethodArgumentResolver());
         result.add(new MultipartMethodArgumentResolver());
         result.add(new PathMethodArgumentResolver());

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import top.huanyv.jdbc.annotation.TableName;
-import top.huanyv.tools.annotation.JavaBean;
 
 /**
  * @author huanyv

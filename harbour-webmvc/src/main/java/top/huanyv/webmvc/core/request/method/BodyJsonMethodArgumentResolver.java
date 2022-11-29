@@ -9,10 +9,12 @@ import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
 import top.huanyv.webmvc.core.request.type.TypeConverter;
 import top.huanyv.webmvc.core.request.type.TypeConverterFactory;
+import top.huanyv.webmvc.enums.BodyType;
 import top.huanyv.webmvc.utils.ClassDesc;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
 
@@ -20,7 +22,7 @@ import java.util.Date;
  * @author huanyv
  * @date 2022/11/17 16:09
  */
-public class BodyMethodArgumentResolver implements MethodArgumentResolver{
+public class BodyJsonMethodArgumentResolver implements MethodArgumentResolver {
     @Override
     public Object resolve(HttpRequest req, HttpResponse resp, ClassDesc methodParameterDesc) throws ServletException, IOException {
         String requestBody = null;
@@ -30,10 +32,10 @@ public class BodyMethodArgumentResolver implements MethodArgumentResolver{
             return null;
         }
         Object result = null;
-        Type genericType = methodParameterDesc.getGenericType();
+        ParameterizedType genericType = methodParameterDesc.getGenericType();
         // 如果是泛型类型
         if (genericType != null) {
-            result = JsonUtil.fromJson(requestBody, new TypeReferenceImpl(genericType));
+            result = JsonUtil.fromJson(requestBody, genericType);
         } else {
             result = JsonUtil.fromJson(requestBody, methodParameterDesc.getType());
         }
@@ -43,6 +45,7 @@ public class BodyMethodArgumentResolver implements MethodArgumentResolver{
 
     @Override
     public boolean support(ClassDesc methodParameterDesc) {
-        return methodParameterDesc.isAnnotationPresent(Body.class);
+        Body body = methodParameterDesc.getAnnotation(Body.class);
+        return body != null && BodyType.JSON.equals(body.value());
     }
 }

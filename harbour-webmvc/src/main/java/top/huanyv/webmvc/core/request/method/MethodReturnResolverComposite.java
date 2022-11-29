@@ -22,7 +22,7 @@ public class MethodReturnResolverComposite implements MethodReturnResolver {
     private Map<Method, MethodReturnResolver> resolverCache = new ConcurrentHashMap<>(64);
 
     public MethodReturnResolverComposite() {
-        returnResolvers.add(new BodyMethodReturnResolver());
+        returnResolvers.add(new BodyJsonMethodReturnResolver());
         returnResolvers.add(new ViewMethodReturnResolver());
     }
 

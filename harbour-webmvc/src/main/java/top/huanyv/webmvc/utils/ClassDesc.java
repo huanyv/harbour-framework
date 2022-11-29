@@ -124,8 +124,10 @@ public class ClassDesc implements AnnotatedElement {
         List<ClassDesc> classDescList = new ArrayList<>();
         // 方法的注解列表，二维数组
         Annotation[][] methodParameterAnnotations = method.getParameterAnnotations();
-        // 类型列表
+        // 泛型类型列表
         Type[] genericTypes = method.getGenericParameterTypes();
+        // 普通类型列表
+        Class<?>[] types = method.getParameterTypes();
 
         int index = 0;
         for (Type genericType : genericTypes) {
@@ -139,7 +141,7 @@ public class ClassDesc implements AnnotatedElement {
                 }
             } else if (genericType instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) genericType;
-                classDesc.setType((Class<?>) parameterizedType.getRawType());
+                classDesc.setType(types[index]);
                 classDesc.setAnnotations(methodParameterAnnotations[index]);
                 classDesc.setGenericType(parameterizedType);
                 classDesc.setActualTypes(parameterizedType.getActualTypeArguments());
@@ -162,7 +164,7 @@ public class ClassDesc implements AnnotatedElement {
             }
         } else if (genericReturnType instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
-            classDesc.setType((Class<?>) parameterizedType.getRawType());
+            classDesc.setType(method.getReturnType());
             classDesc.setAnnotations(method.getAnnotations());
             classDesc.setGenericType(parameterizedType);
             classDesc.setActualTypes(parameterizedType.getActualTypeArguments());

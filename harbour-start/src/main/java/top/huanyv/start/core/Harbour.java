@@ -22,17 +22,17 @@ import java.util.Properties;
 
 import static top.huanyv.start.config.BootGlobalConfig.*;
 
-public class Winter implements Routing, WebServer {
+public class Harbour implements Routing, WebServer {
 
     /**
      * 单例
      */
-    private Winter() { }
+    private Harbour() { }
 
     private static class SingleHolder {
-        private static final Winter INSTANCE = new Winter();
+        private static final Harbour INSTANCE = new Harbour();
     }
-    public static Winter use() {
+    public static Harbour use() {
         return SingleHolder.INSTANCE;
     }
 
