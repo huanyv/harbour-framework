@@ -19,7 +19,7 @@ public class ConnectionDecorator implements Connection {
     // 连接池
     private ConnectionPool connectionPool;
 
-    //  是否关闭/收回，默认收回状态
+    //  连接是否收回(true)，默认收回状态
     private boolean isClosed = true;
 
     public ConnectionDecorator(Connection connection, ConnectionPool connectionPool) {
@@ -34,8 +34,8 @@ public class ConnectionDecorator implements Connection {
      */
     @Override
     public void close() throws SQLException {
-        this.isClosed = true;
         this.connectionPool.close(this);
+        this.isClosed = true;
     }
 
     /**
@@ -46,7 +46,7 @@ public class ConnectionDecorator implements Connection {
      */
     @Override
     public boolean isClosed() throws SQLException {
-        return isClosed;
+        return isClosed || this.connection.isClosed();
     }
 
     /**
@@ -55,12 +55,12 @@ public class ConnectionDecorator implements Connection {
      * @throws SQLException sqlexception异常
      */
     public void realClose() throws SQLException {
-        this.isClosed = true;
         this.connection.close();
+        this.isClosed = true;
     }
 
-    public void setClosed(boolean closed) {
-        isClosed = closed;
+    public void open() {
+        this.isClosed = false;
     }
 
     @Override
@@ -150,7 +150,7 @@ public class ConnectionDecorator implements Connection {
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        return this.connection.createStatement();
+        return this.connection.createStatement(resultSetType, resultSetConcurrency);
     }
 
     @Override

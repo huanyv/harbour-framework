@@ -44,10 +44,7 @@ public class ConnectionPool {
         // 初始化连接池
         for (int i = 0; i < this.initialSize; i++) {
             try {
-                Connection connection = DriverManager.getConnection(url, username, password);
-                // 创建装饰器
-                ConnectionDecorator connectionDecorator = new ConnectionDecorator(connection, this);
-                connections.add(connectionDecorator);
+                this.connections.add(newConnection());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -64,7 +61,10 @@ public class ConnectionPool {
             connection.realClose();
             return;
         }
-        this.connections.add(connection);
+        // 防止多次调用close()方法出现重复连接
+        if (!this.connections.contains(connection)) {
+            this.connections.add(connection);
+        }
     }
 
     /**
@@ -72,25 +72,31 @@ public class ConnectionPool {
      *
      * @return {@link Connection}
      */
-    public synchronized Connection getConnection() {
+    public synchronized Connection getConnection() throws SQLException {
 
         // 空闲连接数
         if (this.connections.size() <= 0) {
             for (int i = 0; i <= minIdle; i++) {
-                try {
-                    Connection connection = DriverManager.getConnection(url, username, password);
-                    this.connections.add(new ConnectionDecorator(connection, this));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                this.connections.add(newConnection());
             }
         }
 
         // 连接池非空
         ConnectionDecorator connectionDecorator = this.connections.get(0);
         this.connections.remove(connectionDecorator);
-        connectionDecorator.setClosed(false);
+        connectionDecorator.open();
         return connectionDecorator;
+    }
+
+    /**
+     * 创建新装饰器连接
+     *
+     * @return {@link ConnectionDecorator}
+     * @throws SQLException sqlexception异常
+     */
+    public ConnectionDecorator newConnection() throws SQLException {
+        Connection connection = DriverManager.getConnection(url, username, password);
+        return new ConnectionDecorator(connection, this);
     }
 
     public boolean containsConnection(ConnectionDecorator connection) {

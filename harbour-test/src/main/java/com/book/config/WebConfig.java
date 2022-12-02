@@ -63,7 +63,7 @@ public class WebConfig implements WebConfigurer {
         simpleDataSource.setUsername("root");
         simpleDataSource.setPassword("2233");
 
-        jdbcConfigurer.setDataSource(druidDataSource);
+        jdbcConfigurer.setDataSource(simpleDataSource);
         jdbcConfigurer.setScanPackages("com.book");
 
         return new DaoScanner();

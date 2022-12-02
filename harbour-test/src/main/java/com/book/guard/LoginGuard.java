@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author huanyv
  * @date 2022/11/17 18:58
  */
-@Component
+//@Component
 @Guard(value = {"/**"}, exclude = {"/error/**", "/jquery/**", "/layui/**", "/login", "/admin/user/login"})
 public class LoginGuard implements NavigationGuard {
 

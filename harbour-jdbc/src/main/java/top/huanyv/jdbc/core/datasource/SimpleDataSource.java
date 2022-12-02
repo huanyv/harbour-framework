@@ -42,14 +42,14 @@ public class SimpleDataSource implements DataSource {
         dataSource.setUsername(username);
         dataSource.setPassword(password);
 
-        dataSource.setConnectionPool(new ConnectionPool(url, username, password));
+        dataSource.initConnectionPool();
         return dataSource;
     }
 
     @Override
     public Connection getConnection() throws SQLException {
         if (connectionPool == null) {
-            connectionPool = new ConnectionPool(this.url, this.username, this.password);
+            initConnectionPool();
         }
         return connectionPool.getConnection();
     }
@@ -92,6 +92,13 @@ public class SimpleDataSource implements DataSource {
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return null;
+    }
+
+    /**
+     * 初始化连接池
+     */
+    public void initConnectionPool() {
+        connectionPool = new ConnectionPool(this.url, this.username, this.password);
     }
 
     /**
