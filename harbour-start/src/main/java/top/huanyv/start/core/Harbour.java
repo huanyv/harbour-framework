@@ -135,7 +135,6 @@ public class Harbour implements Routing, WebServer {
 
         try {
             this.tomcat.start();
-            this.tomcat.getServer().await();
         } catch (LifecycleException e) {
             e.printStackTrace();
             stop();

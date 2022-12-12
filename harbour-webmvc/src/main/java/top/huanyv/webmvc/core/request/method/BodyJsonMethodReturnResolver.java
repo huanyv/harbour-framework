@@ -21,7 +21,7 @@ public class BodyJsonMethodReturnResolver implements MethodReturnResolver {
         if (returnValue == null) {
             return;
         }
-        resp.getWriter().println(JsonUtil.toJson(returnValue));
+        resp.json(JsonUtil.toJson(returnValue));
     }
 
     @Override

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>top.huanyv</groupId>
-    <artifactId>harbour-start</artifactId>
+    <artifactId>enjoy-harbour</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -16,46 +16,26 @@
         <java.version>1.8</java.version>
     </properties>
 
+
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+            <groupId>com.jfinal</groupId>
+            <artifactId>enjoy</artifactId>
+            <version>5.0.3</version>
         </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.49</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
-            <version>9.0.64</version>
-        </dependency>
-
         <dependency>
             <groupId>top.huanyv</groupId>
             <artifactId>harbour-webmvc</artifactId>
             <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>top.huanyv</groupId>
-            <artifactId>thymeleaf-harbour</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>top.huanyv</groupId>
-            <artifactId>harbour-jdbc</artifactId>
-            <version>1.0</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
-
 
     <build>
         <plugins>
@@ -87,6 +67,4 @@
 
         </plugins>
     </build>
-
-
 </project>

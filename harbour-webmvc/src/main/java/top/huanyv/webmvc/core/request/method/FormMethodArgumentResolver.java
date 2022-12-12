@@ -24,7 +24,7 @@ public class FormMethodArgumentResolver implements MethodArgumentResolver{
 
     @Override
     public Object resolve(HttpRequest req, HttpResponse resp, ClassDesc methodParameterDesc) throws ServletException, IOException {
-        return CONVERTER.convert(req.getParameterMap(), methodParameterDesc);
+        return CONVERTER.convert(req.raw().getParameterMap(), methodParameterDesc);
     }
 
     @Override

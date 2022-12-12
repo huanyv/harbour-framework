@@ -4,6 +4,7 @@ import top.huanyv.webmvc.guard.NavigationGuard;
 import top.huanyv.webmvc.guard.NavigationGuardMapping;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,6 +24,6 @@ public class NavigationGuardRegistry {
 
 
     public List<NavigationGuardMapping> getConfigNavigationGuards() {
-        return navigationGuards;
+        return Collections.unmodifiableList(navigationGuards);
     }
 }

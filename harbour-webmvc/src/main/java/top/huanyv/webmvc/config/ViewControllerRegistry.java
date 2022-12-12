@@ -1,5 +1,6 @@
 package top.huanyv.webmvc.config;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,6 @@ public class ViewControllerRegistry {
     }
 
     public Map<String, String> getViewController() {
-        return viewController;
+        return Collections.unmodifiableMap(viewController);
     }
 }

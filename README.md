@@ -152,6 +152,7 @@ public class UserController {
 * 创建切面，实现`AspectAdvice`接口，实现其中的方法
 * 支持前置通知、后置通知、环绕通知，如想使用异常、最终通知，建议使用环绕通知`try{}catch{}finaly{}`捕获
 * 在Bean上使用`@Aop`注解，指定切面，可以多个
+* 可以在单个方法上使用，方法上的AOP和类上的AOP会组合
 
 ```java
 public interface AspectAdvice {
@@ -217,6 +218,19 @@ public class LogAspect2 implements AspectAdvice {
 @Aop({LogAspect.class, LogAspect2.class}) // 指定切面
 public class AdminService {
 
+    public User getUser() {
+        System.out.println("方法执行");
+        return new User(1, "admin", "123", "男", "111@qq.com");
+    }
+
+}
+
+// 等效于上面
+@Component
+@Aop(LogAspect.class) // 指定切面
+public class AdminService {
+
+    @Aop(LogAspect2.class) // 指定切面
     public User getUser() {
         System.out.println("方法执行");
         return new User(1, "admin", "123", "男", "111@qq.com");

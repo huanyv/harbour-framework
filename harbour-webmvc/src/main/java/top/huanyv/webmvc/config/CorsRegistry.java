@@ -1,6 +1,7 @@
 package top.huanyv.webmvc.config;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,6 +18,6 @@ public class CorsRegistry {
     }
 
     public List<CorsRegistryBean> getCorsRegistryBeans() {
-        return corsRegistryBeans;
+        return Collections.unmodifiableList(corsRegistryBeans);
     }
 }

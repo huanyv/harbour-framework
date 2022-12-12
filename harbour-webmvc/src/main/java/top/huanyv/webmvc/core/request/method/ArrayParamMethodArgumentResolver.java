@@ -21,7 +21,7 @@ public class ArrayParamMethodArgumentResolver implements MethodArgumentResolver{
     public Object resolve(HttpRequest req, HttpResponse resp, ClassDesc methodParameterDesc) throws ServletException, IOException {
         Class<?> type = methodParameterDesc.getType();
         String key = methodParameterDesc.getAnnotation(Param.class).value();
-        String[] values = req.getParameterValues(key);
+        String[] values = req.raw().getParameterValues(key);
         if (values == null) {
             return null;
         }

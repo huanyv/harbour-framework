@@ -20,7 +20,7 @@ public class ParamMethodArgumentResolver implements MethodArgumentResolver{
     public Object resolve(HttpRequest req, HttpResponse resp, ClassDesc methodParameterDesc) throws ServletException, IOException {
         Class<?> type = methodParameterDesc.getType();
         String key = methodParameterDesc.getAnnotation(Param.class).value();
-        String value = req.getParameter(key);
+        String value = req.param(key);
         if (value == null) {
             return null;
         }

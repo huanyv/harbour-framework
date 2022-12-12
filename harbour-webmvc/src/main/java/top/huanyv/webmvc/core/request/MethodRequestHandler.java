@@ -65,14 +65,14 @@ public class MethodRequestHandler implements RequestHandler {
 
     private void initResolver() {
         if (argumentResolver == null) {
-            argumentResolver = new MethodArgumentResolverComposite().addResolvers(getMethodArgumentResolver());
+            argumentResolver = new MethodArgumentResolverComposite().addResolvers(getMethodArgumentResolvers());
         }
         if (returnResolver == null) {
             returnResolver = new MethodReturnResolverComposite();
         }
     }
 
-    private List<MethodArgumentResolver> getMethodArgumentResolver() {
+    private List<MethodArgumentResolver> getMethodArgumentResolvers() {
         List<MethodArgumentResolver> result = new ArrayList<>();
         result.add(new ParamMethodArgumentResolver());
         result.add(new ArrayParamMethodArgumentResolver());

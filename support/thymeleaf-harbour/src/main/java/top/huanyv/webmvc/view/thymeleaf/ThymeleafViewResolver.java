@@ -1,10 +1,12 @@
-package top.huanyv.webmvc.view;
+package top.huanyv.webmvc.view.thymeleaf;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.*;
 import top.huanyv.webmvc.utils.ServletHolder;
+import top.huanyv.webmvc.view.ViewResolver;
+import top.huanyv.webmvc.view.ViewResolverType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

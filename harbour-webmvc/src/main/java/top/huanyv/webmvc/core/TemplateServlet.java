@@ -110,23 +110,23 @@ public abstract class TemplateServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) {
-        ServletHolder.setRequest(req);
-        ServletHolder.setResponse(resp);
+        HttpRequest httpRequest = new HttpRequest(req, resp);
+        httpRequest.setViewResolver(this.viewResolver);
+        HttpResponse httpResponse = new HttpResponse(req, resp);
 
-        HttpRequest httpRequest = null;
-        HttpResponse httpResponse = null;
+        ServletHolder.setRequest(httpRequest);
+        ServletHolder.setResponse(httpResponse);
         try {
             req.setCharacterEncoding(StandardCharsets.UTF_8.name());
             resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            httpRequest = new HttpRequest(req, resp);
-            httpRequest.setViewResolver(this.viewResolver);
-            httpResponse = new HttpResponse(req, resp);
             // 路由分发
-            doRouting(req, resp);
+            doRouting(httpRequest, httpResponse);
         } catch (InvocationTargetException e) {
+            // 反射异常捕获，先获取反射中的具体异常
             Exception targetException = ReflectUtil.getTargetException(e);
             doException(httpRequest, httpResponse, targetException);
         } catch (Exception e) {
+            // 其它异常捕获
             doException(httpRequest, httpResponse, e);
         } finally {
             ServletHolder.removeRequest();
@@ -134,7 +134,7 @@ public abstract class TemplateServlet extends HttpServlet {
         }
     }
 
-    abstract void doRouting(HttpServletRequest req, HttpServletResponse resp) throws Exception;
+    abstract void doRouting(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception;
 
 
     abstract void doException(HttpRequest req, HttpResponse resp, Exception ex);

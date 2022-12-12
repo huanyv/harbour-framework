@@ -1,6 +1,5 @@
 package com.book.config;
 
-
 import com.alibaba.druid.pool.DruidDataSource;
 import com.mysql.jdbc.Driver;
 import top.huanyv.bean.annotation.Bean;

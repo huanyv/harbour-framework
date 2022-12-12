@@ -2,6 +2,7 @@ package top.huanyv.webmvc.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -75,6 +76,6 @@ public class CorsRegistryBean {
     }
 
     public List<String> getAllowedMethods() {
-        return allowedMethods;
+        return Collections.unmodifiableList(this.allowedMethods);
     }
 }

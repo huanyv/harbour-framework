@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Locale;
 
 public class HttpResponse {
 
@@ -30,7 +28,7 @@ public class HttpResponse {
      *
      * @return {@link HttpServletResponse}
      */
-    public HttpServletResponse getOriginal() {
+    public HttpServletResponse raw() {
         return servletResponse;
     }
 
@@ -111,46 +109,12 @@ public class HttpResponse {
         servletResponse.addCookie(cookie);
     }
 
-    public boolean containsHeader(String name) {
-        return servletResponse.containsHeader(name);
-    }
-
-    public String encodeURL(String url) {
-        return servletResponse.encodeURL(url);
-    }
-
-    public String encodeRedirectURL(String url) {
-        return servletResponse.encodeRedirectURL(url);
-    }
-
-    @Deprecated
-    public String encodeUrl(String url) {
-        return servletResponse.encodeUrl(url);
-    }
-
-    @Deprecated
-    public String encodeRedirectUrl(String url) {
-        return servletResponse.encodeRedirectUrl(url);
-    }
-
-    public void sendError(int sc, String msg) throws IOException {
+    public void error(int sc, String msg) throws IOException {
         servletResponse.sendError(sc, msg);
     }
 
-    public void sendError(int sc) throws IOException {
+    public void error(int sc) throws IOException {
         servletResponse.sendError(sc);
-    }
-
-    public void sendRedirect(String location) throws IOException {
-        servletResponse.sendRedirect(location);
-    }
-
-    public void setDateHeader(String name, long date) {
-        servletResponse.setDateHeader(name, date);
-    }
-
-    public void addDateHeader(String name, long date) {
-        servletResponse.addDateHeader(name, date);
     }
 
     public void setHeader(String name, String value) {
@@ -161,100 +125,16 @@ public class HttpResponse {
         servletResponse.addHeader(name, value);
     }
 
-    public void setIntHeader(String name, int value) {
-        servletResponse.setIntHeader(name, value);
-    }
-
-    public void addIntHeader(String name, int value) {
-        servletResponse.addIntHeader(name, value);
-    }
-
-    public void setStatus(int sc) {
+    public void status(int sc) {
         servletResponse.setStatus(sc);
-    }
-
-    @Deprecated
-    public void setStatus(int sc, String sm) {
-        servletResponse.setStatus(sc, sm);
-    }
-
-    public int getStatus() {
-        return servletResponse.getStatus();
-    }
-
-    public String getHeader(String name) {
-        return servletResponse.getHeader(name);
-    }
-
-    public Collection<String> getHeaders(String name) {
-        return servletResponse.getHeaders(name);
-    }
-
-    public Collection<String> getHeaderNames() {
-        return servletResponse.getHeaderNames();
-    }
-
-    public String getCharacterEncoding() {
-        return servletResponse.getCharacterEncoding();
-    }
-
-    public String getContentType() {
-        return servletResponse.getContentType();
     }
 
     public ServletOutputStream getOutputStream() throws IOException {
         return servletResponse.getOutputStream();
     }
 
-    public PrintWriter getWriter() throws IOException {
-        return servletResponse.getWriter();
-    }
-
-    public void setCharacterEncoding(String charset) {
-        servletResponse.setCharacterEncoding(charset);
-    }
-
-    public void setContentLength(int len) {
-        servletResponse.setContentLength(len);
-    }
-
-    public void setContentLengthLong(long len) {
-        servletResponse.setContentLengthLong(len);
-    }
-
-    public void setContentType(String type) {
+    public void contentType(String type) {
         servletResponse.setContentType(type);
     }
 
-    public void setBufferSize(int size) {
-        servletResponse.setBufferSize(size);
-    }
-
-    public int getBufferSize() {
-        return servletResponse.getBufferSize();
-    }
-
-    public void flushBuffer() throws IOException {
-        servletResponse.flushBuffer();
-    }
-
-    public void resetBuffer() {
-        servletResponse.resetBuffer();
-    }
-
-    public boolean isCommitted() {
-        return servletResponse.isCommitted();
-    }
-
-    public void reset() {
-        servletResponse.reset();
-    }
-
-    public void setLocale(Locale loc) {
-        servletResponse.setLocale(loc);
-    }
-
-    public Locale getLocale() {
-        return servletResponse.getLocale();
-    }
 }

@@ -2,6 +2,7 @@ package top.huanyv.webmvc.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ public class ResourceMapping {
     }
 
     public List<String> getLocations() {
-        return locations;
+        return Collections.unmodifiableList(locations);
     }
 
     public void setUrlPattern(String urlPattern) {

@@ -1,11 +1,8 @@
 package top.huanyv.webmvc.core.request.method;
 
-import top.huanyv.tools.utils.BeanUtil;
-import top.huanyv.webmvc.annotation.argument.Form;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
 import top.huanyv.webmvc.core.request.Model;
-import top.huanyv.webmvc.core.request.type.MapToBeanConverter;
 import top.huanyv.webmvc.utils.ClassDesc;
 
 import javax.servlet.ServletException;
@@ -27,9 +24,9 @@ public class ServletMethodArgumentResolver implements MethodArgumentResolver {
     public Object resolve(HttpRequest req, HttpResponse resp, ClassDesc methodParameterDesc) throws ServletException, IOException {
         Class<?> paramType = methodParameterDesc.getType();
         if (HttpServletRequest.class.equals(paramType)) {
-            return req.getOriginal();
+            return req.raw();
         } else if (HttpServletResponse.class.equals(paramType)) {
-            return resp.getOriginal();
+            return resp.raw();
         } else if (HttpSession.class.equals(paramType)) {
             return req.getSession();
         } else if (OutputStream.class.isAssignableFrom(paramType)) {
@@ -39,7 +36,7 @@ public class ServletMethodArgumentResolver implements MethodArgumentResolver {
         } else if (HttpResponse.class.equals(paramType)) {
             return resp;
         } else if (Model.class.equals(paramType)) {
-            return new Model(req.getOriginal());
+            return new Model(req.raw());
         }
         return null;
     }

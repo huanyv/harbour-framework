@@ -24,7 +24,7 @@ import java.io.IOException;
 
 @Component
 @Route("/admin/book")
-//@Aop(LogAop.class)
+@Aop(LogAop.class)
 //@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Body
 public class BookController {

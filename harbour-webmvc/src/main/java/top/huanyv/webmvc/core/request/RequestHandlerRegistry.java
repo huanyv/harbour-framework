@@ -45,8 +45,8 @@ public class RequestHandlerRegistry {
     }
 
     public void registerHandler(String urlPattern, RequestMethod requestMethod, RequestHandler requestHandler) {
-        RequestMapping mapping = getMapping(urlPattern);
-        mapping.getHandler().put(requestMethod, requestHandler);
+        RequestMapping mapping = getRequestMapping(urlPattern);
+        mapping.addHandlerMapping(requestMethod, requestHandler);
     }
 
 
@@ -66,20 +66,12 @@ public class RequestHandlerRegistry {
     }
 
     /**
-     * 根据地址获取处理器映射
-     * @param urlPattern 地址，一般是精确的
-     */
-//    public Map<RequestMethod, ServletHandler> getHandler(String urlPattern) {
-//        return getMapping(urlPattern).getHandler();
-//    }
-
-    /**
      * 根据地址获取请求映射
      *
      * @param urlPattern 请求地址，一般是精确的
      * @return RequestMapping
      */
-    public RequestMapping getMapping(String urlPattern) {
+    public RequestMapping getRequestMapping(String urlPattern) {
         for (RequestMapping mapping : this.registry) {
             if (mapping.compareUrl(urlPattern)) {
                 return mapping;
@@ -91,8 +83,6 @@ public class RequestHandlerRegistry {
         mapping.setHandler(new HashMap<>());
         this.registry.add(mapping);
         return mapping;
-
     }
-
 
 }

@@ -22,19 +22,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 前端控制器，将请求到路由
  * @author admin
  * @date 2022/7/29 9:22
  */
-//public class RouterServlet extends InitRouterServlet {
-public class RouterServlet extends InitProxyRouterServlet {
+public class RouterServlet extends InitRouterServlet {
 
     @Override
-    void doRouting(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        String uri = WebUtil.getRequestURI(req);
+    void doRouting(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {
+        HttpServletRequest req = httpRequest.raw();
+        HttpServletResponse resp = httpResponse.raw();
 
-        HttpRequest httpRequest = new HttpRequest(req, resp);
-        httpRequest.setViewResolver(this.viewResolver);
-        HttpResponse httpResponse = new HttpResponse(req, resp);
+        String uri = httpRequest.getUri();
 
         // 获取路由守卫执行链
         NavigationGuardChain navigationGuardChain = getNavigationGuardChain(req);
@@ -62,12 +61,12 @@ public class RouterServlet extends InitProxyRouterServlet {
 
         RequestMethod requestMethod = RequestMethod.valueOf(req.getMethod().toUpperCase());
         // 获取当前uri的对应请求处理器映射
-        RequestMapping requestMapping = this.requestRegistry.getMapping(uri);
+        RequestMapping requestMapping = this.requestRegistry.getRequestMapping(uri);
         // 获取当前请求方式的处理
         RequestHandler requestHandler = requestMapping.getRequestHandler(requestMethod);
 
         // 设置pathVar
-        requestMapping.parsePathVars(uri);
+        httpRequest.setPathVariables(requestMapping.parsePathVars(uri));
 
         // 判断处理器是否存在
         if (requestHandler != null) {

@@ -3,6 +3,7 @@ package top.huanyv.webmvc.config;
 import top.huanyv.webmvc.resource.ResourceMapping;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -69,6 +70,6 @@ public class ResourceMappingRegistry {
     }
 
     public List<ResourceMapping> getResourceMappings() {
-        return resourceMappings;
+        return Collections.unmodifiableList(resourceMappings);
     }
 }

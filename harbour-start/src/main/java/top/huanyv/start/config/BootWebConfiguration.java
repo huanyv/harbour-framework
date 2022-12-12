@@ -1,12 +1,11 @@
 package top.huanyv.start.config;
 
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Configuration;
-import top.huanyv.webmvc.view.ThymeleafViewResolver;
 import top.huanyv.webmvc.view.ViewResolver;
+import top.huanyv.webmvc.view.thymeleaf.ThymeleafViewResolver;
 
 import java.nio.charset.StandardCharsets;
 

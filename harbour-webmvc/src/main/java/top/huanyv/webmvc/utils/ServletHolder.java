@@ -1,8 +1,9 @@
 package top.huanyv.webmvc.utils;
 
+import top.huanyv.webmvc.core.HttpRequest;
+import top.huanyv.webmvc.core.HttpResponse;
+
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author huanyv
@@ -12,9 +13,9 @@ public class ServletHolder {
 
     private static ServletContext servletContext;
 
-    private static ThreadLocal<HttpServletRequest> requestThreadLocal = new ThreadLocal<>();
+    private static ThreadLocal<HttpRequest> requestThreadLocal = new ThreadLocal<>();
 
-    private static ThreadLocal<HttpServletResponse> responseThreadLocal = new ThreadLocal<>();
+    private static ThreadLocal<HttpResponse> responseThreadLocal = new ThreadLocal<>();
 
     public static void setServletContext(ServletContext ctx) {
         servletContext = ctx;
@@ -25,11 +26,11 @@ public class ServletHolder {
     }
 
 
-    public static void setRequest(HttpServletRequest request) {
+    public static void setRequest(HttpRequest request) {
         requestThreadLocal.set(request);
     }
 
-    public static HttpServletRequest getRequest() {
+    public static HttpRequest getRequest() {
         return requestThreadLocal.get();
     }
 
@@ -38,11 +39,11 @@ public class ServletHolder {
     }
 
 
-    public static void setResponse(HttpServletResponse response) {
+    public static void setResponse(HttpResponse response) {
         responseThreadLocal.set(response);
     }
 
-    public static HttpServletResponse getResponse() {
+    public static HttpResponse getResponse() {
         return responseThreadLocal.get();
     }
 
