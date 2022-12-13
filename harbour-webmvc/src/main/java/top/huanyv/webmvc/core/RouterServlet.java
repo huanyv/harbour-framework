@@ -1,5 +1,6 @@
 package top.huanyv.webmvc.core;
 
+import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.utils.AopUtil;
 import top.huanyv.tools.utils.IoUtil;
 import top.huanyv.tools.utils.WebUtil;
@@ -27,6 +28,13 @@ import java.util.stream.Collectors;
  * @date 2022/7/29 9:22
  */
 public class RouterServlet extends InitRouterServlet {
+
+    public RouterServlet() {
+    }
+
+    public RouterServlet(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     void doRouting(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception {

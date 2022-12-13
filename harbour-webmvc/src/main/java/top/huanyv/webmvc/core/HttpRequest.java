@@ -197,7 +197,7 @@ public class HttpRequest {
     }
 
     public Map<String, String> getPathVariables() {
-        return pathVariables;
+        return Collections.unmodifiableMap(this.pathVariables);
     }
 
     public void setPathVariables(Map<String, String> pathVariables) {

@@ -72,8 +72,10 @@ public abstract class TemplateServlet extends HttpServlet {
         ServletContext servletContext = getServletContext();
         ServletHolder.setServletContext(servletContext);
 
-        String scanPackages = getServletConfig().getInitParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES);
-        this.applicationContext = new AnnotationConfigApplicationContext(scanPackages.split(","));
+        if (this.applicationContext == null) {
+            String scanPackages = getServletConfig().getInitParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES);
+            this.applicationContext = new AnnotationConfigApplicationContext(scanPackages.split(","));
+        }
 
         // IOC容器存到上下文中
         servletContext.setAttribute(WebMvcGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME, applicationContext);

@@ -5,6 +5,8 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import top.huanyv.bean.ioc.AnnotationConfigApplicationContext;
+import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.start.utils.CommandLineUtil;
 import top.huanyv.tools.utils.PropertiesUtil;
 import top.huanyv.tools.utils.ResourceUtil;
@@ -110,22 +112,23 @@ public class Harbour implements Routing, WebServer {
         // ===========================
 
         // 注册
-        String scanPackages = mainClass.getPackage().getName() + ", top.huanyv.start";
-//        this.context.addParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES, scanPackages);
-//        this.context.addApplicationListener(WebApplicationListener.class.getName());
+//        String scanPackages = mainClass.getPackage().getName() + ", top.huanyv.start";
 
         // 文件配置
         String maxFileSize = properties.getProperty(CONFIG_FILE_MAX_FILE_SIZE, "1048576");
         String maxRequestSize = properties.getProperty(CONFIG_FILE_MAX_REQUEST_SIZE, "10485760");
 
+        // IOC
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(mainClass.getPackage().getName(), "top.huanyv.start");
+
         // 请求注册到tomcat容器中
-        RouterServlet routerServlet = new RouterServlet();
+        RouterServlet routerServlet = new RouterServlet(applicationContext);
         Wrapper router = this.tomcat.addServlet(this.context, WebMvcGlobalConfig.ROUTER_SERVLET_NAME, routerServlet);
         router.setMultipartConfigElement(new MultipartConfigElement("", Long.parseLong(maxFileSize), Long.parseLong(maxRequestSize), 0));
-        router.addMapping("/");
         // 扫描包
-        router.addInitParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES, scanPackages);
+//        router.addInitParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES, scanPackages);
         router.setLoadOnStartup(1);
+        router.addMapping("/");
 
         // 获取banner
         String banner = ResourceUtil.readStr(BANNER_FILE_NAME, DEFAULT_BANNER);
