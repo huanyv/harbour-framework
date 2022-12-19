@@ -7,11 +7,11 @@ import top.huanyv.jdbc.core.SqlContextFactory;
  * @author admin
  * @date 2022/7/23 16:31
  */
-public class SqlContextFactoryBean<T> implements FactoryBean<T> {
+public class DaoFactoryBean<T> implements FactoryBean<T> {
 
     private Class<T> daoInterface;
 
-    public SqlContextFactoryBean(Class<T> daoInterface) {
+    public DaoFactoryBean(Class<T> daoInterface) {
         this.daoInterface = daoInterface;
     }
 

@@ -44,7 +44,7 @@ public class WebConfig implements WebConfigurer {
         registry.addMapping("/**").defaultRule();
     }
 
-    @Bean
+//    @Bean
     public DaoScanner daoScanner() {
         // 加载配置
         JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();

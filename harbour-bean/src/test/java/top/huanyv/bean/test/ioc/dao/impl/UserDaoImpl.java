@@ -1,6 +1,7 @@
 package top.huanyv.bean.test.ioc.dao.impl;
 
 import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Inject;
 import top.huanyv.bean.test.entity.User;
 import top.huanyv.bean.test.ioc.dao.UserDao;
 
@@ -10,6 +11,10 @@ import top.huanyv.bean.test.ioc.dao.UserDao;
  */
 @Component("userDao")
 public class UserDaoImpl implements UserDao {
+
+    @Inject
+    private AdminDaoImpl adminDao;
+
     @Override
     public User getUserById(Integer id) {
         return new User(id, "user", "123", "男", "2233@qq.com");

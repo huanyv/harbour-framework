@@ -1,2 +1,3 @@
 top.huanyv.start.loader.TomcatStartLoader
 top.huanyv.start.loader.ViewResolverLoader
+top.huanyv.start.loader.JdbcStartLoader

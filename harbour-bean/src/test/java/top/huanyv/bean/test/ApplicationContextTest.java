@@ -4,10 +4,13 @@ import org.junit.Test;
 import top.huanyv.bean.ioc.AnnotationConfigApplicationContext;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.test.aop.AdminService;
+import top.huanyv.bean.test.cycle.A;
+import top.huanyv.bean.test.cycle.B;
 import top.huanyv.bean.test.entity.User;
 import top.huanyv.bean.test.factory.MapperFactoryBean;
 import top.huanyv.bean.test.ioc.controller.UserController;
 import top.huanyv.bean.test.ioc.dao.UserDao;
+import top.huanyv.bean.test.ioc.dao.impl.UserDaoImpl;
 
 import java.util.Arrays;
 
@@ -52,5 +55,21 @@ public class ApplicationContextTest {
         ApplicationContext app = new AnnotationConfigApplicationContext("top.huanyv.bean.test.weave");
         UserDao userDao = app.getBean(UserDao.class);
         System.out.println(userDao);
+    }
+
+
+    @Test
+    public void testCycle() {
+        ApplicationContext app = new AnnotationConfigApplicationContext("top.huanyv.bean.test.cycle");
+        A aBean = app.getBean(A.class);
+        System.out.println(aBean);
+        System.out.println("aBean.getClass() = " + aBean.getClass());
+        B bBean = app.getBean(B.class);
+        System.out.println(bBean);
+        System.out.println("bBean.getClass() = " + bBean.getClass());
+        System.out.println("A = " + app.getBean(A.class));
+        System.out.println("A = " + app.getBean(A.class));
+        System.out.println("B = " + app.getBean(B.class));
+        System.out.println("B = " + app.getBean(B.class));
     }
 }

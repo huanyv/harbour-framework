@@ -18,6 +18,10 @@ public interface BeanDefinition {
 
     void setScope(String scope);
 
+    default boolean isSingleton() {
+        return SCOPE_SINGLETON.equals(getScope());
+    }
+
     Object newInstance();
 
 }
