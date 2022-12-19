@@ -1,4 +1,4 @@
-package top.huanyv.start.core;
+package top.huanyv.start.server;
 
 /**
  * web服务器
@@ -11,10 +11,8 @@ public interface WebServer {
     /**
      * 服务启动方法
      *
-     * @param mainClass 主类
-     * @param args      arg游戏
      */
-    void start(Class<?> mainClass, String[] args);
+    void start();
 
     /**
      * 服务停止

@@ -1,5 +1,6 @@
 package top.huanyv.bean.utils;
 
+import top.huanyv.bean.exception.NoSuchBeanDefinitionException;
 import top.huanyv.bean.ioc.ApplicationContext;
 
 import java.lang.annotation.Annotation;
@@ -52,5 +53,31 @@ public class BeanFactoryUtil {
         return beanList;
     }
 
+    /**
+     * bean存在
+     *
+     * @param applicationContext 应用程序上下文
+     * @param type               类型
+     * @return boolean
+     */
+    public static boolean isPresent(ApplicationContext applicationContext, Class<?> type) {
+        try {
+            applicationContext.getBean(type);
+            return true;
+        } catch (NoSuchBeanDefinitionException e) {
+            return false;
+        }
+    }
+
+    /**
+     * bean不存在
+     *
+     * @param applicationContext 应用程序上下文
+     * @param type               类型
+     * @return boolean
+     */
+    public static boolean isNotPresent(ApplicationContext applicationContext, Class<?> type) {
+        return !isPresent(applicationContext, type);
+    }
 
 }

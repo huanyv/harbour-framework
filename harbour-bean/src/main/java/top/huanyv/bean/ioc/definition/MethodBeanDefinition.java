@@ -27,7 +27,7 @@ public class MethodBeanDefinition implements BeanDefinition{
         this.method = method;
 
         this.beanClass = method.getReturnType();
-        this.beanName = StringUtil.firstLetterLower(this.beanClass.getSimpleName());
+        this.beanName = method.getName();
         Scope scope = method.getAnnotation(Scope.class);
         this.scope = scope != null ? scope.value() : BeanDefinition.SCOPE_SINGLETON;
     }

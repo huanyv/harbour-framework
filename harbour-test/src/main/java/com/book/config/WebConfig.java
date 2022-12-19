@@ -1,6 +1,5 @@
 package com.book.config;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.mysql.jdbc.Driver;
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Component;
@@ -49,12 +48,6 @@ public class WebConfig implements WebConfigurer {
     public DaoScanner daoScanner() {
         // 加载配置
         JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
-
-        DruidDataSource druidDataSource = new DruidDataSource();
-        druidDataSource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
-        druidDataSource.setDriverClassName(Driver.class.getName());
-        druidDataSource.setUsername("root");
-        druidDataSource.setPassword("2233");
 
         SimpleDataSource simpleDataSource = new SimpleDataSource();
         simpleDataSource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
