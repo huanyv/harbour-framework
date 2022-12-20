@@ -1,35 +1,31 @@
 package com.book.config;
 
-import com.mysql.jdbc.Driver;
-import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Component;
 import top.huanyv.bean.annotation.Configuration;
-import top.huanyv.jdbc.core.JdbcConfigurer;
-import top.huanyv.jdbc.core.datasource.SimpleDataSource;
-import top.huanyv.jdbc.support.DaoScanner;
+import top.huanyv.start.web.WebConfiguration;
 import top.huanyv.webmvc.config.CorsRegistry;
 import top.huanyv.webmvc.config.ResourceMappingRegistry;
 import top.huanyv.webmvc.config.ViewControllerRegistry;
-import top.huanyv.webmvc.config.WebConfigurer;
 
 @Component
 @Configuration
-public class WebConfig implements WebConfigurer {
+public class WebConfig extends WebConfiguration {
 
     @Override
     public void addViewController(ViewControllerRegistry registry) {
+        super.addViewController(registry);
         registry.add("/", "index");
         registry.add("/login", "login");
     }
 
     @Override
     public void addResourceMapping(ResourceMappingRegistry registry) {
-        registry.addResourceHandler("/static/**").addResourceLocations("classpath:static/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:META-INF/resources/webjars/");
+        super.addResourceMapping(registry);
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        super.addCorsMappings(registry);
 //        registry.addMapping("/**")
 //            // 设置允许跨域请求的域名
 //            .allowedOriginPatterns("*")
@@ -44,20 +40,4 @@ public class WebConfig implements WebConfigurer {
         registry.addMapping("/**").defaultRule();
     }
 
-//    @Bean
-    public DaoScanner daoScanner() {
-        // 加载配置
-        JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
-
-        SimpleDataSource simpleDataSource = new SimpleDataSource();
-        simpleDataSource.setUrl("jdbc:mysql://localhost:3306/test?useSSL=false");
-        simpleDataSource.setDriverClassName(Driver.class.getName());
-        simpleDataSource.setUsername("root");
-        simpleDataSource.setPassword("2233");
-
-        jdbcConfigurer.setDataSource(simpleDataSource);
-        jdbcConfigurer.setScanPackages("com.book");
-
-        return new DaoScanner();
-    }
 }

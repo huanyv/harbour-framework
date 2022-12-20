@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>top.huanyv</groupId>
-    <artifactId>harbour-framework</artifactId>
+    <artifactId>harbour-start-loader</artifactId>
     <version>1.0</version>
 
     <packaging>pom</packaging>
@@ -19,13 +19,10 @@
     </properties>
 
     <modules>
-	    <module>harbour-webmvc</module>
-	    <module>harbour-bean</module>
-	    <module>harbour-jdbc</module>
-	    <module>harbour-start</module>
-	    <module>harbour-start-loader</module>
-	    <module>./support/enjoy-harbour</module>
-	    <module>./support/thymeleaf-harbour</module>
+	    <module>harbour-start-web</module>
+	    <module>harbour-start-thymeleaf</module>
+	    <module>harbour-start-tomcat</module>
+	    <module>harbour-start-jdbc</module>
 	</modules>
 
  	<build>

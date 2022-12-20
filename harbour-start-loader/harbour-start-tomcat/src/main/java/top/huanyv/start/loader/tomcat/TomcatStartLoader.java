@@ -1,14 +1,17 @@
-package top.huanyv.start.loader;
+package top.huanyv.start.loader.tomcat;
 
 import org.apache.catalina.Wrapper;
 import top.huanyv.bean.annotation.Bean;
+import top.huanyv.bean.annotation.Order;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.anntation.Conditional;
 import top.huanyv.start.anntation.ConfigurationProperties;
 import top.huanyv.start.config.AppArguments;
-import top.huanyv.start.server.TomcatServer;
+import top.huanyv.start.loader.ApplicationLoader;
+import top.huanyv.start.loader.Condition;
 import top.huanyv.start.server.WebServer;
+import top.huanyv.start.tomcat.TomcatServer;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;
 import top.huanyv.webmvc.core.RouterServlet;
 
@@ -20,6 +23,7 @@ import java.nio.charset.StandardCharsets;
  * @date 2022/12/17 17:09
  */
 @ConfigurationProperties(prefix = "server")
+@Order(-9)
 public class TomcatStartLoader implements ApplicationLoader {
 
     /**
@@ -54,7 +58,7 @@ public class TomcatStartLoader implements ApplicationLoader {
 
     @Override
     public void load(ApplicationContext applicationContext, AppArguments appArguments) {
-        this.servlet = new RouterServlet(applicationContext);
+        this.servlet = applicationContext.getBean(RouterServlet.class);
     }
 
     @Bean

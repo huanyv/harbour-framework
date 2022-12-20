@@ -5,10 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>top.huanyv</groupId>
-    <artifactId>harbour-framework</artifactId>
+    <artifactId>harbour-start-web</artifactId>
     <version>1.0</version>
-
-    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -18,17 +16,26 @@
         <java.version>1.8</java.version>
     </properties>
 
-    <modules>
-	    <module>harbour-webmvc</module>
-	    <module>harbour-bean</module>
-	    <module>harbour-jdbc</module>
-	    <module>harbour-start</module>
-	    <module>harbour-start-loader</module>
-	    <module>./support/enjoy-harbour</module>
-	    <module>./support/thymeleaf-harbour</module>
-	</modules>
+    <dependencies>
+        <dependency>
+            <groupId>top.huanyv</groupId>
+            <artifactId>harbour-webmvc</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>top.huanyv</groupId>
+            <artifactId>harbour-start</artifactId>
+            <version>1.0</version>
+        </dependency>
 
- 	<build>
+        <dependency>
+            <groupId>top.huanyv</groupId>
+            <artifactId>harbour-start-tomcat</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
         <plugins>
             <!--生成java帮助文档-->
             <plugin>

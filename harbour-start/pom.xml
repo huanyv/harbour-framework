@@ -23,35 +23,9 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.49</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
-            <version>9.0.64</version>
-        </dependency>
-
         <dependency>
             <groupId>top.huanyv</groupId>
-            <artifactId>harbour-webmvc</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>top.huanyv</groupId>
-            <artifactId>thymeleaf-harbour</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>top.huanyv</groupId>
-            <artifactId>harbour-jdbc</artifactId>
+            <artifactId>harbour-bean</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>
