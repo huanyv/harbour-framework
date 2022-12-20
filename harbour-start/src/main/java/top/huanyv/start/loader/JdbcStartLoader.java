@@ -9,6 +9,7 @@ import top.huanyv.jdbc.support.DaoScanner;
 import top.huanyv.start.anntation.Conditional;
 import top.huanyv.start.anntation.ConfigurationProperties;
 import top.huanyv.start.config.AppArguments;
+import top.huanyv.tools.utils.Assert;
 
 /**
  * TODO BUG 不会织入
@@ -31,6 +32,11 @@ public class JdbcStartLoader implements ApplicationLoader {
 
     @Override
     public void load(ApplicationContext applicationContext, AppArguments appArguments) {
+        Assert.notNull(driverClassName, "database 'driverClassName' property not configured!");
+        Assert.notNull(url, "database 'url' property not configured!");
+        Assert.notNull(username, "database 'username' property not configured!");
+        Assert.notNull(scanPackages, "'scanPackages' property not configured!");
+
         // 加载配置
         JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
 

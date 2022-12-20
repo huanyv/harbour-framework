@@ -1,5 +1,6 @@
 package top.huanyv.start.config;
 
+import top.huanyv.start.exception.ConfigFileNotFountException;
 import top.huanyv.tools.utils.*;
 
 import java.io.InputStream;
@@ -20,6 +21,10 @@ public class AppArguments {
         // 获取配置文件名
         String envName = commandLineArguments.getEnv();
         InputStream inputStream = ClassLoaderUtil.getInputStream(envName);
+
+        if (!Constants.DEFAULT_CONFIG_FILE_NAME.equals(envName) && inputStream == null) {
+            throw new ConfigFileNotFountException("The configuration file named '" + envName + "' does not exist!");
+        }
 
         // 加载配置文件
         Properties properties = PropertiesUtil.load(inputStream);
@@ -66,11 +71,17 @@ public class AppArguments {
         return Long.parseLong(get(name, defaultValue));
     }
 
-    public static void populate(AppArguments appArguments, String prefix, Object o) {
+    /**
+     * 以指定前缀，把参数属性填充到一个对象中
+     *
+     * @param prefix 前缀
+     * @param o      o
+     */
+    public void populate(String prefix, Object o) {
         Class<?> cls = o.getClass();
         for (Field field : cls.getDeclaredFields()) {
             field.setAccessible(true);
-            String stringValue = appArguments.get(prefix + field.getName());
+            String stringValue = this.get(prefix + field.getName());
             Object val = null;
             if (StringUtil.hasText(stringValue)) {
                 val = BeanUtil.numberConvert(field.getType(), stringValue);

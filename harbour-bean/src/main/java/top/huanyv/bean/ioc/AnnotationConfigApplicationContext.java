@@ -51,10 +51,10 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     }
 
     public void initApplicationContextAware() {
-        for (String beanDefinitionName : beanDefinitionRegistry.getBeanDefinitionNames()) {
-            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
+        for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
             if (ApplicationContextAware.class.isAssignableFrom(beanDefinition.getBeanClass())) {
-                ApplicationContextAware aware = (ApplicationContextAware) getBean(beanDefinition.getBeanClass());
+                ApplicationContextAware aware = (ApplicationContextAware) getBean(beanName);
                 aware.setApplicationContext(this);
             }
         }

@@ -1,7 +1,7 @@
 package top.huanyv.start.core;
 
-import jdk.nashorn.internal.ir.IfNode;
 import top.huanyv.bean.annotation.Bean;
+import top.huanyv.bean.annotation.Order;
 import top.huanyv.bean.ioc.AnnotationConfigApplicationContext;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
@@ -17,11 +17,10 @@ import top.huanyv.tools.utils.ClassUtil;
 import top.huanyv.tools.utils.ReflectUtil;
 import top.huanyv.tools.utils.ResourceUtil;
 
-import javax.swing.tree.VariableHeightLayoutCache;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ServiceLoader;
-import java.util.regex.Pattern;
 
 import static top.huanyv.start.config.Constants.BANNER_FILE_NAME;
 import static top.huanyv.start.config.Constants.FUOZU_BANNER;
@@ -80,29 +79,53 @@ public class HarbourApplication {
     public ApplicationContext createApplicationContext() {
         // 创建IOC容器
         ApplicationContext applicationContext = new AnnotationConfigApplicationContext(mainClass.getPackage().getName());
+        // 执行启动加载器
+        appStartLoad(applicationContext);
+        // 刷新容器
+        applicationContext.refresh();
+        return applicationContext;
+    }
+
+    /**
+     * 应用程序启动加载
+     *
+     * @param applicationContext 应用程序上下文
+     */
+    public void appStartLoad(ApplicationContext applicationContext) {
+        List<ApplicationLoader> loaders = new ArrayList<>();
         // 获取SPI，应用启动加载器
         ServiceLoader<ApplicationLoader> applicationLoaders = ServiceLoader.load(ApplicationLoader.class);
         for (ApplicationLoader applicationLoader : applicationLoaders) {
-            Class<? extends ApplicationLoader> cls = applicationLoader.getClass();
-
-            // 方法Bean注入
-            for (Method method : cls.getDeclaredMethods()) {
-                if (isInject(method, applicationContext)) {
-                    BeanDefinition beanDefinition = new MethodBeanDefinition(applicationLoader, method);
-                    applicationContext.registerBeanDefinition(beanDefinition.getBeanName(), beanDefinition);
-                }
+            loaders.add(applicationLoader);
+        }
+        // 排序
+        loaders.sort((o1, o2) -> {
+            Order o1Order = o1.getClass().getAnnotation(Order.class);
+            Order o2Order = o2.getClass().getAnnotation(Order.class);
+            if (o1Order != null && o2Order != null) {
+                return o1Order.value() - o2Order.value();
             }
+            return 0;
+        });
+        // 执行
+        for (ApplicationLoader applicationLoader : loaders) {
+            Class<? extends ApplicationLoader> cls = applicationLoader.getClass();
 
             // 获取配置属性前缀
             String propertiesPrefix = getPropertiesPrefix(cls);
             // 配置属性填充
-            AppArguments.populate(appArguments, propertiesPrefix + ".", applicationLoader);
+            appArguments.populate(propertiesPrefix + ".", applicationLoader);
 
+            // 方法Bean注入
+            for (Method method : cls.getDeclaredMethods()) {
+                if (isMatcher(method, applicationContext)) {
+                    BeanDefinition beanDefinition = new MethodBeanDefinition(applicationLoader, method);
+                    applicationContext.registerBeanDefinition(beanDefinition.getBeanName(), beanDefinition);
+                }
+            }
             // 执行加载方法
             applicationLoader.load(applicationContext, appArguments);
         }
-        applicationContext.refresh();
-        return applicationContext;
     }
 
     /**
@@ -129,7 +152,7 @@ public class HarbourApplication {
      * @param applicationContext 应用程序上下文
      * @return boolean
      */
-    public boolean isInject(Method method, ApplicationContext applicationContext) {
+    public boolean isMatcher(Method method, ApplicationContext applicationContext) {
         // 如果没有@Bean注解，不注入
         if (!method.isAnnotationPresent(Bean.class)) {
             return false;
