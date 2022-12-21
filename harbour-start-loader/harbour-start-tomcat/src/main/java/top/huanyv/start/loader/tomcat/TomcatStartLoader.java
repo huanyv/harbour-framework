@@ -23,7 +23,6 @@ import java.nio.charset.StandardCharsets;
  * @date 2022/12/17 17:09
  */
 @ConfigurationProperties(prefix = "server")
-@Order(-9)
 public class TomcatStartLoader implements ApplicationLoader {
 
     /**
@@ -58,7 +57,8 @@ public class TomcatStartLoader implements ApplicationLoader {
 
     @Override
     public void load(ApplicationContext applicationContext, AppArguments appArguments) {
-        this.servlet = applicationContext.getBean(RouterServlet.class);
+        // 创建前端控制器
+        this.servlet = new RouterServlet(applicationContext);
     }
 
     @Bean

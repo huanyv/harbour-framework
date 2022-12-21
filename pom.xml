@@ -23,6 +23,7 @@
 	    <module>harbour-bean</module>
 	    <module>harbour-jdbc</module>
 	    <module>harbour-start</module>
+	    <module>harbour-parent</module>
 	    <module>harbour-start-loader</module>
 	    <module>./support/enjoy-harbour</module>
 	    <module>./support/thymeleaf-harbour</module>

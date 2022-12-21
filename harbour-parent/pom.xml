@@ -64,13 +64,13 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${servlet.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -90,6 +90,8 @@
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>3.2.4</version>
                     <configuration>
+                        <!-- 不出现dependency-reduced-pom.xml文件，此文件将不打入jar包中的依赖列出 -->
+                        <createDependencyReducedPom>false</createDependencyReducedPom>
                         <transformers>
                             <!-- 合并 resources/META-INF/services/ 下同名的配置文件 -->
                             <transformer
