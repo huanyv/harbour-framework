@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>top.huanyv</groupId>
+    <artifactId>harbour-parent</artifactId>
+    <version>1.0</version>
+
+    <packaging>pom</packaging>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <main.class>com.example.Main</main.class>
+
+        <harbour.version>1.0</harbour.version>
+        <lombok.version>1.18.16</lombok.version>
+        <mysql.version>5.1.49</mysql.version>
+        <servlet.version>4.0.1</servlet.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>top.huanyv</groupId>
+                <artifactId>harbour-start</artifactId>
+                <version>${harbour.version}</version>
+            </dependency>
+            <!-- Web -->
+            <dependency>
+                <groupId>top.huanyv</groupId>
+                <artifactId>harbour-start-web</artifactId>
+                <version>${harbour.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>top.huanyv</groupId>
+                <artifactId>harbour-start-thymeleaf</artifactId>
+                <version>${harbour.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>top.huanyv</groupId>
+                <artifactId>harbour-start-enjoy</artifactId>
+                <version>${harbour.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>top.huanyv</groupId>
+                <artifactId>harbour-start-tomcat</artifactId>
+                <version>${harbour.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>top.huanyv</groupId>
+                <artifactId>harbour-start-jdbc</artifactId>
+                <version>${harbour.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.4</version>
+                    <configuration>
+                        <transformers>
+                            <!-- 合并 resources/META-INF/services/ 下同名的配置文件 -->
+                            <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>${main.class}</mainClass>
+                            </transformer>
+                        </transformers>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <!--绑定到生命周期-->
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

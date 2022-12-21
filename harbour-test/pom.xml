@@ -3,15 +3,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>top.huanyv</groupId>
+        <artifactId>harbour-parent</artifactId>
+        <version>1.0</version>
+        <relativePath /> <!-- lookup parent from repository -->
+    </parent>
+
     <groupId>com.book</groupId>
     <artifactId>harbour-test</artifactId>
     <version>1.0</version>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <mysql.version>5.1.49</mysql.version>
         <main.class>com.book.MainApplication</main.class>
     </properties>
 
@@ -19,75 +22,30 @@
         <dependency>
             <groupId>top.huanyv</groupId>
             <artifactId>harbour-start-web</artifactId>
-            <version>1.0</version>
         </dependency>
-
         <dependency>
             <groupId>top.huanyv</groupId>
             <artifactId>harbour-start-enjoy</artifactId>
-            <version>1.0</version>
         </dependency>
-
         <dependency>
             <groupId>top.huanyv</groupId>
             <artifactId>harbour-start-jdbc</artifactId>
-            <version>1.0</version>
         </dependency>
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.12</version>
-            <scope>provided</scope>
         </dependency>
-
-<!--        <dependency>
-            <groupId>org.webjars.npm</groupId>
-            <artifactId>github-com-layui-layui</artifactId>
-            <version>2.7.2</version>
-        </dependency>-->
-
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.2</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>${main.class}</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <configuration>
-                    <transformers>
-                        <!-- 合并 resources/META-INF/services/ 下同名的配置文件 -->
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                    </transformers>
-                </configuration>
-                <executions>
-                    <execution>
-                        <!--绑定到生命周期-->
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
