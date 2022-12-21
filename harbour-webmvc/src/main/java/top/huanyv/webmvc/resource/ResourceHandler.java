@@ -18,11 +18,10 @@ public class ResourceHandler {
 
     private ResourceMappingRegistry resourceMappingRegistry;
 
-    private ResourceHolder resourceHolder;
+    private final ResourceHolder resourceHolder;
 
     public ResourceHandler() {
         resourceHolder = new ResourceHolderManager();
-        resourceMappingRegistry = new ResourceMappingRegistry();
     }
 
     /**
@@ -67,7 +66,6 @@ public class ResourceHandler {
 
     public void setResourceMappingRegistry(ResourceMappingRegistry resourceMappingRegistry) {
         this.resourceMappingRegistry = resourceMappingRegistry;
-        resourceMappingRegistry.addResourceHandler("/**").addResourceLocations("classpath:static/");
     }
 
 }

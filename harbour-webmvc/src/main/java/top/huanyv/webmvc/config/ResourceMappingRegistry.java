@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ResourceMappingRegistry {
 
-    private List<ResourceMapping> resourceMappings = new ArrayList<>();
+    private final List<ResourceMapping> resourceMappings = new ArrayList<>();
 
     /**
      * 添加资源，
