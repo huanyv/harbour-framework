@@ -7,6 +7,7 @@ import com.book.service.BookService;
 
 import top.huanyv.bean.annotation.Component;
 import top.huanyv.bean.annotation.Inject;
+import top.huanyv.bean.annotation.Lazy;
 import top.huanyv.bean.annotation.Scope;
 import top.huanyv.bean.aop.Aop;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
@@ -27,6 +28,7 @@ import java.io.IOException;
 @Aop(LogAop.class)
 //@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Body
+@Lazy
 public class BookController {
 
     @Inject

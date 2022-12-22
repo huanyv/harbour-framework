@@ -1,5 +1,6 @@
 package top.huanyv.bean.ioc.definition;
 
+import top.huanyv.bean.annotation.Lazy;
 import top.huanyv.bean.ioc.FactoryBean;
 import top.huanyv.tools.utils.StringUtil;
 
@@ -15,6 +16,8 @@ public class FactoryBeanDefinition implements BeanDefinition {
 
     private String scope;
 
+    private boolean lazy;
+
     private FactoryBean<?> factoryInstance;
 
     public FactoryBeanDefinition(FactoryBean<?> factoryBeanInstance) {
@@ -22,6 +25,8 @@ public class FactoryBeanDefinition implements BeanDefinition {
         this.beanName = StringUtil.firstLetterLower(this.factoryInstance.getClass().getSimpleName());
         this.beanClass = this.factoryInstance.getObjectType();
         this.scope = this.factoryInstance.isSingleton() ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE;
+
+        this.lazy = factoryBeanInstance.getClass().isAnnotationPresent(Lazy.class);
     }
 
     @Override
@@ -52,6 +57,11 @@ public class FactoryBeanDefinition implements BeanDefinition {
     @Override
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    @Override
+    public boolean isLazy() {
+        return this.lazy;
     }
 
     @Override

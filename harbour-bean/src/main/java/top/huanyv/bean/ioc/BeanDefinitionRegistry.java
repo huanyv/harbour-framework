@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
 
-    private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+    private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
 
     public void loadBeanDefinition(String... scanPackages) {
         // 加载组件 bean 定义
@@ -33,7 +33,8 @@ public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
             // 加载组件 bean 定义
             Component component = cls.getAnnotation(Component.class);
             if (component != null) {
-                register(component.value(), cls);
+                BeanDefinition beanDefinition = new ClassBeanDefinition(cls);
+                this.register(component.value(), beanDefinition);
             }
 
             // 加载方法Bean
@@ -49,20 +50,6 @@ public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
                 }
             }
         }
-
-    }
-
-    /**
-     * 注册一个@Component注解声明的Bean
-     *
-     * @param beanName        bean名字
-     * @param cls             cls
-     * @param constructorArgs 构造函数参数
-     */
-    public void register(String beanName, Class<?> cls, Object... constructorArgs) {
-        // 组件Bean
-        ClassBeanDefinition classBeanDefinition = new ClassBeanDefinition(cls, constructorArgs);
-        this.register(beanName, classBeanDefinition);
     }
 
     /**

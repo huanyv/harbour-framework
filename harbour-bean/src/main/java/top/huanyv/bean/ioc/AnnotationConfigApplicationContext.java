@@ -7,6 +7,7 @@ import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.exception.BeanCurrentlyInCreationException;
 import top.huanyv.bean.aop.AopContext;
 import top.huanyv.bean.exception.NoSuchBeanDefinitionException;
+import top.huanyv.bean.ioc.definition.ClassBeanDefinition;
 import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Field;
@@ -29,7 +30,7 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
     private final Map<String, ObjectFactory> objectsFactories;
 
     // 当前正在加载的 Bean ，避免循环依赖
-    private final Set<String> currentBeans = new HashSet<>();
+    private final Set<String> currentBeans;
 
     public AnnotationConfigApplicationContext(String... scanPackages) {
         aopContext = new AopContext();
@@ -37,25 +38,44 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         singletonObjects = new ConcurrentHashMap<>();
         earlySingletonObjects = new ConcurrentHashMap<>();
         objectsFactories = new ConcurrentHashMap<>();
+        currentBeans = new HashSet<>();
 
         // 加载所有的 BeanDefinition
         beanDefinitionRegistry.loadBeanDefinition(scanPackages);
 
-        refresh();
-
+        initialization();
     }
 
     @Override
     public void refresh() {
-        initApplicationContextAware();
+        initialization();
+        loadHungryBean();
     }
 
-    public void initApplicationContextAware() {
+    /**
+     * 加载饿Bean
+     */
+    public void loadHungryBean() {
         for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames()) {
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+            if (!beanDefinition.isLazy()) {
+                getBean(beanName);
+            }
             if (ApplicationContextAware.class.isAssignableFrom(beanDefinition.getBeanClass())) {
-                ApplicationContextAware aware = (ApplicationContextAware) getBean(beanName);
+                ApplicationContextAware aware = getBean(beanName, ApplicationContextAware.class);
                 aware.setApplicationContext(this);
+            }
+        }
+    }
+
+    public void initialization() {
+        // BeanDefinition后置处理器
+        for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+            // ApplicationContextAware
+            if (BeanDefinitionRegistryPostProcessor.class.isAssignableFrom(beanDefinition.getBeanClass())) {
+                BeanDefinitionRegistryPostProcessor postProcessor = getBean(beanName, BeanDefinitionRegistryPostProcessor.class);
+                postProcessor.postProcessBeanDefinitionRegistry(this.beanDefinitionRegistry);
             }
         }
     }
@@ -103,7 +123,8 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
     @Override
     public void registerBean(String beanName, Class<?> beanClass, Object... constructorArgs) {
-        this.beanDefinitionRegistry.register(beanName, beanClass, constructorArgs);
+        BeanDefinition beanDefinition = new ClassBeanDefinition(beanClass, constructorArgs);
+        this.registerBeanDefinition(beanName, beanDefinition);
     }
 
     @Override
@@ -126,6 +147,13 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         return this.beanDefinitionRegistry.getBeanDefinition(beanName);
     }
 
+    /**
+     * 获取Bean
+     *
+     * @param beanName bean名字
+     * @return {@link Object}
+     * @throws RuntimeException 运行时异常
+     */
     @Override
     public synchronized Object getBean(String beanName) throws RuntimeException {
         BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
@@ -158,6 +186,12 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         return createBean(beanName, beanDefinition);
     }
 
+    /**
+     * 获取单例，依次从缓存中找，如果从三级缓存中找到返回Bean，并放入二级缓存中
+     *
+     * @param beanName bean名字
+     * @return {@link Object}
+     */
     private Object getSingleton(String beanName) {
         // 从一级缓存中找
         Object bean = this.singletonObjects.get(beanName);
@@ -165,12 +199,12 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
             // 一级缓存没有，从二级缓存找
             bean = this.earlySingletonObjects.get(beanName);
             if (bean == null) {
-                // 二级缓存没有，从三级缓存获取 ObjectFactory
+                // 二级缓存没有，从三级缓存获取 ObjectFactory对象工厂
                 ObjectFactory objectFactory = this.objectsFactories.get(beanName);
                 if (objectFactory != null) {
-                    // 得去对象工厂
+                    // 得到对象工厂
                     bean = objectFactory.getObject();
-                    // 加工后的Bean放入二级缓存，三级缓存删除掉
+                    // 加工后的Bean放入二级缓存，从三级缓存删除掉
                     this.earlySingletonObjects.put(beanName, bean);
                     objectsFactories.remove(beanName);
                 }
@@ -179,21 +213,13 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
         return bean;
     }
 
-    private void registerSingleton(String beanName, Object beanInstance) {
-        synchronized (this.singletonObjects) {
-            this.singletonObjects.put(beanName, beanInstance);
-            this.earlySingletonObjects.remove(beanName);
-            this.objectsFactories.remove(beanName);
-        }
-    }
-
-    private void addSingletonFactory(String beanName, ObjectFactory objectFactory) {
-        if (!this.singletonObjects.containsKey(beanName)) {
-            this.objectsFactories.put(beanName, objectFactory);
-            this.earlySingletonObjects.remove(beanName);
-        }
-    }
-
+    /**
+     * 创建新的Bean实例
+     *
+     * @param beanName       bean名字
+     * @param beanDefinition bean定义
+     * @return {@link Object}
+     */
     private Object createBean(String beanName, BeanDefinition beanDefinition) {
         Object bean = beanDefinition.newInstance();
 
@@ -209,20 +235,54 @@ public class AnnotationConfigApplicationContext implements ApplicationContext {
 
         this.currentBeans.remove(beanName);
 
-        Object exposedObject = bean;
+        Object earlyBean = bean;
         if (beanDefinition.isSingleton()) {
             // 获取代理对象
-            exposedObject = getSingleton(beanName);
-            if (exposedObject == null) {
-                exposedObject = bean;
+            earlyBean = getSingleton(beanName);
+            if (earlyBean == null) {
+                earlyBean = bean;
             }
 
             // 放入单例池
-            registerSingleton(beanName, exposedObject);
+            registerSingleton(beanName, earlyBean);
         }
-        return exposedObject;
+        return earlyBean;
     }
 
+    /**
+     * Bean放入单例池
+     *
+     * @param beanName     bean名字
+     * @param beanInstance bean实例
+     */
+    private void registerSingleton(String beanName, Object beanInstance) {
+        synchronized (this.singletonObjects) {
+            this.singletonObjects.put(beanName, beanInstance);
+            this.earlySingletonObjects.remove(beanName);
+            this.objectsFactories.remove(beanName);
+        }
+    }
+
+    /**
+     * 添加对象工厂（三级缓存）
+     *
+     * @param beanName      bean名字
+     * @param objectFactory 对象工厂
+     */
+    private void addSingletonFactory(String beanName, ObjectFactory objectFactory) {
+        if (!this.singletonObjects.containsKey(beanName)) {
+            this.objectsFactories.put(beanName, objectFactory);
+            this.earlySingletonObjects.remove(beanName);
+        }
+    }
+
+    /**
+     * 得到bean代理，如果不需要代理返回的是原对象
+     *
+     * @param beanDefinition bean定义
+     * @param bean           豆
+     * @return {@link Object}
+     */
     private Object getBeanProxy(BeanDefinition beanDefinition, Object bean) {
         Class<?> cls = beanDefinition.getBeanClass();
         if (AopContext.isNeedProxy(cls)) {

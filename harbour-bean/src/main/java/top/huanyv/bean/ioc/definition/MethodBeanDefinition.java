@@ -1,5 +1,6 @@
 package top.huanyv.bean.ioc.definition;
 
+import top.huanyv.bean.annotation.Lazy;
 import top.huanyv.bean.annotation.Scope;
 import top.huanyv.tools.utils.StringUtil;
 
@@ -18,6 +19,8 @@ public class MethodBeanDefinition implements BeanDefinition{
 
     private String scope;
 
+    private boolean lazy;
+
     private Object methodClassInstance;
 
     private Method method;
@@ -30,6 +33,7 @@ public class MethodBeanDefinition implements BeanDefinition{
         this.beanName = method.getName();
         Scope scope = method.getAnnotation(Scope.class);
         this.scope = scope != null ? scope.value() : BeanDefinition.SCOPE_SINGLETON;
+        this.lazy = method.isAnnotationPresent(Lazy.class);
     }
 
     @Override
@@ -60,6 +64,11 @@ public class MethodBeanDefinition implements BeanDefinition{
     @Override
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    @Override
+    public boolean isLazy() {
+        return this.lazy;
     }
 
     @Override

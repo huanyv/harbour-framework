@@ -1,10 +1,12 @@
 package top.huanyv.bean.ioc.definition;
 
+import top.huanyv.bean.annotation.Lazy;
 import top.huanyv.bean.annotation.Scope;
 import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 /**
  * @author huanyv
@@ -18,14 +20,55 @@ public class ClassBeanDefinition implements BeanDefinition {
 
     private String scope;
 
+    private boolean lazy;
+
     private Object[] constructorArgs;
+
+    private Constructor<?> constructor;
 
     public ClassBeanDefinition(Class<?> beanClass, Object... constructorArgs) {
         this.beanClass = beanClass;
-        this.constructorArgs = constructorArgs;
         this.beanName = StringUtil.firstLetterLower(this.beanClass.getSimpleName());
         Scope scope = beanClass.getAnnotation(Scope.class);
         this.scope = scope != null ? scope.value() : BeanDefinition.SCOPE_SINGLETON;
+        this.lazy = beanClass.isAnnotationPresent(Lazy.class);
+
+        this.constructorArgs = constructorArgs;
+        handleConstructor();
+    }
+
+    private void handleConstructor() {
+        try {
+            // 如果没有构造参数，为无参构造
+            if (this.constructorArgs.length == 0) {
+                this.constructor = this.beanClass.getDeclaredConstructor();
+                return;
+            }
+            for (Constructor<?> constructor : this.beanClass.getConstructors()) {
+                if (isConstructor(constructor, constructorArgs)) {
+                    this.constructor = constructor;
+                }
+            }
+            if (this.constructor == null) {
+                throw new IllegalArgumentException("No constructor for '" + Arrays.toString(constructorArgs) + "'.");
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isConstructor(Constructor<?> constructor, Object[] constructorArgs) {
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        if (parameterTypes.length != constructorArgs.length) {
+            return false;
+        }
+        for (int i = 0; i < parameterTypes.length; i++) {
+            Class<?> parameterType = parameterTypes[i];
+            if (!parameterType.isInstance(constructorArgs[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -59,17 +102,16 @@ public class ClassBeanDefinition implements BeanDefinition {
     }
 
     @Override
+    public boolean isLazy() {
+        return this.lazy;
+    }
+
+    @Override
     public Object newInstance() {
         try {
-            Class<?>[] parameterTypes = new Class[constructorArgs.length];
-            for (int i = 0; i < constructorArgs.length; i++) {
-                parameterTypes[i] = constructorArgs[i].getClass();
-            }
-            Constructor<?> constructor = this.beanClass.getConstructor(parameterTypes);
             constructor.setAccessible(true);
             return constructor.newInstance(constructorArgs);
-        } catch (NoSuchMethodException | IllegalAccessException
-                | InstantiationException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return null;

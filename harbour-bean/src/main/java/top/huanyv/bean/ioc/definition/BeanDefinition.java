@@ -22,6 +22,8 @@ public interface BeanDefinition {
         return SCOPE_SINGLETON.equals(getScope());
     }
 
+    boolean isLazy();
+
     Object newInstance();
 
 }
