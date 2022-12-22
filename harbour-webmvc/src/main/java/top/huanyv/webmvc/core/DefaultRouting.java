@@ -11,13 +11,25 @@ import top.huanyv.webmvc.interfaces.ServletHandler;
  */
 public class DefaultRouting implements Routing {
 
+    private String base;
+
+    public DefaultRouting() {
+        this.base = "";
+    }
+
     /**
      * 请求注册器
      */
-    private RequestHandlerRegistry requestRegistry = RequestHandlerRegistry.single();
+    private final RequestHandlerRegistry requestRegistry = RequestHandlerRegistry.single();
 
     @Override
     public void register(String urlPattern, RequestMethod method, ServletHandler handler) {
-        requestRegistry.registerHandler(urlPattern, method, new FunctionRequestHandler(handler));
+        requestRegistry.registerHandler(base + urlPattern, method, new FunctionRequestHandler(handler));
     }
+
+    @Override
+    public void setBase(String base) {
+        this.base = base;
+    }
+
 }

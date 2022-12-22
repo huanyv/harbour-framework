@@ -45,4 +45,8 @@ public interface Routing {
         return this;
     }
 
+    default void setBase(String base) {
+
+    }
+
 }

@@ -21,7 +21,6 @@ public class BeanFactoryUtil {
         return beanMap;
     }
 
-
     public static List<Object> getBeans(ApplicationContext applicationContext) {
         List<Object> beanList = new ArrayList<>();
         for (String beanName : applicationContext.getBeanDefinitionNames()) {
@@ -31,23 +30,31 @@ public class BeanFactoryUtil {
         return beanList;
     }
 
-    public static List<Object> getBeansByAnnotation(ApplicationContext applicationContext, Class<? extends Annotation> clazz) {
+    public static List<Object> getBeansByAnnotation(ApplicationContext applicationContext, Class<? extends Annotation> annotation) {
         List<Object> beanList = new ArrayList<>();
         for (String beanName : applicationContext.getBeanDefinitionNames()) {
-            Object bean = applicationContext.getBean(beanName);
-            if (bean.getClass().isAnnotationPresent(clazz)) {
-                beanList.add(bean);
+            Class<?> beanClass = applicationContext.getBeanDefinition(beanName).getBeanClass();
+            if (beanClass.isAnnotationPresent(annotation)) {
+                beanList.add(applicationContext.getBean(beanName));
             }
         }
         return beanList;
     }
 
-    public static <T> List<T> getBeansByType(ApplicationContext applicationContext, Class<T> clazz) {
+    public static List<Class<?>> getBeanClasses(ApplicationContext applicationContext) {
+        List<Class<?>> classes = new ArrayList<>();
+        for (String beanName : applicationContext.getBeanDefinitionNames()) {
+            classes.add(applicationContext.getBeanDefinition(beanName).getBeanClass());
+        }
+        return classes;
+    }
+
+    public static <T> List<T> getBeansByType(ApplicationContext applicationContext, Class<T> cls) {
         List<T> beanList = new ArrayList<>();
         for (String beanName : applicationContext.getBeanDefinitionNames()) {
-            Object bean = applicationContext.getBean(beanName);
-            if (clazz.isInstance(bean)) {
-                beanList.add((T) bean);
+            Class<?> beanClass = applicationContext.getBeanDefinition(beanName).getBeanClass();
+            if (cls.isAssignableFrom(beanClass)) {
+                beanList.add((T) applicationContext.getBean(beanName));
             }
         }
         return beanList;

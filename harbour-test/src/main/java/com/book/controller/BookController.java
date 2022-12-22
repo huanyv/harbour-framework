@@ -28,7 +28,6 @@ import java.io.IOException;
 @Aop(LogAop.class)
 //@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Body
-@Lazy
 public class BookController {
 
     @Inject

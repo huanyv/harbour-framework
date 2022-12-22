@@ -27,15 +27,14 @@ public abstract class InitRouterServlet extends TemplateServlet {
     @Override
     void initRouting(ApplicationContext applicationContext) {
         // 遍历所有的bean，找到所有的路由
-        for (Object bean : BeanFactoryUtil.getBeans(applicationContext)) {
-            Class<?> targetClass = AopUtil.getTargetClass(bean);
-            Route route = targetClass.getAnnotation(Route.class);
+        for (Class<?> cls : BeanFactoryUtil.getBeanClasses(applicationContext)) {
+            Route route = cls.getAnnotation(Route.class);
             if (route != null) {
                 // 遍历方法
-                for (Method method : targetClass.getDeclaredMethods()) {
+                for (Method method : cls.getDeclaredMethods()) {
                     // 基路由
                     String basePath = route.value();
-                    RequestHandler requestHandler = new MethodRequestHandler(targetClass, method);
+                    RequestHandler requestHandler = new MethodRequestHandler(cls, method);
                     Route methodRoute = method.getAnnotation(Route.class);
                     if (methodRoute != null) {
                         // 拼接上子路由
@@ -73,9 +72,8 @@ public abstract class InitRouterServlet extends TemplateServlet {
             }
         }
 
-        Routing routing = new DefaultRouting();
         for (RouteRegistry registry : BeanFactoryUtil.getBeansByType(applicationContext, RouteRegistry.class)) {
-            registry.run(routing);
+            registry.run(new DefaultRouting());
         }
 
     }
