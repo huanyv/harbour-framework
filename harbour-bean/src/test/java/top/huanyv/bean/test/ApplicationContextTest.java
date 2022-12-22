@@ -51,14 +51,6 @@ public class ApplicationContextTest {
     }
 
     @Test
-    public void testWeave() {
-        ApplicationContext app = new AnnotationConfigApplicationContext("top.huanyv.bean.test.weave");
-        UserDao userDao = app.getBean(UserDao.class);
-        System.out.println(userDao);
-    }
-
-
-    @Test
     public void testCycle() {
         ApplicationContext app = new AnnotationConfigApplicationContext("top.huanyv.bean.test.cycle");
         A aBean = app.getBean(A.class);

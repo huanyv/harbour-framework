@@ -12,39 +12,32 @@ import java.util.Arrays;
  * @author huanyv
  * @date 2022/11/2 19:48
  */
-public class ClassBeanDefinition implements BeanDefinition {
-
-    private String beanName;
-
-    private Class<?> beanClass;
-
-    private String scope;
-
-    private boolean lazy;
+public class ClassBeanDefinition extends AbstractBeanDefinition {
 
     private Object[] constructorArgs;
 
     private Constructor<?> constructor;
 
     public ClassBeanDefinition(Class<?> beanClass, Object... constructorArgs) {
-        this.beanClass = beanClass;
-        this.beanName = StringUtil.firstLetterLower(this.beanClass.getSimpleName());
+        setBeanClass(beanClass);
+        setBeanName(StringUtil.firstLetterLower(beanClass.getSimpleName()));
         Scope scope = beanClass.getAnnotation(Scope.class);
-        this.scope = scope != null ? scope.value() : BeanDefinition.SCOPE_SINGLETON;
-        this.lazy = beanClass.isAnnotationPresent(Lazy.class);
+        setScope(scope != null ? scope.value() : BeanDefinition.SCOPE_SINGLETON);
+        setLazy(beanClass.isAnnotationPresent(Lazy.class));
 
         this.constructorArgs = constructorArgs;
         handleConstructor();
     }
 
     private void handleConstructor() {
+        Class<?> beanClass = getBeanClass();
         try {
             // 如果没有构造参数，为无参构造
             if (this.constructorArgs.length == 0) {
-                this.constructor = this.beanClass.getDeclaredConstructor();
+                this.constructor = beanClass.getDeclaredConstructor();
                 return;
             }
-            for (Constructor<?> constructor : this.beanClass.getConstructors()) {
+            for (Constructor<?> constructor : beanClass.getConstructors()) {
                 if (isConstructor(constructor, constructorArgs)) {
                     this.constructor = constructor;
                 }
@@ -71,40 +64,6 @@ public class ClassBeanDefinition implements BeanDefinition {
         return true;
     }
 
-    @Override
-    public String getBeanName() {
-        return this.beanName;
-    }
-
-    @Override
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
-    }
-
-    @Override
-    public Class<?> getBeanClass() {
-        return this.beanClass;
-    }
-
-    @Override
-    public void setBeanClass(Class<?> beanClass) {
-        this.beanClass = beanClass;
-    }
-
-    @Override
-    public String getScope() {
-        return this.scope;
-    }
-
-    @Override
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
-
-    @Override
-    public boolean isLazy() {
-        return this.lazy;
-    }
 
     @Override
     public Object newInstance() {

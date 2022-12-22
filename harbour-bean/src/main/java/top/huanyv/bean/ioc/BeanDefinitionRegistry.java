@@ -26,32 +26,6 @@ public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
 
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
 
-    public void loadBeanDefinition(String... scanPackages) {
-        // 加载组件 bean 定义
-        Set<Class<?>> classes = ClassUtil.getClasses(scanPackages);
-        for (Class<?> cls : classes) {
-            // 加载组件 bean 定义
-            Component component = cls.getAnnotation(Component.class);
-            if (component != null) {
-                BeanDefinition beanDefinition = new ClassBeanDefinition(cls);
-                this.register(component.value(), beanDefinition);
-            }
-
-            // 加载方法Bean
-            if (cls.isAnnotationPresent(Configuration.class)) {
-                Object configInstance = ReflectUtil.newInstance(cls);
-                for (Method method : cls.getDeclaredMethods()) {
-                    method.setAccessible(true);
-                    if (method.isAnnotationPresent(Bean.class)) {
-                        BeanDefinition beanDefinition = new MethodBeanDefinition(configInstance, method);
-                        // 注册
-                        register(method.getName(), beanDefinition);
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * 注册一个BeanDefinition
      *
