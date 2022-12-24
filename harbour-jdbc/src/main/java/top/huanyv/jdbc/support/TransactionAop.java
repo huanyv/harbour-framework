@@ -51,6 +51,7 @@ public class TransactionAop implements AspectAdvice {
             }
             targetException.printStackTrace();
         } finally {
+            sqlContext.closeTransaction();
             return result;
         }
     }

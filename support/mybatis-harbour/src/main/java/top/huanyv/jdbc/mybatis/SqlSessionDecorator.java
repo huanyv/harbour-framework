@@ -191,6 +191,7 @@ public class SqlSessionDecorator implements SqlSession {
             SqlSession sqlSession = SqlSessionDecorator.this.sqlSessionFactory.openSession();
             Object result = method.invoke(sqlSession, args);
             sqlSession.commit(true);
+            sqlSession.close();
             return result;
         }
     }

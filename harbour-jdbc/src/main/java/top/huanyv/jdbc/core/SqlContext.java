@@ -144,6 +144,20 @@ public class SqlContext {
     }
 
     /**
+     * 关闭事务
+     */
+    public void closeTransaction() {
+        if (!isAutoClose) {
+            isAutoClose = true;
+            try {
+                this.connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * 根据类型，获取动态代理后的对象
      * @param type 类型
      * @param <T> 类型泛型
