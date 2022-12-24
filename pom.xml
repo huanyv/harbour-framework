@@ -27,6 +27,7 @@
 	    <module>harbour-start-loader</module>
 	    <module>./support/enjoy-harbour</module>
 	    <module>./support/thymeleaf-harbour</module>
+	    <module>./support/mybatis-harbour</module>
 	</modules>
 
  	<build>

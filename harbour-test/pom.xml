@@ -10,6 +10,8 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
+<!--    <packaging>war</packaging>-->
+
     <groupId>com.book</groupId>
     <artifactId>harbour-test</artifactId>
     <version>1.0</version>
@@ -22,7 +24,19 @@
         <dependency>
             <groupId>top.huanyv</groupId>
             <artifactId>harbour-start-web</artifactId>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>top.huanyv</groupId>-->
+<!--                    <artifactId>harbour-start-tomcat</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>javax.servlet</groupId>-->
+<!--            <artifactId>javax.servlet-api</artifactId>-->
+<!--            <version>4.0.1</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>top.huanyv</groupId>
             <artifactId>harbour-start-enjoy</artifactId>
@@ -43,10 +57,16 @@
 
     <build>
         <plugins>
+<!--            打jar包-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
             </plugin>
+<!--            打war包-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-war-plugin</artifactId>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
