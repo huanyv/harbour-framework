@@ -1,4 +1,4 @@
-package top.huanyv.start.web;
+package top.huanyv.start.web.initialize;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;

@@ -114,7 +114,7 @@ public class HarbourApplication {
             // 获取配置属性前缀
             String propertiesPrefix = getPropertiesPrefix(cls);
             // 配置属性填充
-            appArguments.populate(propertiesPrefix + ".", applicationLoader);
+            appArguments.populate(propertiesPrefix, applicationLoader);
 
             // 方法Bean注入
             for (Method method : cls.getDeclaredMethods()) {
@@ -140,7 +140,7 @@ public class HarbourApplication {
     public String getPropertiesPrefix(Class<? extends ApplicationLoader> cls) {
         ConfigurationProperties annotation = cls.getAnnotation(ConfigurationProperties.class);
         if (annotation != null) {
-            return annotation.prefix();
+            return annotation.prefix() + ".";
         }
         return "";
     }
@@ -178,4 +178,7 @@ public class HarbourApplication {
         return "\n" + banner + "\n";
     }
 
+    public void setAppArguments(AppArguments appArguments) {
+        this.appArguments = appArguments;
+    }
 }

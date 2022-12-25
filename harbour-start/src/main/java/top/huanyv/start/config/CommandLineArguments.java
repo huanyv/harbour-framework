@@ -20,11 +20,13 @@ public class CommandLineArguments {
 
     public CommandLineArguments(String... args) {
         for (String arg : args) {
-            String[] argMap = arg.substring(PREFIX.length()).split("=");
-            if (argMap.length == 1) {
-                this.argumentMap.put(argMap[0], "");
-            } else {
-                this.argumentMap.put(argMap[0], argMap[1]);
+            if (arg.startsWith(PREFIX)) {
+                String[] argMap = arg.substring(PREFIX.length()).split("=");
+                if (argMap.length == 1) {
+                    this.argumentMap.put(argMap[0], "");
+                } else {
+                    this.argumentMap.put(argMap[0], argMap[1]);
+                }
             }
         }
     }

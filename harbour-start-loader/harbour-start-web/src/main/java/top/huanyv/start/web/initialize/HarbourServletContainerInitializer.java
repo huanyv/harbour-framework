@@ -1,6 +1,5 @@
-package top.huanyv.start.web;
+package top.huanyv.start.web.initialize;
 
-import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.tools.utils.ReflectUtil;
 
 import javax.servlet.ServletContainerInitializer;
@@ -10,7 +9,6 @@ import javax.servlet.annotation.HandlesTypes;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.Set;
 
 /**

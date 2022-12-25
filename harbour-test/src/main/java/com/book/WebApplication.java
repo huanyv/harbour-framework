@@ -1,6 +1,7 @@
 package com.book;
 
-import top.huanyv.start.web.HarbourApplicationInitializer;
+
+import top.huanyv.start.web.initialize.HarbourApplicationInitializer;
 
 /**
  * 打war包
