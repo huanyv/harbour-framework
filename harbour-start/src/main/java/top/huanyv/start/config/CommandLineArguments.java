@@ -34,7 +34,7 @@ public class CommandLineArguments {
     public String getEnv() {
         String env = this.argumentMap.get(ENV_KEY);
         if (!StringUtil.hasText(env)) {
-            return Constants.DEFAULT_CONFIG_FILE_NAME;
+            return StartConstants.DEFAULT_CONFIG_FILE_NAME;
         }
         return "application-" + env + ".properties";
     }

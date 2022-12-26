@@ -4,7 +4,7 @@ package top.huanyv.start.config;
  * @author admin
  * @date 2022/7/6 9:05
  */
-public class Constants {
+public class StartConstants {
 
     public static final String DEFAULT_CONFIG_FILE_NAME = "application.properties";
 

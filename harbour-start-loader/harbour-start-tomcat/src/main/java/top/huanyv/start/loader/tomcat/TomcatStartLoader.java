@@ -1,8 +1,6 @@
 package top.huanyv.start.loader.tomcat;
 
-import org.apache.catalina.Wrapper;
 import top.huanyv.bean.annotation.Bean;
-import top.huanyv.bean.annotation.Order;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.anntation.Conditional;
@@ -15,7 +13,9 @@ import top.huanyv.start.tomcat.TomcatServer;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;
 import top.huanyv.webmvc.core.RouterServlet;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.Servlet;
+import javax.servlet.ServletRegistration;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -55,6 +55,7 @@ public class TomcatStartLoader implements ApplicationLoader {
      */
     private Servlet servlet;
 
+
     @Override
     public void load(ApplicationContext applicationContext, AppArguments appArguments) {
         // 创建前端控制器
@@ -71,9 +72,10 @@ public class TomcatStartLoader implements ApplicationLoader {
         tomcatServer.setUriEncoding(this.uriEncoding);
 
         // 请求注册到tomcat容器中
-        Wrapper wrapper = tomcatServer.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, servlet);
-        wrapper.setLoadOnStartup(1);
-        wrapper.addMapping("/");
+        ServletRegistration.Dynamic servletRegistration = tomcatServer.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, servlet);
+        servletRegistration.addMapping("/");
+        servletRegistration.setLoadOnStartup(1);
+        servletRegistration.setMultipartConfig(new MultipartConfigElement("", maxFileSize, maxRequestSize, 0));
 
         return tomcatServer;
     }

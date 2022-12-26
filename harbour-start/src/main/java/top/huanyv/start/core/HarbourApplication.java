@@ -6,6 +6,7 @@ import top.huanyv.bean.ioc.AnnotationConfigApplicationContext;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.MethodBeanDefinition;
+import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.anntation.Conditional;
 import top.huanyv.start.anntation.ConfigurationProperties;
 import top.huanyv.start.config.AppArguments;
@@ -19,11 +20,14 @@ import top.huanyv.tools.utils.ResourceUtil;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
-import static top.huanyv.start.config.Constants.BANNER_FILE_NAME;
-import static top.huanyv.start.config.Constants.FUOZU_BANNER;
+import static top.huanyv.start.config.StartConstants.BANNER_FILE_NAME;
+import static top.huanyv.start.config.StartConstants.FUOZU_BANNER;
 
 /**
  * @author admin
@@ -40,6 +44,8 @@ public class HarbourApplication {
      * 应用配置参数
      */
     private AppArguments appArguments;
+
+
 
     public HarbourApplication(Class<?> mainClass) {
         this.mainClass = mainClass;
@@ -67,6 +73,9 @@ public class HarbourApplication {
             WebServer webServer = applicationContext.getBean(WebServer.class);
             webServer.start();
         }
+
+        // 启动任务和定时任务
+        handleApplicationTask(applicationContext);
 
         return applicationContext;
     }
@@ -125,6 +134,24 @@ public class HarbourApplication {
             }
             // 执行加载方法
             applicationLoader.load(applicationContext, appArguments);
+        }
+    }
+
+    public void handleApplicationTask(ApplicationContext applicationContext) {
+        // 启动任务
+        List<ApplicationRunner> runners = BeanFactoryUtil.getBeansByType(applicationContext, ApplicationRunner.class);
+        for (ApplicationRunner runner : runners) {
+            runner.run(this.appArguments);
+        }
+        // 定时任务
+        List<SchedulingTask> tasks = BeanFactoryUtil.getBeansByType(applicationContext, SchedulingTask.class);
+        if (!tasks.isEmpty()) {
+            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(tasks.size());
+            for (SchedulingTask task : tasks) {
+                scheduledExecutorService.scheduleAtFixedRate(() -> {
+                    task.run();
+                }, task.getInitialDelay(), task.getPeriod(), task.getTimeUnit());
+            }
         }
     }
 

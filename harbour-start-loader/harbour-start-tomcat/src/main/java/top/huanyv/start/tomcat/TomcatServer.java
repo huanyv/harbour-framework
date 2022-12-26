@@ -1,14 +1,24 @@
 package top.huanyv.start.tomcat;
 
+import com.sun.corba.se.impl.ior.NewObjectKeyTemplateBase;
+import com.sun.media.jfxmedia.events.NewFrameEvent;
+import com.sun.org.apache.regexp.internal.RE;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.core.ApplicationFilterRegistration;
+import org.apache.catalina.core.ApplicationServletRegistration;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.tomcat.util.descriptor.web.FilterDef;
+import org.apache.tomcat.util.descriptor.web.FilterMap;
 import top.huanyv.start.server.WebServer;
 
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.Servlet;
+import javax.servlet.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EventListener;
 
 /**
  * @author huanyv
@@ -49,10 +59,25 @@ public class TomcatServer implements WebServer {
 
     private String uriEncoding;
 
-    public Wrapper addServlet(String servletName, Servlet servlet) {
+    public ServletRegistration.Dynamic addServlet(String servletName, Servlet servlet) {
         Wrapper wrapper = Tomcat.addServlet(context, servletName, servlet);
-        wrapper.setMultipartConfigElement(new MultipartConfigElement("", maxFileSize, maxRequestSize, 0));
-        return wrapper;
+        return new ApplicationServletRegistration(wrapper, context);
+    }
+
+    public FilterRegistration.Dynamic addFilter(String filterName, Filter filter) {
+        FilterDef filterDef = new FilterDef();
+        filterDef.setFilter(filter);
+        filterDef.setFilterName(filterName);
+        this.context.addFilterDef(filterDef);
+        return new ApplicationFilterRegistration(filterDef, this.context);
+    }
+
+    public void addListener(EventListener eventListener) {
+        Object[] eventListeners = this.context.getApplicationEventListeners();
+        int newLen = eventListeners.length + 1;
+        Object[] newListeners = Arrays.copyOf(eventListeners, newLen);
+        newListeners[newLen] = eventListener;
+        this.context.setApplicationEventListeners(newListeners);
     }
 
     @Override

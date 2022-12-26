@@ -22,7 +22,7 @@ public class AppArguments {
         String envName = commandLineArguments.getEnv();
         InputStream inputStream = ClassLoaderUtil.getInputStream(envName);
 
-        if (!Constants.DEFAULT_CONFIG_FILE_NAME.equals(envName) && inputStream == null) {
+        if (!StartConstants.DEFAULT_CONFIG_FILE_NAME.equals(envName) && inputStream == null) {
             throw new ConfigFileNotFountException("The configuration file named '" + envName + "' does not exist!");
         }
 
