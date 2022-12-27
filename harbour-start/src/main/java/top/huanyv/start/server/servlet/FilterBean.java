@@ -1,5 +1,6 @@
-package top.huanyv.start.web.servlet;
+package top.huanyv.start.server.servlet;
 
+import top.huanyv.start.server.NativeServletRegistry;
 import top.huanyv.tools.utils.StringUtil;
 
 import javax.servlet.DispatcherType;
@@ -79,5 +80,9 @@ public class FilterBean {
                 true, this.urlPatterns.toArray(new String[0]));
     }
 
+    public void addRegistration(NativeServletRegistry servletRegistry) {
+        FilterRegistration.Dynamic filterRegistration = servletRegistry.addFilter(this.name, this.filter);
+        populateFilterRegistration(filterRegistration);
+    }
 
 }

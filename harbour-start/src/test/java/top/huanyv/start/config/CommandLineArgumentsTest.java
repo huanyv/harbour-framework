@@ -10,8 +10,7 @@ public class CommandLineArgumentsTest {
         String env = commandLineArguments.getEnv();
 
 
-        AppArguments appArguments = new AppArguments();
-        appArguments.load(commandLineArguments);
+        AppArguments appArguments = new AppArguments(commandLineArguments);
 
 
         System.out.println("appArguments = " + appArguments);

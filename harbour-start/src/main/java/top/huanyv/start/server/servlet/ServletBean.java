@@ -1,5 +1,6 @@
-package top.huanyv.start.web.servlet;
+package top.huanyv.start.server.servlet;
 
+import top.huanyv.start.server.NativeServletRegistry;
 import top.huanyv.tools.utils.StringUtil;
 
 import javax.servlet.MultipartConfigElement;
@@ -95,4 +96,8 @@ public class ServletBean {
         dynamic.setInitParameters(this.initParameters);
     }
 
+    public void addRegistration(NativeServletRegistry servletRegistry) {
+        ServletRegistration.Dynamic servletRegistration = servletRegistry.addServlet(this.name, this.servlet);
+        populateServletRegistration(servletRegistration);
+    }
 }

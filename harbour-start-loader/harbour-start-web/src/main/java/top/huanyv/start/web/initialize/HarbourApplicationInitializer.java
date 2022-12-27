@@ -5,9 +5,11 @@ import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.config.CommandLineArguments;
 import top.huanyv.start.core.HarbourApplication;
-import top.huanyv.start.web.servlet.FilterBean;
-import top.huanyv.start.web.servlet.ServletBean;
-import top.huanyv.start.web.servlet.ServletListenerBean;
+import top.huanyv.start.server.NativeServletRegistry;
+import top.huanyv.start.server.servlet.FilterBean;
+import top.huanyv.start.server.servlet.ServletBean;
+import top.huanyv.start.server.servlet.ServletListenerBean;
+import top.huanyv.start.web.servlet.ServletContextRegistry;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;
 import top.huanyv.webmvc.core.RouterServlet;
 
@@ -23,14 +25,16 @@ public abstract class HarbourApplicationInitializer implements WebStartupInitial
     @Override
     public void onStartup(ServletContext ctx) throws ServletException {
         Class<?> mainClass = run();
-        AppArguments appArguments = new AppArguments();
-        appArguments.load(new CommandLineArguments());
+        AppArguments appArguments = new AppArguments(new CommandLineArguments());
 
+        // 创建应用
         HarbourApplication application = new HarbourApplication(mainClass);
         application.setAppArguments(appArguments);
 
+        // 创建容器
         ApplicationContext applicationContext = application.createApplicationContext();
 
+        // 注册前端控制器
         RouterServlet routerServlet = new RouterServlet(applicationContext);
         ServletRegistration.Dynamic router = ctx.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, routerServlet);
         router.setLoadOnStartup(1);
@@ -39,25 +43,15 @@ public abstract class HarbourApplicationInitializer implements WebStartupInitial
                 appArguments.getLong("server.maxRequestSize", "10485760"), 0));
         router.addMapping("/");
 
-
-        List<ServletBean> servletBeans = BeanFactoryUtil.getBeansByType(applicationContext, ServletBean.class);
-        for (ServletBean servletBean : servletBeans) {
-            ServletRegistration.Dynamic registration = ctx.addServlet(servletBean.getName(), servletBean.getServlet());
-            servletBean.populateServletRegistration(registration);
-        }
-
-        List<FilterBean> filterBeans = BeanFactoryUtil.getBeansByType(applicationContext, FilterBean.class);
-        for (FilterBean filterBean : filterBeans) {
-            FilterRegistration.Dynamic registration = ctx.addFilter(filterBean.getName(), filterBean.getFilter());
-            filterBean.populateFilterRegistration(registration);
-        }
-
-        List<ServletListenerBean> listenerBeans = BeanFactoryUtil.getBeansByType(applicationContext, ServletListenerBean.class);
-        for (ServletListenerBean listenerBean : listenerBeans) {
-            ctx.addListener(listenerBean.getEventListener());
-        }
-
+        // 注册原生的 Servlet
+        ServletContextRegistry servletContextRegistry = new ServletContextRegistry(ctx);
+        NativeServletRegistry.register(applicationContext, servletContextRegistry);
     }
 
+    /**
+     * 重写此方法，返回值应是IOC要扫描的包中的一个类，即主方法类
+     *
+     * @return {@link Class}<{@link ?}>
+     */
     public abstract Class<?> run();
 }

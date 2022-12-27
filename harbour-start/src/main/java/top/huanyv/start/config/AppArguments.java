@@ -17,7 +17,7 @@ public class AppArguments {
 
     private final Map<String, String> argumentMap = new ConcurrentHashMap<>();
 
-    public void load(CommandLineArguments commandLineArguments) {
+    public AppArguments(CommandLineArguments commandLineArguments) {
         // 获取配置文件名
         String envName = commandLineArguments.getEnv();
         InputStream inputStream = ClassLoaderUtil.getInputStream(envName);
@@ -85,13 +85,13 @@ public class AppArguments {
             Object val = null;
             if (StringUtil.hasText(stringValue)) {
                 val = BeanUtil.numberConvert(field.getType(), stringValue);
-            }
-            try {
-                if (val != null) {
-                    field.set(o, val);
+                try {
+                    if (val != null) {
+                        field.set(o, val);
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
                 }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
             }
         }
     }

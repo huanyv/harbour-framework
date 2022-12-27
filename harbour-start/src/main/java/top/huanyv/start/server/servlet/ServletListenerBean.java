@@ -1,4 +1,6 @@
-package top.huanyv.start.web.servlet;
+package top.huanyv.start.server.servlet;
+
+import top.huanyv.start.server.NativeServletRegistry;
 
 import java.util.EventListener;
 
@@ -20,5 +22,9 @@ public class ServletListenerBean {
 
     public EventListener getEventListener() {
         return eventListener;
+    }
+
+    public void addRegistration(NativeServletRegistry servletRegistry) {
+        servletRegistry.addListener(this.eventListener);
     }
 }

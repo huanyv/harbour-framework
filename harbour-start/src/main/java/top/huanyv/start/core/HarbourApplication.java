@@ -13,6 +13,7 @@ import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.config.CommandLineArguments;
 import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.start.loader.Condition;
+import top.huanyv.start.server.NativeServletRegistry;
 import top.huanyv.start.server.WebServer;
 import top.huanyv.tools.utils.ClassUtil;
 import top.huanyv.tools.utils.ReflectUtil;
@@ -20,7 +21,6 @@ import top.huanyv.tools.utils.ResourceUtil;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.Executors;
@@ -57,10 +57,7 @@ public class HarbourApplication {
 
     public ApplicationContext run(String... args) {
         CommandLineArguments commandLineArguments = new CommandLineArguments(args);
-        AppArguments appArguments = new AppArguments();
-        appArguments.load(commandLineArguments);
-
-        this.appArguments = appArguments;
+        this.appArguments = new AppArguments(commandLineArguments);
 
         // IOC
         ApplicationContext applicationContext = createApplicationContext();
@@ -71,6 +68,8 @@ public class HarbourApplication {
         if (isWebApplication()) {
             // 启动服务
             WebServer webServer = applicationContext.getBean(WebServer.class);
+            // 注册原生的 Servlet
+            NativeServletRegistry.register(applicationContext, webServer);
             webServer.start();
         }
 

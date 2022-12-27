@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * 部署war包在tomcat容器中，执行的类
+ *
  * @author huanyv
  * @date 2022/12/24 16:47
  */
@@ -19,9 +21,7 @@ import java.util.Set;
 public class HarbourServletContainerInitializer implements ServletContainerInitializer {
     @Override
     public void onStartup(Set<Class<?>> c, ServletContext ctx) throws ServletException {
-
         List<WebStartupInitializer> initializers = new ArrayList<>(c.size());
-
 
         for (Class<?> cls : c) {
             if (WebStartupInitializer.class.isAssignableFrom(cls)

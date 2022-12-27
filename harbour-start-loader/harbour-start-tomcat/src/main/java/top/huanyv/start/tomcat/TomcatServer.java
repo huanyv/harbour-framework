@@ -59,11 +59,13 @@ public class TomcatServer implements WebServer {
 
     private String uriEncoding;
 
+    @Override
     public ServletRegistration.Dynamic addServlet(String servletName, Servlet servlet) {
         Wrapper wrapper = Tomcat.addServlet(context, servletName, servlet);
         return new ApplicationServletRegistration(wrapper, context);
     }
 
+    @Override
     public FilterRegistration.Dynamic addFilter(String filterName, Filter filter) {
         FilterDef filterDef = new FilterDef();
         filterDef.setFilter(filter);
@@ -72,8 +74,13 @@ public class TomcatServer implements WebServer {
         return new ApplicationFilterRegistration(filterDef, this.context);
     }
 
+    @Override
     public void addListener(EventListener eventListener) {
         Object[] eventListeners = this.context.getApplicationEventListeners();
+        if (eventListeners.length == 0) {
+            this.context.setApplicationEventListeners(new Object[]{eventListener});
+            return;
+        }
         int newLen = eventListeners.length + 1;
         Object[] newListeners = Arrays.copyOf(eventListeners, newLen);
         newListeners[newLen] = eventListener;

@@ -6,11 +6,10 @@ package top.huanyv.start.server;
  * @author huanyv
  * @date 2022/11/5 19:21
  */
-public interface WebServer {
+public interface WebServer extends NativeServletRegistry {
 
     /**
      * 服务启动方法
-     *
      */
     void start();
 
