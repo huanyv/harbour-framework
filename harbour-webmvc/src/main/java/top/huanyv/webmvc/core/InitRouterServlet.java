@@ -1,6 +1,5 @@
 package top.huanyv.webmvc.core;
 
-import top.huanyv.bean.annotation.Order;
 import top.huanyv.bean.exception.NoSuchBeanDefinitionException;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.utils.AopUtil;
@@ -148,7 +147,7 @@ public abstract class InitRouterServlet extends TemplateServlet {
             Guard guard = targetClass.getAnnotation(Guard.class);
             if (guard != null) {
                 // 获得顺序
-                Order order = targetClass.getAnnotation(Order.class);
+                int order = guard.order();
                 // 获得匹配路径
                 String[] urlPatterns = guard.value();
                 // 获得排序路径
@@ -159,19 +158,13 @@ public abstract class InitRouterServlet extends TemplateServlet {
                 navigationGuardMapping.setNavigationGuard(navigationGuard);
                 navigationGuardMapping.setUrlPatterns(urlPatterns);
                 navigationGuardMapping.setExcludeUrl(exclude);
-                if (order != null) {
-                    navigationGuardMapping.setOrder(order.value());
-                } else {
-                    navigationGuardMapping.setOrder(guard.order());
-                }
+                navigationGuardMapping.setOrder(order);
                 this.guardMappings.add(navigationGuardMapping);
             }
         }
 
 
     }
-
-
 
 
 }

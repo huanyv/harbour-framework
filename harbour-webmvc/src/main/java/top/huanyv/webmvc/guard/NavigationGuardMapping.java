@@ -1,5 +1,6 @@
 package top.huanyv.webmvc.guard;
 
+import top.huanyv.bean.utils.Ordered;
 import top.huanyv.tools.utils.AntPathMatcher;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;
 
@@ -7,7 +8,7 @@ import top.huanyv.webmvc.config.WebMvcGlobalConfig;
  * @author admin
  * @date 2022/7/27 16:07
  */
-public class NavigationGuardMapping {
+public class NavigationGuardMapping implements Ordered {
 
     // 请求地址
     private String[] urlPatterns;
@@ -60,9 +61,6 @@ public class NavigationGuardMapping {
         return false;
     }
 
-
-
-
     public String[] getUrlPatterns() {
         return urlPatterns;
     }
@@ -87,6 +85,7 @@ public class NavigationGuardMapping {
         this.navigationGuard = navigationGuard;
     }
 
+    @Override
     public int getOrder() {
         return order;
     }

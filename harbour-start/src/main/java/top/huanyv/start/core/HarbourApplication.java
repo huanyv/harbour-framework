@@ -1,12 +1,12 @@
 package top.huanyv.start.core;
 
 import top.huanyv.bean.annotation.Bean;
-import top.huanyv.bean.annotation.Order;
 import top.huanyv.bean.ioc.AnnotationConfigApplicationContext;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.MethodBeanDefinition;
 import top.huanyv.bean.utils.BeanFactoryUtil;
+import top.huanyv.bean.utils.OrderUtil;
 import top.huanyv.start.anntation.Conditional;
 import top.huanyv.start.anntation.ConfigurationProperties;
 import top.huanyv.start.config.AppArguments;
@@ -46,7 +46,6 @@ public class HarbourApplication {
     private AppArguments appArguments;
 
 
-
     public HarbourApplication(Class<?> mainClass) {
         this.mainClass = mainClass;
     }
@@ -75,7 +74,6 @@ public class HarbourApplication {
 
         // 启动任务和定时任务
         handleApplicationTask(applicationContext);
-
         return applicationContext;
     }
 
@@ -107,14 +105,8 @@ public class HarbourApplication {
             loaders.add(applicationLoader);
         }
         // 排序
-        loaders.sort((o1, o2) -> {
-            Order o1Order = o1.getClass().getAnnotation(Order.class);
-            Order o2Order = o2.getClass().getAnnotation(Order.class);
-            if (o1Order != null && o2Order != null) {
-                return o1Order.value() - o2Order.value();
-            }
-            return 0;
-        });
+        loaders.sort(new OrderUtil.OrderAsc());
+
         // 执行
         for (ApplicationLoader applicationLoader : loaders) {
             Class<? extends ApplicationLoader> cls = applicationLoader.getClass();
@@ -139,6 +131,8 @@ public class HarbourApplication {
     public void handleApplicationTask(ApplicationContext applicationContext) {
         // 启动任务
         List<ApplicationRunner> runners = BeanFactoryUtil.getBeansByType(applicationContext, ApplicationRunner.class);
+        // 排序
+        runners.sort(new OrderUtil.OrderAsc());
         for (ApplicationRunner runner : runners) {
             runner.run(this.appArguments);
         }

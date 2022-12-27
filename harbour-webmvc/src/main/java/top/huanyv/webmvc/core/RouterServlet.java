@@ -2,6 +2,7 @@ package top.huanyv.webmvc.core;
 
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.utils.AopUtil;
+import top.huanyv.bean.utils.OrderUtil;
 import top.huanyv.tools.utils.IoUtil;
 import top.huanyv.tools.utils.WebUtil;
 import top.huanyv.webmvc.annotation.ExceptionPoint;
@@ -133,14 +134,7 @@ public class RouterServlet extends InitRouterServlet {
         List<NavigationGuardMapping> navigationGuardMappings = this.guardMappings.stream()
                 .filter(navigationGuardMapping -> navigationGuardMapping.hasUrlPatten(uri)
                         && !navigationGuardMapping.isExclude(uri))
-                .sorted((o1, o2) -> {
-                    // 排序，如果序号一样，按照类名顺序
-                    if (o1.getOrder() == o2.getOrder()) {
-                        return o1.getNavigationGuard().getClass().getName()
-                                .compareTo(o2.getNavigationGuard().getClass().getName());
-                    }
-                    return o1.getOrder() - o2.getOrder();
-                }).collect(Collectors.toList());
+                .sorted((o1, o2) -> o1.getOrder() - o2.getOrder()).collect(Collectors.toList());
         navigationGuardChain.setNavigationGuards(navigationGuardMappings);
         return navigationGuardChain;
     }

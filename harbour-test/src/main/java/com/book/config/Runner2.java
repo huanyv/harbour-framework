@@ -10,10 +10,10 @@ import top.huanyv.start.core.ApplicationRunner;
  * @date 2022/12/26 15:28
  */
 @Component
-@Order(0)
-public class Runner implements ApplicationRunner {
+@Order(1)
+public class Runner2 implements ApplicationRunner {
     @Override
     public void run(AppArguments appArguments) {
-        System.out.println("应用启动了");
+        System.out.println("应用启动了2");
     }
 }

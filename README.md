@@ -36,7 +36,7 @@
 ```xml
 <dependency>
     <groupId>top.huanyv</groupId>
-    <artifactId>harbour-start</artifactId>
+    <artifactId>harbour-start-web</artifactId>
     <version>1.0</version>
 </dependency>
 ```
@@ -45,11 +45,11 @@
 
 ```java
 public static void main(String[] args) {
-    Harbour.use().get("/hello", (req, resp) -> resp.html("Hello World!")).start(Main.class, args);
+    Harbour.use().get("/hello", (req, resp) -> resp.html("Hello World!")).run(Main.class, args);
 }
 ```
 
-
+如果你使用过SpringBoot的话，它与其使用方式是相同的，将主方法类作为根包，即所有的其它包与类，都和主方法类在同一包下
 
 ## 1. Bean组件管理
 
@@ -95,7 +95,7 @@ public class Config {
 * `registerBean(Class<?> beanClass, Object... constructorArgs)`注册一个Bean，指定构造参数，BeanName为类名小写
 * `registerBean(String beanName, Class<?> beanClass, Object... constructorArgs)`
 * `registerBeanDefinition(String beanName, BeanDefinition beanDefinition)`注册一个`BeanDefinition`
-* 只有在调用`refresh()`才可创建实例
+* 只有在调用`refresh()`提前加载所有饿加载单例对象
 
 ```java
 ApplicationContext app = new AnnotationConfigApplicationContext("com.package");
@@ -328,74 +328,4 @@ public void testFactoryBean() {
 > userDao = top.huanyv.bean.test.factory.MapperFactoryBean$1@512ddf17
 > userDao.getClass() = class com.sun.proxy.$Proxy6
 > app.getBean("&mapperFactoryBean") = top.huanyv.bean.test.factory.MapperFactoryBean@2c13da15
-
-### 1.4 ApplicationContextWeave
-
-* 应用初始化钩子
-* 两种方式：
-  1. 使用Java内置的SPI机制（无侵入式），在Resources目录下创建`META-INF/services`，创建`top.huanyv.bean.ioc.ApplicationContextWeave`文件，内容为接口实现类的全类名，一个一行
-  2. 将`ApplicationContextWeave`的实现类注入到容器中（侵入式）
-
-```java
-public interface ApplicationContextWeave {
-
-    // 执行顺序
-    default int getOrder() {
-        return 0;
-    }
-
-    default void createBeanInstanceAfter(ApplicationContext applicationContext) {
-		// 如果在这个方法中使用了register方法注册单例Bean，一定要调用refresh方法，否则不会创建实例
-    }
-
-    default void populateBeanBefore(ApplicationContext applicationContext) {
-
-    }
-
-    default void populateBeanAfter(ApplicationContext applicationContext){
-
-    }
-}
-
-```
-
-
-
-```java
-@Component
-public class BeanWeave implements ApplicationContextWeave {
-    @Override
-    public int getOrder() {
-        return 0;
-    }
-
-    @Override
-    public void createBeanInstanceAfter(ApplicationContext applicationContext) {
-        System.out.println("创建实例后");
-        applicationContext.registerBean(MapperFactoryBean.class, UserDao.class);
-        applicationContext.refresh();
-    }
-
-    @Override
-    public void populateBeanBefore(ApplicationContext applicationContext) {
-        System.out.println("注入之前");
-    }
-
-    @Override
-    public void populateBeanAfter(ApplicationContext applicationContext) {
-        System.out.println("注入之后");
-    }
-}
-
-public void testWeave() {
-    ApplicationContext app = new AnnotationConfigApplicationContext("top.huanyv.bean.test.weave");
-    UserDao userDao = app.getBean(UserDao.class);
-    System.out.println(userDao);
-}
-```
-
->创建实例后
->注入之前
->注入之后
->top.huanyv.bean.test.factory.MapperFactoryBean$1@4aa8f0b4
 
