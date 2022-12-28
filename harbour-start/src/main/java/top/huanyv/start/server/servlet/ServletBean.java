@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author huanyv
  * @date 2022/12/25 15:14
  */
-public class ServletBean {
+public class ServletBean implements Registration {
 
     private Servlet servlet;
 
@@ -96,6 +96,7 @@ public class ServletBean {
         dynamic.setInitParameters(this.initParameters);
     }
 
+    @Override
     public void addRegistration(NativeServletRegistry servletRegistry) {
         ServletRegistration.Dynamic servletRegistration = servletRegistry.addServlet(this.name, this.servlet);
         populateServletRegistration(servletRegistration);

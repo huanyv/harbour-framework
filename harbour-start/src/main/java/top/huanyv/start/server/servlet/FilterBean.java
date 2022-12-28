@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author huanyv
  * @date 2022/12/25 15:43
  */
-public class FilterBean {
+public class FilterBean implements Registration {
 
     private Filter filter;
 
@@ -80,6 +80,7 @@ public class FilterBean {
                 true, this.urlPatterns.toArray(new String[0]));
     }
 
+    @Override
     public void addRegistration(NativeServletRegistry servletRegistry) {
         FilterRegistration.Dynamic filterRegistration = servletRegistry.addFilter(this.name, this.filter);
         populateFilterRegistration(filterRegistration);

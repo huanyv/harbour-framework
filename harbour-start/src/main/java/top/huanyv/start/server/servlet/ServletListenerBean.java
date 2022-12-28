@@ -8,7 +8,7 @@ import java.util.EventListener;
  * @author huanyv
  * @date 2022/12/25 16:51
  */
-public class ServletListenerBean {
+public class ServletListenerBean implements Registration {
 
     private EventListener eventListener;
 
@@ -24,6 +24,7 @@ public class ServletListenerBean {
         return eventListener;
     }
 
+    @Override
     public void addRegistration(NativeServletRegistry servletRegistry) {
         servletRegistry.addListener(this.eventListener);
     }

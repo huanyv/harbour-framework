@@ -15,6 +15,7 @@ import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.start.loader.Condition;
 import top.huanyv.start.server.NativeServletRegistry;
 import top.huanyv.start.server.WebServer;
+import top.huanyv.start.server.servlet.Registration;
 import top.huanyv.tools.utils.ClassUtil;
 import top.huanyv.tools.utils.ReflectUtil;
 import top.huanyv.tools.utils.ResourceUtil;
@@ -68,7 +69,7 @@ public class HarbourApplication {
             // 启动服务
             WebServer webServer = applicationContext.getBean(WebServer.class);
             // 注册原生的 Servlet
-            NativeServletRegistry.register(applicationContext, webServer);
+            registerServlet(applicationContext, webServer);
             webServer.start();
         }
 
@@ -137,13 +138,12 @@ public class HarbourApplication {
             runner.run(this.appArguments);
         }
         // 定时任务
-        List<SchedulingTask> tasks = BeanFactoryUtil.getBeansByType(applicationContext, SchedulingTask.class);
-        if (!tasks.isEmpty()) {
-            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(tasks.size());
-            for (SchedulingTask task : tasks) {
-                scheduledExecutorService.scheduleAtFixedRate(() -> {
-                    task.run();
-                }, task.getInitialDelay(), task.getPeriod(), task.getTimeUnit());
+        List<Timer> timers = BeanFactoryUtil.getBeansByType(applicationContext, Timer.class);
+        if (!timers.isEmpty()) {
+            ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(timers.size());
+            for (Timer timer : timers) {
+                scheduledExecutorService.scheduleAtFixedRate(() -> timer.run(),
+                        timer.getInitialDelay(), timer.getPeriod(), timer.getTimeUnit());
             }
         }
     }
@@ -185,6 +185,13 @@ public class HarbourApplication {
         }
         // 如果没有条件注解，直接注入
         return true;
+    }
+
+    public void registerServlet(ApplicationContext context, NativeServletRegistry servletRegistry) {
+        List<Registration> registrations = BeanFactoryUtil.getBeansByType(context, Registration.class);
+        for (Registration registration : registrations) {
+            registration.addRegistration(servletRegistry);
+        }
     }
 
     /**

@@ -45,7 +45,7 @@ public abstract class HarbourApplicationInitializer implements WebStartupInitial
 
         // 注册原生的 Servlet
         ServletContextRegistry servletContextRegistry = new ServletContextRegistry(ctx);
-        NativeServletRegistry.register(applicationContext, servletContextRegistry);
+        application.registerServlet(applicationContext, servletContextRegistry);
     }
 
     /**

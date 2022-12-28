@@ -3,12 +3,12 @@ package top.huanyv.start.core;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 定时任务，默认立即执行，10s一次
+ * 定时器，默认立即执行，执行间隔10s
  *
  * @author huanyv
  * @date 2022/12/26 15:16
  */
-public interface SchedulingTask {
+public interface Timer {
 
     /**
      * 定时的时间单位，默认为秒

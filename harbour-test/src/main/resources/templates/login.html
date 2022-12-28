@@ -39,6 +39,15 @@
                             placeholder="密码" autocomplete="off">
                         </div>
                         <div class="layui-form-item layui-col-md10 layui-col-md-offset1">
+                            <div class="layui-input-inline">
+                                <input type="text" name="captcha" id="captcha" class="layui-input"
+                                       placeholder="验证码" autocomplete="off" style="width: 200px;">
+                            </div>
+                            <div class="layui-inline">
+                                <img src="#(ctxPath)/captcha" alt="" width="100px">
+                            </div>
+                        </div>
+                        <div class="layui-form-item layui-col-md10 layui-col-md-offset1">
                             <button class="layui-btn layui-btn-normal layui-btn-fluid">登录</button>
                         </div>
                     </form>

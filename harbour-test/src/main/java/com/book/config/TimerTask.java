@@ -1,7 +1,6 @@
 package com.book.config;
 
-import top.huanyv.bean.annotation.Component;
-import top.huanyv.start.core.SchedulingTask;
+import top.huanyv.start.core.Timer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,8 +10,10 @@ import java.util.Date;
  * @date 2022/12/26 15:26
  */
 //@Component
-public class Task implements SchedulingTask {
+public class TimerTask implements Timer {
+
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     @Override
     public long getPeriod() {
         return 3L;
