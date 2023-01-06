@@ -75,7 +75,6 @@ public abstract class TemplateServlet extends HttpServlet {
         if (this.applicationContext == null) {
             String scanPackages = getServletConfig().getInitParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES);
             this.applicationContext = new AnnotationConfigApplicationContext(scanPackages.split(","));
-            this.applicationContext.refresh();
         }
 
         // IOC容器存到上下文中

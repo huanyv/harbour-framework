@@ -5,8 +5,10 @@ import top.huanyv.tools.utils.*;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,11 +19,12 @@ public class AppArguments {
 
     private final Map<String, String> argumentMap = new ConcurrentHashMap<>();
 
-    public AppArguments(CommandLineArguments commandLineArguments) {
+    public AppArguments(CliArguments cliArguments) {
         // 获取配置文件名
-        String envName = commandLineArguments.getEnv();
+        String envName = cliArguments.getEnv();
         InputStream inputStream = ClassLoaderUtil.getInputStream(envName);
 
+        // 如果不是默认的配置文件，并且不存在，报异常
         if (!StartConstants.DEFAULT_CONFIG_FILE_NAME.equals(envName) && inputStream == null) {
             throw new ConfigFileNotFountException("The configuration file named '" + envName + "' does not exist!");
         }
@@ -33,8 +36,8 @@ public class AppArguments {
         }
 
         // 命令行配置覆盖
-        for (String key : commandLineArguments.keySet()) {
-            this.argumentMap.put(key, commandLineArguments.get(key));
+        for (String key : cliArguments.getNames()) {
+            this.argumentMap.put(key, cliArguments.get(key));
         }
     }
 
@@ -59,16 +62,29 @@ public class AppArguments {
         return Integer.parseInt(get(name));
     }
 
-    public int getInt(String name, String defaultValue) {
-        return Integer.parseInt(get(name, defaultValue));
+    public int getInt(String name, int defaultValue) {
+        try {
+            return Integer.parseInt(get(name));
+        } catch (Exception e) {
+            return defaultValue;
+        }
     }
 
     public long getLong(String name) {
         return Long.parseLong(get(name));
     }
 
-    public long getLong(String name, String defaultValue) {
-        return Long.parseLong(get(name, defaultValue));
+    public long getLong(String name, long defaultValue) {
+        try {
+            return Long.parseLong(get(name));
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+
+    public Set<String> getNames() {
+        return Collections.unmodifiableSet(this.argumentMap.keySet());
     }
 
     /**

@@ -8,7 +8,7 @@ public class AnnotationConfigApplicationContext extends AbstractApplicationConte
         super();
         reader = new AnnotationBeanDefinitionReader(getBeanDefinitionRegistry());
         reader.read(scanPackages);
-        initialization();
+        refresh();
     }
 
 }

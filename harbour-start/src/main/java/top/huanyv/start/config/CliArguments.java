@@ -2,6 +2,7 @@ package top.huanyv.start.config;
 
 import top.huanyv.tools.utils.StringUtil;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author huanyv
  * @date 2022/12/17 14:48
  */
-public class CommandLineArguments {
+public class CliArguments {
 
     public static final String PREFIX = "--";
 
@@ -18,7 +19,7 @@ public class CommandLineArguments {
 
     private final Map<String, String> argumentMap = new ConcurrentHashMap<>();
 
-    public CommandLineArguments(String... args) {
+    public CliArguments(String... args) {
         for (String arg : args) {
             if (arg.startsWith(PREFIX)) {
                 String[] argMap = arg.substring(PREFIX.length()).split("=");
@@ -39,8 +40,8 @@ public class CommandLineArguments {
         return "application-" + env + ".properties";
     }
 
-    public Set<String> keySet() {
-        return this.argumentMap.keySet();
+    public Set<String> getNames() {
+        return Collections.unmodifiableSet(this.argumentMap.keySet());
     }
 
     public String get(String key) {

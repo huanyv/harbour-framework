@@ -1,20 +1,14 @@
 package top.huanyv.start.web.initialize;
 
 import top.huanyv.bean.ioc.ApplicationContext;
-import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.config.AppArguments;
-import top.huanyv.start.config.CommandLineArguments;
+import top.huanyv.start.config.CliArguments;
 import top.huanyv.start.core.HarbourApplication;
-import top.huanyv.start.server.NativeServletRegistry;
-import top.huanyv.start.server.servlet.FilterBean;
-import top.huanyv.start.server.servlet.ServletBean;
-import top.huanyv.start.server.servlet.ServletListenerBean;
 import top.huanyv.start.web.servlet.ServletContextRegistry;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;
 import top.huanyv.webmvc.core.RouterServlet;
 
 import javax.servlet.*;
-import java.util.List;
 
 /**
  * @author huanyv
@@ -25,7 +19,7 @@ public abstract class HarbourApplicationInitializer implements WebStartupInitial
     @Override
     public void onStartup(ServletContext ctx) throws ServletException {
         Class<?> mainClass = run();
-        AppArguments appArguments = new AppArguments(new CommandLineArguments());
+        AppArguments appArguments = new AppArguments(new CliArguments());
 
         // 创建应用
         HarbourApplication application = new HarbourApplication(mainClass);
@@ -39,8 +33,8 @@ public abstract class HarbourApplicationInitializer implements WebStartupInitial
         ServletRegistration.Dynamic router = ctx.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, routerServlet);
         router.setLoadOnStartup(1);
         router.setMultipartConfig(new MultipartConfigElement("",
-                appArguments.getLong("server.maxFileSize", "1048576"),
-                appArguments.getLong("server.maxRequestSize", "10485760"), 0));
+                appArguments.getLong("server.maxFileSize", 1048576L),
+                appArguments.getLong("server.maxRequestSize", 10485760L), 0));
         router.addMapping("/");
 
         // 注册原生的 Servlet

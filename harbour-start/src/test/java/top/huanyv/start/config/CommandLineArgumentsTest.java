@@ -6,7 +6,7 @@ public class CommandLineArgumentsTest {
 
     @Test
     public void testGetEnv() {
-        CommandLineArguments commandLineArguments = new CommandLineArguments("--app.env=prod");
+        CliArguments commandLineArguments = new CliArguments("--app.env=prod");
         String env = commandLineArguments.getEnv();
 
 
@@ -19,7 +19,7 @@ public class CommandLineArgumentsTest {
 
     @Test
     public void testConstruct() {
-        CommandLineArguments commandLineArguments = new CommandLineArguments("--app.env=");
+        CliArguments commandLineArguments = new CliArguments("--app.env=");
 
         System.out.println("commandLineArguments = " + commandLineArguments);
 
