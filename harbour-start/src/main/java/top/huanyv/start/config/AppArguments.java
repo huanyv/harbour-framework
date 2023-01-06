@@ -100,7 +100,7 @@ public class AppArguments {
             String stringValue = this.get(prefix + field.getName());
             Object val = null;
             if (StringUtil.hasText(stringValue)) {
-                val = BeanUtil.numberConvert(field.getType(), stringValue);
+                val = NumberUtil.parse(field.getType(), stringValue);
                 try {
                     if (val != null) {
                         field.set(o, val);
