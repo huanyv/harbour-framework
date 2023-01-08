@@ -77,4 +77,17 @@ public class JdbcTemplateTest extends TestCase {
         System.out.println("mapList = " + mapList);
     }
 
+    public void testInsert() throws Exception {
+        InputStream inputStream = ClassLoader.getSystemResourceAsStream("jdbc.properties");
+        Properties properties = new Properties();
+        properties.load(inputStream);
+        DataSource dataSource = SimpleDataSource.createDataSource(properties);
+
+        Connection connection = dataSource.getConnection();
+
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        String sql = "INSERT INTO user (username, password, sex, email) VALUES(?, ?, ?, ?);";
+        long id = jdbcTemplate.insert(connection, sql, "test5", "123", "男", "123@qq.om");
+        System.out.println("id = " + id);
+    }
 }

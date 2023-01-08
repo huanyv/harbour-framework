@@ -13,6 +13,10 @@ public class ScalarHandler<T> implements ResultSetHandler<T> {
 
     private Class<T> type;
 
+    public ScalarHandler() {
+        this.type = (Class<T>) Object.class;
+    }
+
     public ScalarHandler(Class<T> type) {
         this.type = type;
     }

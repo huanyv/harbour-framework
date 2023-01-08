@@ -1,9 +1,8 @@
 package top.huanyv.jdbc.core;
 
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.apache.commons.dbutils.handlers.ScalarHandler;
+import top.huanyv.jdbc.handler.BeanHandler;
+import top.huanyv.jdbc.handler.BeanListHandler;
+import top.huanyv.jdbc.handler.ScalarHandler;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -18,7 +17,7 @@ public class SqlContext {
     private DataSource dataSource;
     private Connection connection;
 
-    private QueryRunner queryRunner = new QueryRunner();
+    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
     // 配置类
     private JdbcConfigurer config = JdbcConfigurer.create();
@@ -34,7 +33,7 @@ public class SqlContext {
         Connection conn = null;
         try {
             conn = getConnection();
-            return queryRunner.query(conn, sql, new BeanListHandler<T>(type), args);
+            return jdbcTemplate.query(conn, sql, new BeanListHandler<T>(type), args);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -53,7 +52,7 @@ public class SqlContext {
         Connection conn = null;
         try {
             conn = getConnection();
-            return queryRunner.query(conn, sql, new BeanHandler<T>(type), args);
+            return jdbcTemplate.query(conn, sql, new BeanHandler<T>(type), args);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -72,7 +71,7 @@ public class SqlContext {
         Connection conn = null;
         try {
             conn = getConnection();
-            return queryRunner.query(conn, sql, new ScalarHandler<>(), args);
+            return jdbcTemplate.query(conn, sql, new ScalarHandler<>(), args);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -91,7 +90,33 @@ public class SqlContext {
         Connection conn = null;
         try {
             conn = getConnection();
-            return queryRunner.update(conn, sql, args);
+            return jdbcTemplate.update(conn, sql, args);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (isAutoClose && conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * 执行插入，返回主键ID
+     *
+     * @param sql  sql
+     * @param args 参数
+     * @return long
+     */
+    public long insert(String sql, Object... args) {
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            return jdbcTemplate.insert(conn, sql, args);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -165,6 +190,7 @@ public class SqlContext {
      */
     public <T> T getDao(Class<T> type) {
         return ProxyFactory.getImpl(type, new DaoProxyHandler());
+
     }
 
     /**

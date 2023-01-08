@@ -1,5 +1,6 @@
 package top.huanyv.jdbc.util;
 
+import top.huanyv.jdbc.annotation.Column;
 import top.huanyv.jdbc.annotation.TableId;
 import top.huanyv.jdbc.annotation.TableName;
 import top.huanyv.jdbc.builder.BaseDao;
@@ -47,7 +48,8 @@ public class BaseDaoUtil {
     public static String getTableId(Class<?> clazz) {
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(TableId.class)) {
-                return field.getName();
+                Column column = field.getAnnotation(Column.class);
+                return column != null ? column.value() : field.getName();
             }
         }
         return "id";

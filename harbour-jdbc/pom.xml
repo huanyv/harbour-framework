@@ -17,17 +17,10 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>top.huanyv</groupId>
             <artifactId>harbour-bean</artifactId>
             <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-dbutils</groupId>
-            <artifactId>commons-dbutils</artifactId>
-            <version>1.7</version>
         </dependency>
 
        <!--test-->
