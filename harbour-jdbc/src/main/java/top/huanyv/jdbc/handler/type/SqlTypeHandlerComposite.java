@@ -16,6 +16,7 @@ public class SqlTypeHandlerComposite implements SqlTypeHandler {
         handlers.add(new ListSqlTypeHandler());
         handlers.add(new SingleValueSqlTypeHandler());
         handlers.add(new BeanSqlTypeHandler());
+        handlers.add(new PageSqlTypeHandler());
     }
 
     @Override

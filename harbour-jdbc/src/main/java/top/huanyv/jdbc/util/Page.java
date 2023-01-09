@@ -83,6 +83,17 @@ public class Page<T> {
         this.data = data;
     }
 
+    public String getPageSql(String sql) {
+        int start = (getPageNum() - 1) * getPageSize();
+        int len = getPageSize();
+        sql = sql.trim();
+        // 去掉最后的分号
+        if (sql.endsWith(";")) {
+            sql = sql.substring(0, sql.length() - 1);
+        }
+        return sql + " limit " + start + ", " + len;
+    }
+
     @Override
     public String toString() {
         return "Page{" +

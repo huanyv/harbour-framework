@@ -4,6 +4,9 @@ import top.huanyv.jdbc.core.proxy.ClassDaoProxyHandler;
 import top.huanyv.jdbc.core.proxy.InterfaceDaoProxyHandler;
 import top.huanyv.jdbc.core.proxy.ProxyFactory;
 import top.huanyv.jdbc.handler.*;
+import top.huanyv.jdbc.util.Page;
+import top.huanyv.jdbc.util.SqlHandler;
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.ReflectUtil;
 
 import javax.sql.DataSource;
@@ -18,133 +21,88 @@ import java.util.Map;
  * @date 2022/9/1 15:19
  */
 public class SqlContext {
+
     private DataSource dataSource;
+
     private Connection connection;
 
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
-
-    // 配置类
-    private JdbcConfigurer config = JdbcConfigurer.create();
 
     // 是否自动关闭连接，事务开启后会 false
     private boolean isAutoClose = true;
 
     public SqlContext() {
+        // 配置类
+        JdbcConfigurer config = JdbcConfigurer.create();
         this.dataSource = config.getDataSource();
     }
 
-    public <T> List<T> selectList(Class<T> type, String sql, Object... args) {
-        Connection conn = null;
-        try {
-            conn = getConnection();
-            return jdbcTemplate.query(conn, sql, new BeanListHandler<T>(type), args);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (isAutoClose && conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
+    public <T> T selectRow(Class<T> type, String sql, Object... args) {
+        return SqlHandle(sql, args, (connection, sql1, args1) ->
+                jdbcTemplate.query(connection, sql1, new BeanHandler<>(type), args1));
     }
 
-    public <T> T selectRow(Class<T> type, String sql, Object... args) {
-        Connection conn = null;
-        try {
-            conn = getConnection();
-            return jdbcTemplate.query(conn, sql, new BeanHandler<T>(type), args);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (isAutoClose && conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
+    public <T> List<T> selectList(Class<T> type, String sql, Object... args) {
+        return SqlHandle(sql, args, (connection, sql1, args1) ->
+                jdbcTemplate.query(connection, sql1, new BeanListHandler<>(type), args1));
     }
 
     public Map<String, Object> selectMap(String sql, Object... args) {
-        Connection conn = null;
-        try {
-            conn = getConnection();
-            return jdbcTemplate.query(conn, sql, new MapHandler(), args);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (isAutoClose && conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
+        return SqlHandle(sql, args, (connection, sql1, args1) ->
+                jdbcTemplate.query(connection, sql1, new MapHandler(), args1));
     }
 
     public List<Map<String, Object>> selectListMap(String sql, Object... args) {
-        Connection conn = null;
-        try {
-            conn = getConnection();
-            return jdbcTemplate.query(conn, sql, new MapListHandler(), args);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (isAutoClose && conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
+        return SqlHandle(sql, args, (connection, sql1, args1) ->
+                jdbcTemplate.query(connection, sql1, new MapListHandler(), args1));
     }
 
     public Object selectValue(String sql, Object... args) {
-        Connection conn = null;
-        try {
-            conn = getConnection();
-            return jdbcTemplate.query(conn, sql, new ScalarHandler<>(), args);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (isAutoClose && conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
+        return SqlHandle(sql, args, (connection, sql1, args1) ->
+                jdbcTemplate.query(connection, sql1, new ScalarHandler<>(), args1));
     }
 
+    public <T> List<T> selectPage(Page<T> page, Class<T> type, String sql, Object... args) {
+        Assert.notNull(page, "page is null!");
+        long total = selectCount(sql, args);
+        page.setTotal(total);
+        sql = page.getPageSql(sql);
+        List<T> list = selectList(type, sql, args);
+        page.setData(list);
+        return list;
+    }
+
+    public List<Map<String, Object>> selectPageMap(Page<Map<String, Object>> page, String sql, Object... args) {
+        Assert.notNull(page, "page is null!");
+        long total = selectCount(sql, args);
+        page.setTotal(total);
+        sql = page.getPageSql(sql);
+        List<Map<String, Object>> mapList = selectListMap(sql, args);
+        page.setData(mapList);
+        return mapList;
+    }
+
+    /**
+     * sql结果条目数
+     *
+     * @param sql  sql
+     * @param args 参数
+     * @return long
+     */
+    public long selectCount(String sql, Object... args) {
+        return (long) selectValue("select count(*) from (" + sql + ") t1", args);
+    }
+
+    /**
+     * 执行增加、删除、修改语句
+     *
+     * @param sql  sql
+     * @param args arg游戏
+     * @return int
+     */
     public int update(String sql, Object... args) {
-        Connection conn = null;
-        try {
-            conn = getConnection();
-            return jdbcTemplate.update(conn, sql, args);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (isAutoClose && conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return 0;
+        return SqlHandle(sql, args, (connection, sql1, args1) ->
+                jdbcTemplate.update(connection, sql1, args1), 0);
     }
 
     /**
@@ -155,22 +113,40 @@ public class SqlContext {
      * @return long
      */
     public long insert(String sql, Object... args) {
-        Connection conn = null;
+        return SqlHandle(sql, args, (connection, sql1, args1) ->
+                jdbcTemplate.insert(connection, sql1, args1), -1L);
+    }
+
+    private <T> T SqlHandle(String sql, Object[] args, SqlHandler<T> handler) {
+        return SqlHandle(sql, args, handler, null);
+    }
+
+    /**
+     * 处理sql，过程由SqlHandler接口实现，
+     *
+     * @param sql      sql
+     * @param args     参数
+     * @param handler  处理程序
+     * @param exReturn 异常返回值
+     * @return {@link T}
+     */
+    private <T> T SqlHandle(String sql, Object[] args, SqlHandler<T> handler, T exReturn) {
+        Connection connection = null;
         try {
-            conn = getConnection();
-            return jdbcTemplate.insert(conn, sql, args);
+            connection = getConnection();
+            return handler.handle(connection, sql, args);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if (isAutoClose && conn != null) {
+            if (isAutoClose && connection != null) {
                 try {
-                    conn.close();
+                    connection.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
         }
-        return -1;
+        return exReturn;
     }
 
     /**

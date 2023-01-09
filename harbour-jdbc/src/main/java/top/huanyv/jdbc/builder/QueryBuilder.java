@@ -128,16 +128,8 @@ public class QueryBuilder<T> {
      * @return page对象
      */
     public Page<T> page(int pageNum, int pageSize) {
-        SqlContext sqlContext = SqlContextFactory.getSqlContext();
-        String tableName = getTableName();
-        Long count = (Long) sqlContext.selectValue("select count(*) from " + tableName);
-
         Page<T> page = new Page<>(pageNum, pageSize);
-        page.setTotal(count);
-        int start = (pageNum - 1) * pageSize;
-        List<T> data = append("limit").append(String.valueOf(start)).append(",").append(String.valueOf(pageSize)).selectList();
-        page.setData(data);
-        page.setSize(data.size());
+        SqlContextFactory.getSqlContext().selectPage(page, this.sqlBuilder.tableClass, sql(), getArguments());
         return page;
     }
 
