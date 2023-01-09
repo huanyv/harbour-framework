@@ -1,18 +1,17 @@
 package top.huanyv.jdbc.core;
 
 import top.huanyv.jdbc.core.proxy.ClassDaoProxyHandler;
-import top.huanyv.jdbc.core.proxy.DaoProxyHandler;
 import top.huanyv.jdbc.core.proxy.InterfaceDaoProxyHandler;
 import top.huanyv.jdbc.core.proxy.ProxyFactory;
-import top.huanyv.jdbc.handler.BeanHandler;
-import top.huanyv.jdbc.handler.BeanListHandler;
-import top.huanyv.jdbc.handler.ScalarHandler;
+import top.huanyv.jdbc.handler.*;
 import top.huanyv.tools.utils.ReflectUtil;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author huanyv
@@ -58,6 +57,44 @@ public class SqlContext {
         try {
             conn = getConnection();
             return jdbcTemplate.query(conn, sql, new BeanHandler<T>(type), args);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (isAutoClose && conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+    public Map<String, Object> selectMap(String sql, Object... args) {
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            return jdbcTemplate.query(conn, sql, new MapHandler(), args);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (isAutoClose && conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Map<String, Object>> selectListMap(String sql, Object... args) {
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            return jdbcTemplate.query(conn, sql, new MapListHandler(), args);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -189,13 +226,17 @@ public class SqlContext {
 
     /**
      * 根据类型，获取动态代理后的对象
+     *
      * @param type 类型
-     * @param <T> 类型泛型
+     * @param <T>  类型泛型
      * @return 代理
      */
     public <T> T getDao(Class<T> type) {
         if (type.isInterface()) {
             return ProxyFactory.getImpl(type, new InterfaceDaoProxyHandler());
+        }
+        if (Modifier.isAbstract(type.getModifiers())) {
+            throw new IllegalArgumentException("'" + type + "' is a abstract class!");
         }
         return ProxyFactory.getProxy(type, new ClassDaoProxyHandler(ReflectUtil.newInstance(type)));
     }
