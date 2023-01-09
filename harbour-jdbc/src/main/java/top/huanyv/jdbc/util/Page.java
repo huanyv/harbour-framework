@@ -1,4 +1,4 @@
-package top.huanyv.jdbc.core;
+package top.huanyv.jdbc.util;
 
 import java.util.List;
 

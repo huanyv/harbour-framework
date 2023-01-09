@@ -67,4 +67,13 @@ public class BaseDaoUtil {
         }
         return StringUtil.firstLetterLower(clazz.getSimpleName());
     }
+
+    public static Field getIdField(Class<?> cls) throws NoSuchFieldException {
+        for (Field field : cls.getDeclaredFields()) {
+            if (field.isAnnotationPresent(TableId.class)) {
+                return field;
+            }
+        }
+        return cls.getDeclaredField("id");
+    }
 }

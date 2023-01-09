@@ -1,7 +1,7 @@
 package top.huanyv.jdbc.builder;
 
 import junit.framework.TestCase;
-import top.huanyv.jdbc.core.Page;
+import top.huanyv.jdbc.util.Page;
 import top.huanyv.jdbc.core.entity.User;
 import top.huanyv.tools.utils.ClassLoaderUtil;
 

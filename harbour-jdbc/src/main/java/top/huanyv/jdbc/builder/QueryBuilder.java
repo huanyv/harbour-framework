@@ -1,6 +1,6 @@
 package top.huanyv.jdbc.builder;
 
-import top.huanyv.jdbc.core.Page;
+import top.huanyv.jdbc.util.Page;
 import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.SqlContextFactory;
 

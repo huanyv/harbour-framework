@@ -1,6 +1,7 @@
 package com.book.service.impl;
 
 import com.book.mapper.UserDao;
+import com.book.pojo.User;
 import com.book.service.UserService;
 import top.huanyv.bean.annotation.Component;
 import top.huanyv.bean.annotation.Inject;

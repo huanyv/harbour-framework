@@ -42,12 +42,12 @@ public class DaoScanner implements BeanDefinitionRegistryPostProcessor {
         Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(Dao.class, scanPackages);
         for (Class<?> cls : classes) {
             String beanName = StringUtil.firstLetterLower(cls.getSimpleName());
-            BeanDefinition beanDefinition = null;
-            if (cls.isInterface()) {
-                beanDefinition = new ClassBeanDefinition(DaoFactoryBean.class, cls);
-            } else {
-                beanDefinition = new ClassBeanDefinition(cls);
-            }
+            BeanDefinition beanDefinition = new ClassBeanDefinition(DaoFactoryBean.class, cls);
+//            if (cls.isInterface()) {
+//                beanDefinition = new ClassBeanDefinition(DaoFactoryBean.class, cls);
+//            } else {
+//                beanDefinition = new ClassBeanDefinition(cls);
+//            }
             registry.register(beanName, beanDefinition);
         }
     }

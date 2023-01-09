@@ -1,21 +1,18 @@
 package top.huanyv.jdbc.core.datasource;
 
 import javax.sql.DataSource;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 /**
  * @author huanyv
  * @date 2022/10/11 19:14
  */
 
-public class SimpleDataSource implements DataSource {
+public class SimpleDataSource extends AbstractDataSource {
 
     private String driverClassName;
     private String url;
@@ -30,11 +27,12 @@ public class SimpleDataSource implements DataSource {
     public static DataSource createDataSource(Properties properties) {
         return createDataSource((Map) properties);
     }
-    public static DataSource createDataSource(Map map) {
-        String driverClassName = (String) map.get("driverClassName");
-        String url = (String) map.get("url");
-        String username = (String) map.get("username");
-        String password = (String) map.get("password");
+
+    public static DataSource createDataSource(Map<String, String> map) {
+        String driverClassName = map.get("driverClassName");
+        String url = map.get("url");
+        String username = map.get("username");
+        String password = map.get("password");
 
         SimpleDataSource dataSource = new SimpleDataSource();
         dataSource.setDriverClassName(driverClassName);
@@ -57,41 +55,6 @@ public class SimpleDataSource implements DataSource {
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
         return DriverManager.getConnection(url, username, password);
-    }
-
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        return null;
-    }
-
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return false;
-    }
-
-    @Override
-    public PrintWriter getLogWriter() throws SQLException {
-        return null;
-    }
-
-    @Override
-    public void setLogWriter(PrintWriter out) throws SQLException {
-
-    }
-
-    @Override
-    public void setLoginTimeout(int seconds) throws SQLException {
-
-    }
-
-    @Override
-    public int getLoginTimeout() throws SQLException {
-        return 0;
-    }
-
-    @Override
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return null;
     }
 
     /**

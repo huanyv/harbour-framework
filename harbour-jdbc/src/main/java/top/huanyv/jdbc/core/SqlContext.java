@@ -1,8 +1,13 @@
 package top.huanyv.jdbc.core;
 
+import top.huanyv.jdbc.core.proxy.ClassDaoProxyHandler;
+import top.huanyv.jdbc.core.proxy.DaoProxyHandler;
+import top.huanyv.jdbc.core.proxy.InterfaceDaoProxyHandler;
+import top.huanyv.jdbc.core.proxy.ProxyFactory;
 import top.huanyv.jdbc.handler.BeanHandler;
 import top.huanyv.jdbc.handler.BeanListHandler;
 import top.huanyv.jdbc.handler.ScalarHandler;
+import top.huanyv.tools.utils.ReflectUtil;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -128,7 +133,7 @@ public class SqlContext {
                 }
             }
         }
-        return 0;
+        return -1;
     }
 
     /**
@@ -189,8 +194,10 @@ public class SqlContext {
      * @return 代理
      */
     public <T> T getDao(Class<T> type) {
-        return ProxyFactory.getImpl(type, new DaoProxyHandler());
-
+        if (type.isInterface()) {
+            return ProxyFactory.getImpl(type, new InterfaceDaoProxyHandler());
+        }
+        return ProxyFactory.getProxy(type, new ClassDaoProxyHandler(ReflectUtil.newInstance(type)));
     }
 
     /**

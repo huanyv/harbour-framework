@@ -3,12 +3,11 @@ package com.book.mapper;
 import com.book.pojo.Book;
 import top.huanyv.jdbc.annotation.Dao;
 import top.huanyv.jdbc.builder.*;
-import top.huanyv.jdbc.core.Page;
+import top.huanyv.jdbc.util.Page;
 import top.huanyv.tools.utils.StringUtil;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.function.Consumer;
 
 /**
  * @author admin
@@ -47,6 +46,7 @@ public class BookMapperImpl implements BookMapper {
     }
 
     @Override
+//    @top.huanyv.jdbc.annotation.Delete("delete from t_book where id = ?")
     public int deleteBookById(Integer id) {
         return new Delete().from(Book.class)
                 .where(condition -> condition.append("id = ?", id))

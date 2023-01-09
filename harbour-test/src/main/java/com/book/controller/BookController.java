@@ -10,8 +10,7 @@ import top.huanyv.bean.annotation.Inject;
 import top.huanyv.bean.annotation.Lazy;
 import top.huanyv.bean.annotation.Scope;
 import top.huanyv.bean.aop.Aop;
-import top.huanyv.bean.ioc.definition.BeanDefinition;
-import top.huanyv.jdbc.core.Page;
+import top.huanyv.jdbc.util.Page;
 import top.huanyv.tools.utils.JsonUtil;
 import top.huanyv.webmvc.annotation.*;
 import top.huanyv.webmvc.annotation.argument.Body;
@@ -57,13 +56,13 @@ public class BookController {
     @Put
     public ResponseResult updateBook(@Body Book book) {
         int i = bookService.updateBook(book);
-        return ResponseResult.conditionResult(i > 0, "添加成功", "添加失败");
+        return ResponseResult.conditionResult(i > 0, "修改成功", "修改失败");
     }
 
     @Delete("/{id}")
     public ResponseResult delete(@Path("id") int id) {
         int i = bookService.deleteBookById(id);
-        return ResponseResult.conditionResult(i > 0, "添加成功", "添加失败");
+        return ResponseResult.conditionResult(i > 0, "删除成功", "删除失败");
     }
 
 }

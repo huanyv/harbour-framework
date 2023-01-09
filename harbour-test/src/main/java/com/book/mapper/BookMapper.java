@@ -6,7 +6,7 @@ import top.huanyv.jdbc.annotation.Insert;
 import top.huanyv.jdbc.annotation.Select;
 import top.huanyv.jdbc.annotation.Update;
 import top.huanyv.jdbc.builder.BaseDao;
-import top.huanyv.jdbc.core.Page;
+import top.huanyv.jdbc.util.Page;
 
 import java.math.BigDecimal;
 import java.util.Date;

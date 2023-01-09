@@ -1,9 +1,11 @@
-package top.huanyv.jdbc.core;
+package top.huanyv.jdbc.core.proxy;
 
 import top.huanyv.jdbc.annotation.Delete;
 import top.huanyv.jdbc.annotation.Insert;
 import top.huanyv.jdbc.annotation.Select;
 import top.huanyv.jdbc.annotation.Update;
+import top.huanyv.jdbc.core.SqlContext;
+import top.huanyv.jdbc.core.SqlContextFactory;
 import top.huanyv.jdbc.handler.type.SqlTypeHandler;
 import top.huanyv.jdbc.handler.type.SqlTypeHandlerFactory;
 
@@ -16,6 +18,13 @@ import java.sql.SQLException;
  * @date 2022/7/23 15:05
  */
 public class DaoProxyHandler implements InvocationHandler {
+    /*
+        TODO
+        抽象此类
+        两个实现类，一个为实现DAO接口，一个代理DAO类
+            代理DAO：当方法上有CRUD注解时，使用注解，不执行方法体：反之，执行方法体
+        BaseDao<?>的接口实现在抽象的类中，方便两个实现类公共调用
+     */
 
     public DaoProxyHandler() {
     }
@@ -45,6 +54,7 @@ public class DaoProxyHandler implements InvocationHandler {
 
     public Object doSelect(Method method, Object[] args) throws SQLException {
         String sql = method.getAnnotation(Select.class).value();
+        // TODO 改成组合模式
         SqlTypeHandler sqlTypeHandler = SqlTypeHandlerFactory.getSqlTypeHandler(method);
         return sqlTypeHandler.handle(sql, args, method);
     }
