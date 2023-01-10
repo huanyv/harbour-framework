@@ -6,15 +6,12 @@ import top.huanyv.jdbc.builder.*;
 import top.huanyv.jdbc.util.Page;
 import top.huanyv.tools.utils.StringUtil;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 /**
  * @author admin
  * @date 2022/8/3 9:15
  */
 @Dao
-public class BookMapperImpl implements BookMapper {
+public class BookDaoImpl implements BookDao {
 
     @Override
     public Page<Book> listBook(String bname, int pageNum, int pageSize) {
@@ -25,23 +22,24 @@ public class BookMapperImpl implements BookMapper {
     }
 
     @Override
-    public int insertBook(String bname, String author, String pubcomp, Date pubdate, int bcount, BigDecimal price) {
+    @top.huanyv.jdbc.annotation.Insert("insert into t_book(bname, author, pubcomp, pubdate, bcount, price) values(#{bname}, #{author}, #{pubcomp}, #{pubdate}, #{bcount}, #{price})")
+    public int insertBook(Book book) {
         return new Insert(Book.class)
-//                .columns("bname", "author", "pubcomp", "pubdate", "bcount", "price")
                 .columns("bname, author, pubcomp, pubdate, bcount, price")
-                .values(bname, author, pubcomp, pubdate, bcount, price).update();
+                .values(book.getBname(), book.getAuthor(), book.getPubcomp(),
+                        book.getPubdate(), book.getBcount(), book.getPrice()).update();
     }
 
     @Override
-    public int updateBook(String bname, String author, String pubcomp, Date pubdate, int bcount, BigDecimal price, Integer id) {
+    public int updateBook(Book book) {
         int update = new Update(Book.class)
-                .append("bname = ?", bname)
-                .append("author = ?", author)
-                .append("pubcomp = ?", pubcomp)
-                .append("pubdate = ?", pubdate)
-                .append("bcount = ?", bcount)
-                .append("price = ?", price)
-                .where(condition -> condition.append("id = ?", id)).update();
+                .append("bname = ?", book.getBname())
+                .append("author = ?", book.getAuthor())
+                .append("pubcomp = ?", book.getPubcomp())
+                .append("pubdate = ?", book.getPubdate())
+                .append("bcount = ?", book.getBcount())
+                .append("price = ?", book.getPrice())
+                .where(condition -> condition.append("id = ?", book.getId())).update();
         return update;
     }
 

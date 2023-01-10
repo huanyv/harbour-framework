@@ -12,7 +12,7 @@ import top.huanyv.jdbc.builder.BaseDao;
 @Dao
 public interface UserDao extends BaseDao<User> {
 
-    @Select("select * from t_user where username = ? and password = ?")
+    @Select("select * from t_user where username = #{arg0} and password = #{arg1}")
     User getUserByUsernameAndPassword(String username, String password);
 
 }

@@ -9,5 +9,5 @@ import java.sql.SQLException;
  */
 @FunctionalInterface
 public interface SqlHandler<T> {
-    T handle(Connection connection, String sql, Object[] args) throws SQLException;
+    T handle(Connection connection, SqlAndArgs sqlAndArgs) throws SQLException;
 }

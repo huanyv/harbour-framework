@@ -2,6 +2,8 @@ package top.huanyv.jdbc.handler;
 
 import junit.framework.TestCase;
 import top.huanyv.jdbc.core.entity.User;
+import top.huanyv.jdbc.util.SqlAndArgs;
+import top.huanyv.jdbc.util.SqlParamParser;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,8 +27,7 @@ public class SqlParamParseTest extends TestCase {
         mapping.put("address", "shanghai");
         mapping.put("shengao", 168);
 
-        SqlParamParser sqlParamParser = new SqlParamParser();
-        SqlParamParser.SqlAndArgs sqlAndArgs = sqlParamParser.parse(placeholder, user, mapping);
+        SqlAndArgs sqlAndArgs = SqlParamParser.parse(placeholder, user, mapping);
 
         System.out.println("sqlAndArgs.getSql() = " + sqlAndArgs.getSql());
         System.out.println("sqlAndArgs.getArgs() = " + Arrays.toString(sqlAndArgs.getArgs()));
@@ -40,8 +41,7 @@ public class SqlParamParseTest extends TestCase {
         System.out.println(matcher.find()); // 查找，找到 true  无 false
         System.out.println(matcher.matches()); //serv.encodserv.servl.encodeurl;
 
-        SqlParamParser sqlParamParser = new SqlParamParser();
-        SqlParamParser.SqlAndArgs sqlAndArgs = sqlParamParser.parse(sql, "andmin", 123);
+        SqlAndArgs sqlAndArgs = SqlParamParser.parse(sql, "andmin", 123);
         System.out.println(sqlAndArgs);
     }
 }

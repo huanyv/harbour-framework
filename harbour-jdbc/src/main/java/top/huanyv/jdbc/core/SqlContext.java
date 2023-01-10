@@ -5,7 +5,9 @@ import top.huanyv.jdbc.core.proxy.InterfaceDaoProxyHandler;
 import top.huanyv.jdbc.core.proxy.ProxyFactory;
 import top.huanyv.jdbc.handler.*;
 import top.huanyv.jdbc.util.Page;
+import top.huanyv.jdbc.util.SqlAndArgs;
 import top.huanyv.jdbc.util.SqlHandler;
+import top.huanyv.jdbc.util.SqlParamParser;
 import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.ReflectUtil;
 
@@ -38,28 +40,28 @@ public class SqlContext {
     }
 
     public <T> T selectRow(Class<T> type, String sql, Object... args) {
-        return SqlHandle(sql, args, (connection, sql1, args1) ->
-                jdbcTemplate.query(connection, sql1, new BeanHandler<>(type), args1));
+        return sqlExecute(sql, args, (connection, sqlAndArgs) ->
+                jdbcTemplate.query(connection, sqlAndArgs.getSql(), new BeanHandler<>(type), sqlAndArgs.getArgs()));
     }
 
     public <T> List<T> selectList(Class<T> type, String sql, Object... args) {
-        return SqlHandle(sql, args, (connection, sql1, args1) ->
-                jdbcTemplate.query(connection, sql1, new BeanListHandler<>(type), args1));
+        return sqlExecute(sql, args, (connection, sqlAndArgs) ->
+                jdbcTemplate.query(connection, sqlAndArgs.getSql(), new BeanListHandler<>(type), sqlAndArgs.getArgs()));
     }
 
     public Map<String, Object> selectMap(String sql, Object... args) {
-        return SqlHandle(sql, args, (connection, sql1, args1) ->
-                jdbcTemplate.query(connection, sql1, new MapHandler(), args1));
+        return sqlExecute(sql, args, (connection, sqlAndArgs) ->
+                jdbcTemplate.query(connection, sqlAndArgs.getSql(), new MapHandler(), sqlAndArgs.getArgs()));
     }
 
     public List<Map<String, Object>> selectListMap(String sql, Object... args) {
-        return SqlHandle(sql, args, (connection, sql1, args1) ->
-                jdbcTemplate.query(connection, sql1, new MapListHandler(), args1));
+        return sqlExecute(sql, args, (connection, sqlAndArgs) ->
+                jdbcTemplate.query(connection, sqlAndArgs.getSql(), new MapListHandler(), sqlAndArgs.getArgs()));
     }
 
     public Object selectValue(String sql, Object... args) {
-        return SqlHandle(sql, args, (connection, sql1, args1) ->
-                jdbcTemplate.query(connection, sql1, new ScalarHandler<>(), args1));
+        return sqlExecute(sql, args, (connection, sqlAndArgs) ->
+                jdbcTemplate.query(connection, sqlAndArgs.getSql(), new ScalarHandler<>(), sqlAndArgs.getArgs()));
     }
 
     public <T> List<T> selectPage(Page<T> page, Class<T> type, String sql, Object... args) {
@@ -101,8 +103,8 @@ public class SqlContext {
      * @return int
      */
     public int update(String sql, Object... args) {
-        return SqlHandle(sql, args, (connection, sql1, args1) ->
-                jdbcTemplate.update(connection, sql1, args1), 0);
+        return sqlExecute(sql, args, (connection, sqlAndArgs) ->
+                jdbcTemplate.update(connection, sqlAndArgs.getSql(), sqlAndArgs.getArgs()), 0);
     }
 
     /**
@@ -113,12 +115,12 @@ public class SqlContext {
      * @return long
      */
     public long insert(String sql, Object... args) {
-        return SqlHandle(sql, args, (connection, sql1, args1) ->
-                jdbcTemplate.insert(connection, sql1, args1), -1L);
+        return sqlExecute(sql, args, (connection, sqlAndArgs) ->
+                jdbcTemplate.insert(connection, sqlAndArgs.getSql(), sqlAndArgs.getArgs()), -1L);
     }
 
-    private <T> T SqlHandle(String sql, Object[] args, SqlHandler<T> handler) {
-        return SqlHandle(sql, args, handler, null);
+    private <T> T sqlExecute(String sql, Object[] args, SqlHandler<T> handler) {
+        return sqlExecute(sql, args, handler, null);
     }
 
     /**
@@ -130,11 +132,13 @@ public class SqlContext {
      * @param exReturn 异常返回值
      * @return {@link T}
      */
-    private <T> T SqlHandle(String sql, Object[] args, SqlHandler<T> handler, T exReturn) {
+    private <T> T sqlExecute(String sql, Object[] args, SqlHandler<T> handler, T exReturn) {
         Connection connection = null;
         try {
             connection = getConnection();
-            return handler.handle(connection, sql, args);
+            // 解析参数化SQL与参数
+            SqlAndArgs sqlAndArgs = SqlParamParser.parse(sql, args);
+            return handler.handle(connection, sqlAndArgs);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

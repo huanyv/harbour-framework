@@ -1,6 +1,6 @@
 package com.book.service.impl;
 
-import com.book.mapper.BookMapper;
+import com.book.mapper.BookDao;
 import com.book.pojo.Book;
 import com.book.service.BookService;
 import top.huanyv.bean.annotation.Component;
@@ -15,41 +15,36 @@ import javax.sql.DataSource;
 public class BookServiceImpl implements BookService {
 
     @Inject
-    private BookMapper bookMapper;
+    private BookDao bookDao;
 
 //    @Inject
     private DataSource dataSource;
 
     @Override
     public Page<Book> listBook(String bname, int pageNum, int pageSize) {
-        return bookMapper.listBook(bname, pageNum, pageSize);
+        return bookDao.listBook(bname, pageNum, pageSize);
     }
 
     @Override
     public int insertBook(Book book) {
-//        return bookMapper.insertBook(book.getBname(), book.getAuthor()
-//                , book.getPubcomp(), book.getPubdate(), book.getBcount(), book.getPrice());
-        return bookMapper.insert(book);
+        return bookDao.insert(book);
     }
 
     @Override
     @Aop(TransactionAop.class)
     public int updateBook(Book book) {
 //         事务测试
-//        bookMapper.updateBook(book.getBname(), book.getAuthor(), book.getPubcomp(), book.getPubdate(), book.getBcount(), book.getPrice(), book.getId());
+//        bookDao.updateBook(book);
 //        int i = 10 / 0;
-//        return bookMapper.updateBook(book.getBname(), book.getAuthor(), book.getPubcomp(), book.getPubdate(), book.getBcount(), book.getPrice(), book.getId());
-        bookMapper.updateById(book);
+//        return bookDao.updateBook(book);
+        bookDao.updateById(book);
+        // 模拟异常
         int i = 10 / 0;
-        return bookMapper.updateById(book);
+        return bookDao.updateById(book);
     }
 
     @Override
-    @Aop(TransactionAop.class)
     public int deleteBookById(Integer id) {
-//        bookMapper.deleteBookById(id);
-//        int i = 10 / 0;
-//        return bookMapper.deleteBookById(id);
-        return bookMapper.deleteById(id);
+        return bookDao.deleteById(id);
     }
 }
