@@ -1,5 +1,6 @@
 package top.huanyv.jdbc.builder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,81 +9,80 @@ import java.util.List;
  * @author huanyv
  * @date 2022/11/1 15:07
  */
-public class ConditionBuilder {
+public class ConditionBuilder implements Serializable {
 
-    private List<String> sqlCondition = new ArrayList<>();
+    private static final long serialVersionUID = 4702903648636043900L;
 
-    private List<Object> sqlArgs = new ArrayList<>();
+    private final StringBuilder sqlCondition;
 
-    public ConditionBuilder append(String conditionStr, Object... args) {
-        sqlCondition.add(conditionStr);
-        sqlArgs.addAll(Arrays.asList(args));
+    private final List<Object> sqlArgs;
+
+    public ConditionBuilder() {
+        this.sqlCondition = new StringBuilder();
+        this.sqlArgs = new ArrayList<>();
+    }
+
+    public ConditionBuilder append(String str, Object... args) {
+        if (!isEmpty()) {
+            sqlCondition.append(" ");
+        }
+        sqlCondition.append(str);
+        if (args != null && args.length > 0) {
+            sqlArgs.addAll(Arrays.asList(args));
+        }
         return this;
     }
 
-    public ConditionBuilder append(boolean condition, String conditionStr, Object... args) {
+    public ConditionBuilder append(boolean condition, String str, Object... args) {
         if (condition) {
-            append(conditionStr, args);
+            append(str, args);
         }
         return this;
     }
 
-    public ConditionBuilder and(String conditionStr, Object... args) {
-        if (!this.sqlCondition.isEmpty()) {
-            sqlCondition.add("and");
-        }
-        append(conditionStr, args);
+
+    public ConditionBuilder and(String str, Object... args) {
+        append(!isEmpty(), "and");
+        append(str, args);
         return this;
     }
 
-    public ConditionBuilder and(boolean condition, String conditionStr, Object... args) {
+    public ConditionBuilder and(boolean condition, String str, Object... args) {
         if (condition) {
-            and(conditionStr, args);
+            and(str, args);
         }
         return this;
     }
 
 
-    public ConditionBuilder or(String conditionStr, Object... args) {
-        if (!this.sqlCondition.isEmpty()) {
-            sqlCondition.add("or");
-        }
-        append(conditionStr, args);
+    public ConditionBuilder or(String str, Object... args) {
+        append(!isEmpty(), "or");
+        append(str, args);
         return this;
     }
 
-    public ConditionBuilder or(boolean condition, String conditionStr, Object... args) {
+    public ConditionBuilder or(boolean condition, String str, Object... args) {
         if (condition) {
-            or(conditionStr, args);
-        }
-        return this;
-    }
-
-    public ConditionBuilder not(String conditionStr, Object... args) {
-        if (!this.sqlCondition.isEmpty()) {
-            sqlCondition.add("not");
-        }
-        append(conditionStr, args);
-        return this;
-    }
-
-    public ConditionBuilder not(boolean condition, String conditionStr, Object... args) {
-        if (condition) {
-            not(conditionStr, args);
+            or(str, args);
         }
         return this;
     }
 
     public boolean isEmpty() {
-        return this.sqlCondition.isEmpty();
+        return this.sqlCondition.length() == 0;
     }
 
-    @Override
-    public String toString() {
-        return String.join(" ", sqlCondition);
+    public String getSql() {
+        return this.sqlCondition.toString();
     }
 
     public Object[] getArgs() {
         return sqlArgs.toArray();
     }
+
+    @Override
+    public String toString() {
+        return this.sqlCondition.toString();
+    }
+
 }

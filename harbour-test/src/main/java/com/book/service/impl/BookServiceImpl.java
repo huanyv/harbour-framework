@@ -17,9 +17,6 @@ public class BookServiceImpl implements BookService {
     @Inject
     private BookDao bookDao;
 
-//    @Inject
-    private DataSource dataSource;
-
     @Override
     public Page<Book> listBook(String bname, int pageNum, int pageSize) {
         return bookDao.listBook(bname, pageNum, pageSize);
@@ -36,11 +33,10 @@ public class BookServiceImpl implements BookService {
 //         事务测试
 //        bookDao.updateBook(book);
 //        int i = 10 / 0;
-//        return bookDao.updateBook(book);
-        bookDao.updateById(book);
-        // 模拟异常
-        int i = 10 / 0;
-        return bookDao.updateById(book);
+        return bookDao.updateBook(book);
+//        bookDao.updateById(book);
+//        int i = 10 / 0;
+//        return bookDao.updateById(book);
     }
 
     @Override

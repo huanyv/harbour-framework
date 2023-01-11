@@ -2,6 +2,7 @@ package top.huanyv.jdbc.core.proxy;
 
 import top.huanyv.jdbc.annotation.*;
 import top.huanyv.jdbc.builder.BaseDao;
+import top.huanyv.jdbc.core.DefaultSqlContext;
 import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.SqlContextFactory;
 import top.huanyv.jdbc.handler.type.SqlTypeHandler;

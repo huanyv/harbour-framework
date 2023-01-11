@@ -6,13 +6,15 @@ package top.huanyv.jdbc.core;
  */
 public class SqlContextFactory {
 
-    private static ThreadLocal<SqlContext> sqlContext = new ThreadLocal<>();
+    private static final ThreadLocal<SqlContext> sqlContextThreadLocal = new ThreadLocal<>();
 
     public static SqlContext getSqlContext() {
-        if (sqlContext.get() == null) {
-            sqlContext.set(new SqlContext());
+        SqlContext sqlContext = sqlContextThreadLocal.get();
+        if (sqlContext == null) {
+            sqlContext = new DefaultSqlContext();
+            sqlContextThreadLocal.set(sqlContext);
         }
-        return sqlContext.get();
+        return sqlContext;
     }
 
 }

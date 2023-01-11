@@ -4,7 +4,6 @@ import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.SqlContextFactory;
 import top.huanyv.jdbc.util.Page;
 import top.huanyv.jdbc.util.PageHolder;
-import top.huanyv.tools.utils.BeanUtil;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -27,9 +26,11 @@ public class PageSqlTypeHandler implements SqlTypeHandler {
         if (genericReturnType instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
             Type type = parameterizedType.getActualTypeArguments()[0];
-            return sqlContext.selectPage(page, (Class) type, sql, args);
+            sqlContext.selectPage(page, (Class) type, sql, args);
+            return page;
         }
-        return sqlContext.selectPageMap(page, sql ,args);
+        sqlContext.selectPageMap(page, sql ,args);
+        return page;
     }
 
     @Override

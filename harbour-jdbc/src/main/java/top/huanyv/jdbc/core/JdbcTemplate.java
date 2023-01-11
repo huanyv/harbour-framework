@@ -20,8 +20,10 @@ public class JdbcTemplate {
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(sql);
-            for (int i = 1; i <= args.length; i++) {
-                ps.setObject(i, args[i - 1]);
+            if (args != null && args.length > 0) {
+                for (int i = 1; i <= args.length; i++) {
+                    ps.setObject(i, args[i - 1]);
+                }
             }
             resultSet = ps.executeQuery();
             return resultSetHandler.handle(resultSet);
@@ -48,8 +50,10 @@ public class JdbcTemplate {
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement(sql);
-            for (int i = 1; i <= args.length; i++) {
-                ps.setObject(i, args[i - 1]);
+            if (args != null && args.length > 0) {
+                for (int i = 1; i <= args.length; i++) {
+                    ps.setObject(i, args[i - 1]);
+                }
             }
             return ps.executeUpdate();
         } finally {
@@ -73,8 +77,10 @@ public class JdbcTemplate {
         ResultSet rs = null;
         try {
             ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-            for (int i = 1; i <= args.length; i++) {
-                ps.setObject(i, args[i - 1]);
+            if (args != null && args.length > 0) {
+                for (int i = 1; i <= args.length; i++) {
+                    ps.setObject(i, args[i - 1]);
+                }
             }
             ps.executeUpdate();
             rs = ps.getGeneratedKeys();

@@ -1,67 +1,95 @@
 package top.huanyv.jdbc.builder;
 
-import top.huanyv.jdbc.annotation.TableName;
-import top.huanyv.tools.utils.StringUtil;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
- * @author admin
- * @date 2022/8/1 16:57
+ * @author huanyv
+ * @date 2023/1/11 13:19
  */
-public class SqlBuilder<T> {
-    private List<String> sqlList = new ArrayList<>();
-    private List<Object> arguments = new ArrayList<>();
-    protected Class<T> tableClass;
+public class SqlBuilder implements Serializable {
 
-    public String sql() {
-        return String.join(" ", this.sqlList);
+    private static final long serialVersionUID = -6781070557668986751L;
+
+    private final StringBuilder sb;
+
+    private final List<Object> sqlArgs;
+
+    public SqlBuilder() {
+        this.sb = new StringBuilder();
+        this.sqlArgs = new ArrayList<>();
     }
 
-    public SqlBuilder<T> append(String sql) {
-        this.sqlList.add(sql);
+    public SqlBuilder(String str) {
+        this();
+        this.sb.append(str);
+    }
+
+    public SqlBuilder append(String str, Object... args) {
+        if (this.sb.length() != 0) {
+            this.sb.append(" ");
+        }
+        this.sb.append(str);
+        if (args != null && args.length > 0) {
+            this.sqlArgs.addAll(Arrays.asList(args));
+        }
         return this;
     }
 
-    public String getTableName() {
-        TableName tableName = tableClass.getAnnotation(TableName.class);
-        if (tableName != null) {
-            return tableName.value();
+    public SqlBuilder append(boolean condition, String str, Object... args) {
+        if (condition) {
+            append(str, args);
         }
-        return StringUtil.firstLetterLower(tableClass.getSimpleName());
+        return this;
     }
 
-    public List<String> getSqlList() {
-        return sqlList;
+    /**
+     * 条件
+     *
+     * @param word 使用条件关键词，where having
+     * @param c    c
+     * @return {@link SqlBuilder}
+     */
+    public SqlBuilder condition(String word, Consumer<ConditionBuilder> c) {
+        ConditionBuilder cb = new ConditionBuilder();
+        c.accept(cb);
+        if (!cb.isEmpty()) {
+            append(word);
+            append(cb.toString(), cb.getArgs());
+        }
+        return this;
     }
 
-    public Class<T> getTableClass() {
-        return tableClass;
+    public SqlBuilder with(String separator, Consumer<SqlJoiner> j) {
+        return with(separator, "", "", j);
     }
 
-    public void setSqlList(List<String> sqlList) {
-        this.sqlList = sqlList;
+    public SqlBuilder with(CharSequence separator, CharSequence prefix, Consumer<SqlJoiner> j) {
+        return with(separator, prefix, "", j);
     }
 
-    public void setTableClass(Class<T> tableClass) {
-        this.tableClass = tableClass;
+    public SqlBuilder with(CharSequence separator, CharSequence prefix, CharSequence suffix, Consumer<SqlJoiner> j) {
+        SqlJoiner joiner = new SqlJoiner(separator, prefix, suffix);
+        j.accept(joiner);
+        if (!joiner.isEmpty()) {
+            append(joiner.getSql(), joiner.getArgs());
+        }
+        return this;
     }
 
-    public List<Object> getArguments() {
-        return arguments;
+    public String getSql() {
+        return this.sb.toString();
     }
 
-    public void setArguments(Object... args) {
-        this.arguments.addAll(Arrays.asList(args));
+    public Object[] getArgs() {
+        return this.sqlArgs.toArray();
     }
-
 
     @Override
     public String toString() {
-        return "SqlBuild{" +
-                "sql=" + sqlList +
-                '}';
+        return "SQL:\t" + getSql() + "\nArgs:\t" + this.sqlArgs;
     }
 }
