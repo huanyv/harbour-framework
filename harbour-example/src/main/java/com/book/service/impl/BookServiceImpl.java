@@ -1,6 +1,6 @@
 package com.book.service.impl;
 
-import com.book.mapper.BookDao;
+import com.book.dao.BookDao;
 import com.book.pojo.Book;
 import com.book.service.BookService;
 import top.huanyv.bean.annotation.Component;
@@ -8,8 +8,6 @@ import top.huanyv.bean.annotation.Inject;
 import top.huanyv.bean.aop.Aop;
 import top.huanyv.jdbc.support.TransactionAop;
 import top.huanyv.jdbc.util.Page;
-
-import javax.sql.DataSource;
 
 @Component
 public class BookServiceImpl implements BookService {

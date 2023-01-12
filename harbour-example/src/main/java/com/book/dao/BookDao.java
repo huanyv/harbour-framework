@@ -1,4 +1,4 @@
-package com.book.mapper;
+package com.book.dao;
 
 import com.book.pojo.Book;
 import top.huanyv.jdbc.builder.BaseDao;

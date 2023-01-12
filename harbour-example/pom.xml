@@ -10,10 +10,10 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
-<!--    <packaging>war</packaging>-->
+    <packaging>war</packaging>
 
     <groupId>com.book</groupId>
-    <artifactId>harbour-test</artifactId>
+    <artifactId>harbour-example</artifactId>
     <version>1.0</version>
 
     <properties>

@@ -1,5 +1,6 @@
-package com.book.mapper;
+package com.book.dao.impl;
 
+import com.book.dao.BookDao;
 import com.book.pojo.Book;
 import top.huanyv.jdbc.annotation.Dao;
 import top.huanyv.jdbc.annotation.Delete;
@@ -23,7 +24,8 @@ public class BookDaoImpl implements BookDao {
     public Page<Book> listBook(String bname, int pageNum, int pageSize) {
         SqlBuilder sb = new SqlBuilder("select * from t_book")
                 .condition("where", c -> c
-                        .append(StringUtil.hasText(bname), "bname like ?", "%" + bname + "%"));
+                        .append(StringUtil.hasText(bname), "bname like ?", "%" + bname + "%")
+                );
         Page<Book> page = new Page<>(pageNum, pageSize);
         sqlContext.selectPage(page, Book.class, sb.getSql(), sb.getArgs());
         return page;
@@ -38,7 +40,7 @@ public class BookDaoImpl implements BookDao {
     @Override
     public int updateBook(Book book) {
         SqlBuilder sb = new SqlBuilder("update t_book set")
-                .with(", ", j -> j
+                .join(", ", j -> j
                         .append(StringUtil.hasText(book.getBname()), "bname = ?", book.getBname())
                         .append("author = ?", book.getAuthor())
                         .append("pubcomp = ?", book.getPubcomp())

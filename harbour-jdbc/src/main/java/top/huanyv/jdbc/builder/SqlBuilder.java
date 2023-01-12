@@ -7,6 +7,31 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
+ * sql构造器，构造动态SQL使用，需要调用getSql()、getArgs()方法
+ * 获取SQL语句和参数
+ *
+ * <pre>{@code
+ * SqlBuilder sb = new SqlBuilder("select * from t_book")
+ *     .condition("where", c -> c
+ *         .append(StringUtil.hasText(bname), "bname like ?", "%" + bname + "%")
+ *     );
+ * }
+ * </pre>
+ *
+ * <pre>{@code
+ *   SqlBuilder sb = new SqlBuilder("update t_book")
+ *       .join(", ", "set", j -> j
+ *           .append(StringUtil.hasText(book.getBname()), "bname = ?", book.getBname())
+ *           .append("author = ?", book.getAuthor())
+ *           .append("pubcomp = ?", book.getPubcomp())
+ *           .append("pubdate = ?", book.getPubdate())
+ *           .append("bcount = ?", book.getBcount())
+ *           .append("price = ?", book.getPrice())
+ *       )
+ *       .condition("where", condition -> condition.append("id = ?", book.getId()));
+ * }
+ * </pre>
+ *
  * @author huanyv
  * @date 2023/1/11 13:19
  */
@@ -74,6 +99,28 @@ public class SqlBuilder implements Serializable {
         return join(separator, prefix, "", joiner);
     }
 
+    /**
+     * 以指定前缀、后缀、分割符号连接SQL字符串，适合 update 操作
+     * <pre>{@code
+     *   SqlBuilder sb = new SqlBuilder("update t_book")
+     *       .join(", ", "set", j -> j
+     *           .append(StringUtil.hasText(book.getBname()), "bname = ?", book.getBname())
+     *           .append("author = ?", book.getAuthor())
+     *           .append("pubcomp = ?", book.getPubcomp())
+     *           .append("pubdate = ?", book.getPubdate())
+     *           .append("bcount = ?", book.getBcount())
+     *           .append("price = ?", book.getPrice())
+     *       )
+     *       .condition("where", condition -> condition.append("id = ?", book.getId()));
+     * }
+     * </pre>
+     *
+     * @param separator 分隔符
+     * @param prefix    前缀
+     * @param suffix    后缀
+     * @param j         连接器
+     * @return {@link SqlBuilder}
+     */
     public SqlBuilder join(String separator, String prefix, String suffix, Consumer<SqlJoiner> j) {
         SqlJoiner joiner = new SqlJoiner(separator);
         j.accept(joiner);
