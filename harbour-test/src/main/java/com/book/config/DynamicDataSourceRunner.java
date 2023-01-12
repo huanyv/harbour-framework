@@ -7,6 +7,17 @@ import top.huanyv.jdbc.core.datasource.DynamicDatasource;
 import top.huanyv.jdbc.core.datasource.SimpleDataSource;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.core.ApplicationRunner;
+import top.huanyv.tools.utils.ClassLoaderUtil;
+import top.huanyv.tools.utils.PropertiesUtil;
+
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * @author huanyv
@@ -35,5 +46,25 @@ public class DynamicDataSourceRunner implements ApplicationRunner {
         dynamicDatasource.setDataSource("ds2", ds2);
 
         jdbcConfigurer.setDataSource(dynamicDatasource);
+
+    }
+
+    public static void main(String[] args) {
+        String prefix = "jdbc.";
+        InputStream inputStream = ClassLoaderUtil.getInputStream("application.properties");
+        Map<String, String> properties = PropertiesUtil.loadMap(inputStream);
+        Set<String> names = properties.entrySet().stream()
+                .map(Map.Entry::getKey)
+                .filter(key -> key.startsWith(prefix) && key.endsWith("url") && !(prefix + "url").equals(key))
+                .map(key -> key.substring(prefix.length()).split("\\.")[0])
+                .collect(Collectors.toSet());
+
+        System.out.println("names = " + names);
+        fun("s", null);
+    }
+
+    public static void fun(String s, Object... args) {
+        System.out.println("args = " + args);
+        System.out.println("args.length = " + args.length);
     }
 }

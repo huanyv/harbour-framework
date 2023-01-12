@@ -4,7 +4,7 @@ package top.huanyv.webmvc.utils;
  * @author huanyv
  * @date 2022/11/15 20:14
  */
-public interface RequestHeaderConst {
+public interface ReqHeaderConst {
 
     // 指定客户端能够接收的内容类型	Accept: text/plain, text/html
     String ACCEPT = "Accept";

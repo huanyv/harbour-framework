@@ -8,6 +8,7 @@ import top.huanyv.start.config.CliArguments;
 import top.huanyv.start.server.NativeServletRegistry;
 import top.huanyv.start.server.WebServer;
 import top.huanyv.start.server.servlet.Registration;
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.ClassUtil;
 import top.huanyv.tools.utils.ResourceUtil;
 
@@ -36,6 +37,7 @@ public class HarbourApplication {
 
 
     public HarbourApplication(Class<?> mainClass) {
+        Assert.notNull(mainClass, "'mainClass' must not be null.");
         this.mainClass = mainClass;
     }
 
@@ -44,6 +46,9 @@ public class HarbourApplication {
     }
 
     public ApplicationContext run(String... args) {
+        if (args == null) {
+            args = new String[0];
+        }
         CliArguments cliArguments = new CliArguments(args);
         this.appArguments = new AppArguments(cliArguments);
 

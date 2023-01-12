@@ -1,5 +1,7 @@
 package top.huanyv.jdbc.util;
 
+import top.huanyv.tools.utils.Assert;
+
 import java.util.List;
 
 /**
@@ -84,6 +86,7 @@ public class Page<T> {
     }
 
     public String getPageSql(String sql) {
+        Assert.notNull(sql, "'sql' must not be null.");
         int start = (getPageNum() - 1) * getPageSize();
         int len = getPageSize();
         sql = sql.trim();

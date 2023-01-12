@@ -1,5 +1,7 @@
 package top.huanyv.jdbc.builder;
 
+import top.huanyv.tools.utils.StringUtil;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +31,9 @@ public class SqlJoiner implements Serializable {
     }
 
     public SqlJoiner append(String str, Object... args) {
+        if (str != null && str.length() == 0) {
+            return this;
+        }
         this.joiner.add(str);
         if (args != null && args.length > 0) {
             this.sqlArgs.addAll(Arrays.asList(args));

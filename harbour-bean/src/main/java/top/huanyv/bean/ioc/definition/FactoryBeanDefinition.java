@@ -2,6 +2,7 @@ package top.huanyv.bean.ioc.definition;
 
 import top.huanyv.bean.annotation.Lazy;
 import top.huanyv.bean.ioc.FactoryBean;
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.StringUtil;
 
 /**
@@ -13,6 +14,7 @@ public class FactoryBeanDefinition extends AbstractBeanDefinition {
     private FactoryBean<?> factoryInstance;
 
     public FactoryBeanDefinition(FactoryBean<?> factoryBeanInstance) {
+        Assert.notNull(factoryBeanInstance, "'factoryBeanInstance' must not be null.");
         this.factoryInstance = factoryBeanInstance;
         setBeanName(StringUtil.firstLetterLower(this.factoryInstance.getClass().getSimpleName()));
         setBeanClass(this.factoryInstance.getObjectType());

@@ -1,5 +1,6 @@
 package top.huanyv.webmvc.core;
 
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.webmvc.core.request.FunctionRequestHandler;
 import top.huanyv.webmvc.core.request.RequestHandlerRegistry;
 import top.huanyv.webmvc.enums.RequestMethod;
@@ -29,6 +30,9 @@ public class DefaultRouting implements Routing {
 
     @Override
     public void setBase(String base) {
+        if (base == null) {
+            base = "";
+        }
         this.base = base;
     }
 

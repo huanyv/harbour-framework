@@ -65,7 +65,7 @@ public class DefaultSqlContext implements SqlContext {
     }
 
     public <T> List<T> selectPage(Page<T> page, Class<T> type, String sql, Object... args) {
-        Assert.notNull(page, "page is null!");
+        Assert.notNull(page, "'page' must not be null.");
         long total = selectCount(sql, args);
         page.setTotal(total);
         sql = page.getPageSql(sql);
@@ -75,7 +75,7 @@ public class DefaultSqlContext implements SqlContext {
     }
 
     public List<Map<String, Object>> selectPageMap(Page<Map<String, Object>> page, String sql, Object... args) {
-        Assert.notNull(page, "page is null!");
+        Assert.notNull(page, "'page' must not be null.");
         long total = selectCount(sql, args);
         page.setTotal(total);
         sql = page.getPageSql(sql);

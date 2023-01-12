@@ -1,5 +1,7 @@
 package top.huanyv.jdbc.handler;
 
+import top.huanyv.tools.utils.Assert;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
@@ -19,11 +21,12 @@ public class BeanListHandler<T> implements ResultSetHandler<List<T>> {
     private boolean mapUnderscoreToCamelCase = true;
 
     public BeanListHandler(Class<T> type) {
+        Assert.notNull(type, "'type' must not be null.");
         this.type = type;
     }
 
     public BeanListHandler(Class<T> type, boolean mapUnderscoreToCamelCase) {
-        this.type = type;
+        this(type);
         this.mapUnderscoreToCamelCase = mapUnderscoreToCamelCase;
     }
 

@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class ConnectionPool {
 
-    private List<ConnectionDecorator> connections = new ArrayList<>();
+    private final List<ConnectionDecorator> connections = new ArrayList<>();
 
     private String url;
 

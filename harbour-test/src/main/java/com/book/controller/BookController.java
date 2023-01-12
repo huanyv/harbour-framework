@@ -7,20 +7,12 @@ import com.book.service.BookService;
 
 import top.huanyv.bean.annotation.Component;
 import top.huanyv.bean.annotation.Inject;
-import top.huanyv.bean.annotation.Lazy;
-import top.huanyv.bean.annotation.Scope;
 import top.huanyv.bean.aop.Aop;
 import top.huanyv.jdbc.util.Page;
-import top.huanyv.tools.utils.JsonUtil;
 import top.huanyv.webmvc.annotation.*;
 import top.huanyv.webmvc.annotation.argument.Body;
 import top.huanyv.webmvc.annotation.argument.Param;
 import top.huanyv.webmvc.annotation.argument.Path;
-import top.huanyv.webmvc.core.HttpRequest;
-import top.huanyv.webmvc.core.HttpResponse;
-
-
-import java.io.IOException;
 
 @Component
 @Route("/admin/book")

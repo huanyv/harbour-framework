@@ -3,7 +3,7 @@
 <p align="center">基于<code>Java8</code>创造的轻量级、简洁优雅的Web框架 </p>
 <p align="center">您可以在 <b>短时间</b> 学会它做点有趣的项目</p>
 <p align="center">
-    <a href="index.html#/README?id=开始" target="_self">快速开始</a> | 
+    <a href="#开始" target="_self">快速开始</a> | 
     <a href="http://harbour.huanyv.top" target="_blank">官方文档</a> | 
     <a href="" target="_blank">捐赠我们</a> 
 </p>

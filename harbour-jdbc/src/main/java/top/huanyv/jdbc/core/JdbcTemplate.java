@@ -1,6 +1,7 @@
 package top.huanyv.jdbc.core;
 
 import top.huanyv.jdbc.handler.ResultSetHandler;
+import top.huanyv.tools.utils.Assert;
 
 import java.sql.*;
 
@@ -16,6 +17,9 @@ public class JdbcTemplate {
     }
 
     public <T> T query(Connection connection, String sql, ResultSetHandler<T> resultSetHandler, Object... args) throws SQLException {
+        Assert.notNull(connection, "'connection' must not be null.");
+        Assert.notNull(sql, "'sql' must not be null.");
+        Assert.notNull(resultSetHandler, "'resultSetHandler' must not be null.");
         ResultSet resultSet = null;
         PreparedStatement ps = null;
         try {

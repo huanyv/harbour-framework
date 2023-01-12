@@ -1,5 +1,6 @@
 package top.huanyv.jdbc.core.datasource;
 
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.StringUtil;
 
 import javax.sql.DataSource;
@@ -51,6 +52,7 @@ public class DynamicDatasource extends AbstractDataSource {
     }
 
     public void setDefaultDataSource(DataSource dataSource) {
+        Assert.notNull(dataSource, "'dataSource' must not be null.");
         this.dataSourceMap.put(DEFAULT_KEY, dataSource);
     }
 

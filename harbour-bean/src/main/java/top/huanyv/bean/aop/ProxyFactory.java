@@ -10,11 +10,11 @@ import java.lang.reflect.Proxy;
  */
 public class ProxyFactory {
 
-    public static <T> T getProxy(T target, AopContext aopContext ) {
+    public static <T> T getProxy(T target, AopContext aopContext) {
         // 如果有接口，使用JDK动态代理
         if (target.getClass().getInterfaces().length > 0) {
-            return (T)Proxy.newProxyInstance(target.getClass().getClassLoader()
-                    , target.getClass().getInterfaces(), new JdkInvocationHandler<T>(target ,aopContext));
+            return (T) Proxy.newProxyInstance(target.getClass().getClassLoader()
+                    , target.getClass().getInterfaces(), new JdkInvocationHandler<T>(target, aopContext));
         }
 
         // 没有接口，使用CGLib动态代理

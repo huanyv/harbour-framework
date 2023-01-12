@@ -4,6 +4,7 @@ import top.huanyv.jdbc.annotation.Column;
 import top.huanyv.jdbc.annotation.TableId;
 import top.huanyv.jdbc.annotation.TableName;
 import top.huanyv.jdbc.builder.BaseDao;
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Field;
@@ -22,6 +23,7 @@ public class BaseDaoUtil {
      * @return 泛型 Class
      */
     public static Class<?> getType(Type type) {
+        Assert.notNull(type, "'type' must not be null.");
         if (type instanceof Class) {
             Class<?> clazz = (Class<?>) type;
             for (Type genericInterface : clazz.getGenericInterfaces()) {
@@ -46,6 +48,7 @@ public class BaseDaoUtil {
      * @return table id 的字段名
      */
     public static String getTableId(Class<?> clazz) {
+        Assert.notNull(clazz);
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(TableId.class)) {
                 Column column = field.getAnnotation(Column.class);
@@ -61,6 +64,7 @@ public class BaseDaoUtil {
      * @return 表名称
      */
     public static String getTableName(Class<?> clazz) {
+        Assert.notNull(clazz);
         TableName tableName = clazz.getAnnotation(TableName.class);
         if (tableName != null) {
             return tableName.value();
@@ -69,6 +73,7 @@ public class BaseDaoUtil {
     }
 
     public static Field getIdField(Class<?> cls) throws NoSuchFieldException {
+        Assert.notNull(cls);
         for (Field field : cls.getDeclaredFields()) {
             if (field.isAnnotationPresent(TableId.class)) {
                 return field;

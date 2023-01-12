@@ -18,6 +18,7 @@ public class ScalarHandler<T> implements ResultSetHandler<T> {
     }
 
     public ScalarHandler(Class<T> type) {
+        Assert.notNull(type, "'type' must not be null.");
         this.type = type;
     }
 

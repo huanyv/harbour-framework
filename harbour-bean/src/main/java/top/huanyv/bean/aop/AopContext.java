@@ -1,5 +1,6 @@
 package top.huanyv.bean.aop;
 
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.ReflectUtil;
 
 import java.lang.reflect.Method;
@@ -91,6 +92,7 @@ public class AopContext {
     }
 
     public void add(Class<?> cls) {
+        Assert.notNull(cls);
         if (this.adviceCache.containsKey(cls.getName())) {
             return;
         }

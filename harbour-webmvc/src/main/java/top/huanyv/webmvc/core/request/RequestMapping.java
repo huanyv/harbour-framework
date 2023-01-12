@@ -88,6 +88,9 @@ public class RequestMapping {
      */
     public Map<String, String> parsePathVars(String url) {
         Map<String, String> pathVariables = new HashMap<>();
+        if (url == null) {
+            return pathVariables;
+        }
         // 模糊地址
         String[] arr1 = this.urlPattern.split(WebMvcGlobalConfig.PATH_SEPARATOR);
         // 精确地址

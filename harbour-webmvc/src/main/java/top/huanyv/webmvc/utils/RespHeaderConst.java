@@ -4,7 +4,7 @@ package top.huanyv.webmvc.utils;
  * @author huanyv
  * @date 2022/11/15 20:14
  */
-public interface ResponseHeaderConst {
+public interface RespHeaderConst {
 
     // 表明服务器是否支持指定范围请求及哪种类型的分段请求	Accept-Ranges: bytes
     String ACCEPT_RANGES = "Accept-Ranges";

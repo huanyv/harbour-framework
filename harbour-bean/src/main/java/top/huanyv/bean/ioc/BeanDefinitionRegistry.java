@@ -8,6 +8,7 @@ import top.huanyv.bean.ioc.definition.ClassBeanDefinition;
 import top.huanyv.bean.ioc.definition.FactoryBeanDefinition;
 import top.huanyv.bean.ioc.definition.MethodBeanDefinition;
 import top.huanyv.bean.exception.BeanTypeNonUniqueException;
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.ClassUtil;
 import top.huanyv.tools.utils.ReflectUtil;
 import top.huanyv.tools.utils.StringUtil;
@@ -32,6 +33,9 @@ public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
      * @param beanDefinition bean定义
      */
     public void register(BeanDefinition beanDefinition) {
+        if (beanDefinition == null) {
+            return;
+        }
         register(beanDefinition.getBeanName(), beanDefinition);
     }
 
@@ -44,6 +48,9 @@ public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
      * @param beanDefinition bean定义
      */
     public void register(String beanName, BeanDefinition beanDefinition) {
+        if (beanDefinition == null) {
+            return;
+        }
         Class<?> cls = beanDefinition.getBeanClass();
         // 判断BeanNe是否可用
         beanName = StringUtil.hasText(beanName) ? beanName : beanDefinition.getBeanName();
@@ -87,6 +94,7 @@ public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
     }
 
     public String getBeanName(Class<?> type) {
+        Assert.notNull(type, "'type' must not be null.");
         String beanName = null;
         int count = 0;
         for (Map.Entry<String, BeanDefinition> entry : this.beanDefinitionMap.entrySet()) {

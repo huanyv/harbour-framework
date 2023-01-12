@@ -1,5 +1,6 @@
 package top.huanyv.bean.utils;
 
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.ProxyUtil;
 
 import java.lang.reflect.Field;
@@ -17,6 +18,7 @@ public class AopUtil {
     }
 
     public static Object getTargetObject(Object proxy) {
+        Assert.notNull(proxy, "'proxy object' must not be null.");
         if (!ProxyUtil.isProxyClass(proxy.getClass())) {
             return proxy;
         }
@@ -37,6 +39,7 @@ public class AopUtil {
     }
 
     public static Object getJdkTargetObject(Object proxy) {
+        Assert.notNull(proxy, "'proxy object' must not be null.");
         // 获取代理回调对象 JdkInvocationHandler<T> implements InvocationHandler
         InvocationHandler invocationHandler = Proxy.getInvocationHandler(proxy);
         try {
@@ -51,6 +54,7 @@ public class AopUtil {
     }
 
     public static Object getCglibTargetObject(Object proxy) {
+        Assert.notNull(proxy, "'proxy object' must not be null.");
         try {
             // 获取代理回调对象属性 CglibInvocationHandler<T> implements MethodInterceptor
             Field field = proxy.getClass().getDeclaredField("CGLIB$CALLBACK_0");

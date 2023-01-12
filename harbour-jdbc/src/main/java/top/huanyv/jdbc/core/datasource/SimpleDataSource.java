@@ -1,5 +1,7 @@
 package top.huanyv.jdbc.core.datasource;
 
+import top.huanyv.tools.utils.Assert;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,10 +27,12 @@ public class SimpleDataSource extends AbstractDataSource {
     }
 
     public static DataSource createDataSource(Properties properties) {
+        Assert.notNull(properties, "'properties' must not be null.");
         return createDataSource((Map) properties);
     }
 
     public static DataSource createDataSource(Map<String, String> map) {
+        Assert.notNull(map, "'map' must not be null.");
         String driverClassName = map.get("driverClassName");
         String url = map.get("url");
         String username = map.get("username");
@@ -114,7 +118,4 @@ public class SimpleDataSource extends AbstractDataSource {
         return connectionPool;
     }
 
-    public void setConnectionPool(ConnectionPool connectionPool) {
-        this.connectionPool = connectionPool;
-    }
 }

@@ -27,9 +27,7 @@ public class JoinPoint {
 
     public void addAspect(List<AspectAdvice> list) {
         chain.addAll(list);
-//        curAdvice = chain.get(0);
     }
-
 
     private Object handle() throws InvocationTargetException, IllegalAccessException {
         if (index >= chain.size()) {

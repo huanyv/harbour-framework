@@ -1,6 +1,7 @@
 package top.huanyv.webmvc.core;
 
 
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.IoUtil;
 import top.huanyv.tools.utils.JsonUtil;
 import top.huanyv.tools.utils.StringUtil;
@@ -39,7 +40,7 @@ public class HttpResponse {
      * @throws IOException ioexception
      */
     public void redirect(String location) throws IOException {
-        if (location.startsWith("/")) {
+        if (location != null && location.startsWith("/")) {
             servletResponse.sendRedirect(servletRequest.getContextPath() + location);
             return;
         }
@@ -77,6 +78,7 @@ public class HttpResponse {
     }
 
     public void file(String fileName, File file) throws IOException {
+        Assert.notNull(file, "'file' must not be null.");
         if (!StringUtil.hasText(fileName)) {
             fileName = file.getName();
         }

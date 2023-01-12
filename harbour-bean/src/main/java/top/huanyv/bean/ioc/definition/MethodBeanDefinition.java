@@ -2,6 +2,7 @@ package top.huanyv.bean.ioc.definition;
 
 import top.huanyv.bean.annotation.Lazy;
 import top.huanyv.bean.annotation.Scope;
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,6 +19,8 @@ public class MethodBeanDefinition extends AbstractBeanDefinition {
     private Method method;
 
     public MethodBeanDefinition(Object methodClassInstance, Method method) {
+        Assert.notNull(methodClassInstance, "'methodClassInstance' must not be null.");
+        Assert.notNull(method, "'methid' must not be null.");
         this.methodClassInstance = methodClassInstance;
         this.method = method;
 

@@ -40,8 +40,12 @@ public abstract class AbstractDaoProxyHandler implements InvocationHandler, Base
             return doUpdate(update.value(), method, args);
         }
         Insert insert = method.getAnnotation(Insert.class);
-        if (insert != null) {
-            return doUpdate(insert.value(), method, args);
+        if (insert != null ) {
+            if (insert.getId()) {
+                return SqlContextFactory.getSqlContext().insert(insert.value(), args);
+            } else {
+                return doUpdate(insert.value(), method, args);
+            }
         }
         Delete delete = method.getAnnotation(Delete.class);
         if (delete != null) {
@@ -74,6 +78,7 @@ public abstract class AbstractDaoProxyHandler implements InvocationHandler, Base
 
     @Override
     public Object selectById(Number id) {
+        Assert.notNull(id, "'id' must not be null.");
         Class<?> cls = proxy.getClass();
         Class<?> beanType = BaseDaoUtil.getType(cls);
         Assert.notNull(beanType, "BaseDao not set <generic>!");
@@ -88,6 +93,7 @@ public abstract class AbstractDaoProxyHandler implements InvocationHandler, Base
 
     @Override
     public int insert(Object o) {
+        Assert.notNull(o, "object must not be null.");
         Class<?> cls = o.getClass();
         // 参数
         List<Object> args = new ArrayList<>();
@@ -129,6 +135,7 @@ public abstract class AbstractDaoProxyHandler implements InvocationHandler, Base
 
     @Override
     public int updateById(Object o) {
+        Assert.notNull(o, "object must not be null.");
         try {
             Class<?> cls = o.getClass();
             // 获取表名
@@ -171,6 +178,7 @@ public abstract class AbstractDaoProxyHandler implements InvocationHandler, Base
 
     @Override
     public int deleteById(Number id) {
+        Assert.notNull(id, "'id' must not be null.");
         Class<?> cls = proxy.getClass();
         Class<?> type = BaseDaoUtil.getType(cls);
         Assert.notNull(type, "BaseDao not set <generic>!");

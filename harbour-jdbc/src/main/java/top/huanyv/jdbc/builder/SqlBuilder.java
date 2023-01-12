@@ -29,6 +29,9 @@ public class SqlBuilder implements Serializable {
     }
 
     public SqlBuilder append(String str, Object... args) {
+        if (str != null && str.length() == 0) {
+            return this;
+        }
         if (this.sb.length() != 0) {
             this.sb.append(" ");
         }
@@ -63,19 +66,21 @@ public class SqlBuilder implements Serializable {
         return this;
     }
 
-    public SqlBuilder with(String separator, Consumer<SqlJoiner> j) {
-        return with(separator, "", "", j);
+    public SqlBuilder join(String separator, Consumer<SqlJoiner> joiner) {
+        return join(separator, "", "", joiner);
     }
 
-    public SqlBuilder with(CharSequence separator, CharSequence prefix, Consumer<SqlJoiner> j) {
-        return with(separator, prefix, "", j);
+    public SqlBuilder join(String separator, String prefix, Consumer<SqlJoiner> joiner) {
+        return join(separator, prefix, "", joiner);
     }
 
-    public SqlBuilder with(CharSequence separator, CharSequence prefix, CharSequence suffix, Consumer<SqlJoiner> j) {
-        SqlJoiner joiner = new SqlJoiner(separator, prefix, suffix);
+    public SqlBuilder join(String separator, String prefix, String suffix, Consumer<SqlJoiner> j) {
+        SqlJoiner joiner = new SqlJoiner(separator);
         j.accept(joiner);
         if (!joiner.isEmpty()) {
+            append(prefix);
             append(joiner.getSql(), joiner.getArgs());
+            append(suffix);
         }
         return this;
     }

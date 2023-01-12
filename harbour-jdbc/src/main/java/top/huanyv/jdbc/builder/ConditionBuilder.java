@@ -23,6 +23,9 @@ public class ConditionBuilder implements Serializable {
     }
 
     public ConditionBuilder append(String str, Object... args) {
+        if (str != null && str.length() == 0) {
+            return this;
+        }
         if (!isEmpty()) {
             sqlCondition.append(" ");
         }

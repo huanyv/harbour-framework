@@ -8,6 +8,7 @@ import top.huanyv.bean.exception.BeanCurrentlyInCreationException;
 import top.huanyv.bean.exception.NoSuchBeanDefinitionException;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.ClassBeanDefinition;
+import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Field;
@@ -108,6 +109,9 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
     @Override
     public void register(Class<?>... componentClasses) {
+        if (componentClasses == null) {
+            return;
+        }
         for (Class<?> cls : componentClasses) {
             registerBean(cls);
         }
@@ -153,6 +157,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
      */
     @Override
     public synchronized Object getBean(String beanName) throws RuntimeException {
+        Assert.notNull(beanName, "'beanName' must not be null.");
         BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
         if (beanDefinition == null) {
             throw new NoSuchBeanDefinitionException("No bean named '" + beanName + "' available");
@@ -304,8 +309,9 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     }
 
     @Override
-    public boolean containsBean(String name) {
-        return beanDefinitionRegistry.containsBeanDefinition(name);
+    public boolean containsBean(String beanName) {
+        Assert.notNull(beanName, "'beanName' must not be null.");
+        return beanDefinitionRegistry.containsBeanDefinition(beanName);
     }
 
     public BeanDefinitionRegistry getBeanDefinitionRegistry() {
