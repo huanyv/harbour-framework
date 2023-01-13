@@ -4,7 +4,10 @@ public enum RequestMethod {
     GET("GET"),
     POST("POST"),
     PUT("PUT"),
-    DELETE("DELETE");
+    DELETE("DELETE"),
+    OPTIONS("OPTIONS"),
+    HEAD("HEAD"),
+    TRACE("TRACE");;
 
     private String method;
 

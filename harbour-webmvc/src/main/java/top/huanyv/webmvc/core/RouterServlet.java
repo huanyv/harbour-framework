@@ -69,6 +69,16 @@ public class RouterServlet extends InitRouterServlet {
         }
 
         RequestMethod requestMethod = RequestMethod.valueOf(req.getMethod().toUpperCase());
+        if (RequestMethod.OPTIONS.equals(requestMethod)) {
+            doOptions(req, resp);
+            return;
+        } else if (RequestMethod.HEAD.equals(requestMethod)) {
+            doHead(req, resp);
+            return;
+        } else if (RequestMethod.TRACE.equals(requestMethod)) {
+            doTrace(req, resp);
+            return;
+        }
         // 获取当前uri的对应请求处理器映射
         RequestMapping requestMapping = this.requestRegistry.getRequestMapping(uri);
         // 获取当前请求方式的处理

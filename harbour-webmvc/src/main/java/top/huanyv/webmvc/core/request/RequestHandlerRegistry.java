@@ -1,6 +1,7 @@
 package top.huanyv.webmvc.core.request;
 
 import top.huanyv.tools.utils.Assert;
+import top.huanyv.tools.utils.StringUtil;
 import top.huanyv.webmvc.enums.RequestMethod;
 import top.huanyv.webmvc.interfaces.ServletHandler;
 
@@ -47,6 +48,7 @@ public class RequestHandlerRegistry {
 
     public void registerHandler(String urlPattern, RequestMethod requestMethod, RequestHandler requestHandler) {
         Assert.notNull(urlPattern, "'urlPattern' must not be null.");
+        Assert.isTrue(StringUtil.hasText(urlPattern), "'urlPattern' must not be empty.");
         Assert.notNull(requestMethod, "'requestMethod' must not be null.");
         Assert.notNull(requestHandler, "'requestHandler' must not be null.");
         RequestMapping mapping = getRequestMapping(urlPattern);

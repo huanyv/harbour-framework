@@ -48,7 +48,7 @@ public class JdbcConfigurer {
             config.setUrl(properties.getProperty("url"));
             config.setUsername(properties.getProperty("username"));
             config.setPassword(properties.getProperty("password"));
-            config.setScanPackages(properties.getProperty("mapper.scan"));
+            config.setScanPackages(properties.getProperty("dao.scan"));
         } catch (IOException e) {
             e.printStackTrace();
         }
