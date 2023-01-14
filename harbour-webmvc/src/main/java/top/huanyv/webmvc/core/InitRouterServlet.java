@@ -29,10 +29,10 @@ public abstract class InitRouterServlet extends TemplateServlet {
         for (Class<?> cls : BeanFactoryUtil.getBeanClasses(applicationContext)) {
             Route route = cls.getAnnotation(Route.class);
             if (route != null) {
+                // 基路由
+                String basePath = route.value();
                 // 遍历方法
                 for (Method method : cls.getDeclaredMethods()) {
-                    // 基路由
-                    String basePath = route.value();
                     RequestHandler requestHandler = new MethodRequestHandler(cls, method);
                     Route methodRoute = method.getAnnotation(Route.class);
                     if (methodRoute != null) {

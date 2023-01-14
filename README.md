@@ -1,18 +1,16 @@
 <h1 align="center">Harbour-framework</h1>
-
 <p align="center">基于<code>Java8</code>创造的轻量级、简洁优雅的Web框架 </p>
 <p align="center">您可以在 <b>短时间</b> 学会它做点有趣的项目</p>
 <p align="center">
     <a href="#开始" target="_self">快速开始</a> | 
     <a href="http://harbour.huanyv.top" target="_blank">官方文档</a> | 
-    <a href="" target="_blank">捐赠我们</a> 
+    <a href="https://github.com/huanyv/harbour-framework" target="_blank">支持我</a> 
 </p>
 
 ## 开始
 
-`Harbour` 是一个追求简约、轻量的 Web 框架，集IOC、AOP、MVC、ORM于一体，让 `JavaWeb` 开发如虎添翼，在轻量与灵活性上同时兼顾。 在使用方式上提供与SpringBoot完全相同的注解和设计理念，学习转换零成本 。
-如果你喜欢尝试有趣的事物，相信你会爱上它。
-如果觉得这个项目不错可以 [star](https://github.com) 支持或者 [捐赠](https://github.com) 它
+`Harbour` 是一个追求简约、轻量的 Web 框架，集IOC、AOP、MVC、ORM于一体，让 `JavaWeb` 开发更加轻松，在轻量与灵活性上同时兼顾。 在使用方式上提供与SpringBoot基本相同的注解和设计理念，学习转换几乎零成本 。
+如果觉得这个项目不错可以 [star](https://github.com/huanyv/harbour-framework) 支持
 
 * 简洁的：框架设计简单,容易理解,不依赖于更多第三方库。
 * 优雅的：`Harbour` 支持 REST 风格路由接口, 提供lambda函数路由。
@@ -20,16 +18,17 @@
 
 ## 功能特性
 
-- [x] 轻量级MVC框架，不依赖更多的库
-- [x] 模块化设计，各个模块之间可独立使用
-- [x] 源码轻量，学习简单
-- [x] Restful风格路由设计
-- [x] 模板引擎支持，视图开发更灵活
-- [x] 运行 `JAR` 包即可开启 web 服务
-- [x] 流式API风格
-- [x] 支持 webjars 资源
-- [x] 内置多种常用功能
-- [x] Jdk8 + Servlet4
+* 轻量级MVC框架，不依赖更多的库
+* 简约ORM框架，轻松操作数据库
+* 模块化设计，各个模块之间可独立使用
+* 源码轻量，学习简单
+* Restful风格路由设计
+* 模板引擎支持，视图开发更灵活
+* 运行 `JAR` 包即可开启 web 服务
+* lambda流式API风格
+* 支持webjars静态资源与本地资源映射
+* 内置多种常用功能
+* Jdk8 + Servlet4
 
 ## 快速上手
 
@@ -203,13 +202,13 @@ server.maxFileSize=10240000L
 
 ```xml
 <properties>
-    <main.class>com.book.MainApplication</main.class>
+    <main.class>xxx.xxx.MainApplication</main.class>
 </properties>
 ```
 
 * 执行`package`后，使用`java -jar xxx.jar`启动运行
 
 
-### 更多功能请看<a href="http://harbour.huanyv.top" target="_self">详细文档</a>
+### 更多功能请看[详细文档](http://harbour.huanyv.top)
 
 
