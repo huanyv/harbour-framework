@@ -22,7 +22,6 @@
         <harbour.version>1.0</harbour.version>
         <lombok.version>1.18.16</lombok.version>
         <mysql.version>5.1.49</mysql.version>
-        <servlet.version>4.0.1</servlet.version>
     </properties>
 
     <dependencyManagement>
@@ -54,7 +53,13 @@
                 <artifactId>harbour-start-tomcat</artifactId>
                 <version>${harbour.version}</version>
             </dependency>
+            <dependency>
+                <groupId>top.huanyv</groupId>
+                <artifactId>harbour-start-jetty</artifactId>
+                <version>${harbour.version}</version>
+            </dependency>
 
+            <!-- data -->
             <dependency>
                 <groupId>top.huanyv</groupId>
                 <artifactId>harbour-start-jdbc</artifactId>
@@ -66,13 +71,7 @@
                 <version>${mysql.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${servlet.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
+            <!-- other -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -80,10 +79,10 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-	            <groupId>com.github.whvcse</groupId>
-	            <artifactId>easy-captcha</artifactId>
-	            <version>1.6.2</version>
-	        </dependency>
+                <groupId>com.github.whvcse</groupId>
+                <artifactId>easy-captcha</artifactId>
+                <version>1.6.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

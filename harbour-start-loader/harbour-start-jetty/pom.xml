@@ -5,10 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>top.huanyv</groupId>
-    <artifactId>harbour-start-loader</artifactId>
+    <artifactId>harbour-start-jetty</artifactId>
     <version>1.0</version>
-
-    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -16,17 +14,37 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <jetty.version>9.4.43.v20210629</jetty.version>
     </properties>
 
-    <modules>
-	    <module>harbour-start-web</module>
-	    <module>harbour-start-thymeleaf</module>
-	    <module>harbour-start-tomcat</module>
-	    <module>harbour-start-jetty</module>
-	    <module>harbour-start-jdbc</module>
-	</modules>
+    <dependencies>
+        <dependency>
+            <groupId>top.huanyv</groupId>
+            <artifactId>harbour-webmvc</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>top.huanyv</groupId>
+            <artifactId>harbour-start</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
 
- 	<build>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
         <plugins>
             <!--生成java帮助文档-->
             <plugin>
@@ -53,6 +71,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
