@@ -1,18 +1,13 @@
 package top.huanyv.start.tomcat;
 
-import com.sun.corba.se.impl.ior.NewObjectKeyTemplateBase;
-import com.sun.media.jfxmedia.events.NewFrameEvent;
-import com.sun.org.apache.regexp.internal.RE;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.ApplicationFilterRegistration;
 import org.apache.catalina.core.ApplicationServletRegistration;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
-import org.apache.tomcat.util.descriptor.web.FilterMap;
 import top.huanyv.start.server.WebServer;
 
 import javax.servlet.*;
@@ -39,16 +34,6 @@ public class TomcatServer implements WebServer {
      * 上下文对象
      */
     private Context context;
-
-    /**
-     * 最大上传文件
-     */
-    private long maxFileSize;
-
-    /**
-     * 最大请求文件
-     */
-    private long maxRequestSize;
 
     /**
      * 端口号
@@ -118,14 +103,6 @@ public class TomcatServer implements WebServer {
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
         this.context = this.tomcat.addContext(contextPath, System.getProperty("java.io.tmpdir"));
-    }
-
-    public void setMaxFileSize(long maxFileSize) {
-        this.maxFileSize = maxFileSize;
-    }
-
-    public void setMaxRequestSize(long maxRequestSize) {
-        this.maxRequestSize = maxRequestSize;
     }
 
     public void setUriEncoding(String uriEncoding) {

@@ -1,4 +1,4 @@
-package top.huanyv.start.loader.tomcat;
+package top.huanyv.start.loader.undertow;
 
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.ApplicationContext;
@@ -9,7 +9,7 @@ import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.start.loader.Condition;
 import top.huanyv.start.server.WebServer;
-import top.huanyv.start.tomcat.TomcatServer;
+import top.huanyv.start.undertow.UndertowServer;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;
 import top.huanyv.webmvc.core.RouterServlet;
 
@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
  * @date 2022/12/17 17:09
  */
 @ConfigurationProperties(prefix = "server")
-public class TomcatStartLoader implements ApplicationLoader {
+public class UndertowStartLoader implements ApplicationLoader {
 
     /**
      * 最大上传文件
@@ -65,17 +65,13 @@ public class TomcatStartLoader implements ApplicationLoader {
     @Bean
     @Conditional(ConditionOnMissingBean.class)
     public WebServer webServer() {
-        TomcatServer tomcatServer = new TomcatServer(this.contextPath);
-        tomcatServer.setPort(this.port);
-        tomcatServer.setUriEncoding(this.uriEncoding);
-
-        // 请求注册到tomcat容器中
-        ServletRegistration.Dynamic servletRegistration = tomcatServer.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, servlet);
+        UndertowServer server = new UndertowServer(this.contextPath);
+        server.setPort(this.port);
+        ServletRegistration.Dynamic servletRegistration = server.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, servlet);
         servletRegistration.addMapping("/");
         servletRegistration.setLoadOnStartup(1);
         servletRegistration.setMultipartConfig(new MultipartConfigElement("", maxFileSize, maxRequestSize, 0));
-
-        return tomcatServer;
+        return server;
     }
 
     public static class ConditionOnMissingBean implements Condition {

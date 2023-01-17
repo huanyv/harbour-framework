@@ -1,4 +1,4 @@
-package top.huanyv.start.loader.tomcat;
+package top.huanyv.start.loader.jetty;
 
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.ApplicationContext;
@@ -9,7 +9,7 @@ import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.start.loader.Condition;
 import top.huanyv.start.server.WebServer;
-import top.huanyv.start.undertow.JettyServer;
+import top.huanyv.start.jetty.JettyServer;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;
 import top.huanyv.webmvc.core.RouterServlet;
 
@@ -68,8 +68,6 @@ public class JettyStartLoader implements ApplicationLoader {
         JettyServer jettyServer = new JettyServer();
         jettyServer.setPort(this.port);
         jettyServer.setContextPath(this.contextPath);
-        jettyServer.setMaxFileSize(this.maxFileSize);
-        jettyServer.setMaxRequestSize(this.maxRequestSize);
         ServletRegistration.Dynamic servletRegistration = jettyServer.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, servlet);
         servletRegistration.addMapping("/");
         servletRegistration.setLoadOnStartup(1);

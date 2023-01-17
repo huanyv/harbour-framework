@@ -1,4 +1,4 @@
-package top.huanyv.start.undertow;
+package top.huanyv.start.jetty;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
@@ -15,25 +15,19 @@ import java.util.EventListener;
 public class JettyServer implements WebServer {
 
     /**
-     * 最大上传文件
-     */
-    private long maxFileSize;
-
-    /**
-     * 最大请求文件
-     */
-    private long maxRequestSize;
-
-    /**
      * 端口号
      */
     private int port;
 
     private String contextPath;
 
-    private ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    private final ServletContextHandler contextHandler;
 
     private Server server;
+
+    public JettyServer() {
+        this.contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    }
 
     @Override
     public void start() {
@@ -72,22 +66,6 @@ public class JettyServer implements WebServer {
     @Override
     public void addListener(EventListener eventListener) {
         contextHandler.addEventListener(eventListener);
-    }
-
-    public long getMaxFileSize() {
-        return maxFileSize;
-    }
-
-    public void setMaxFileSize(long maxFileSize) {
-        this.maxFileSize = maxFileSize;
-    }
-
-    public long getMaxRequestSize() {
-        return maxRequestSize;
-    }
-
-    public void setMaxRequestSize(long maxRequestSize) {
-        this.maxRequestSize = maxRequestSize;
     }
 
     public int getPort() {

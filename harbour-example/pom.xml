@@ -10,7 +10,7 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
-    <packaging>war</packaging>
+<!--    <packaging>war</packaging>-->
 
     <groupId>com.book</groupId>
     <artifactId>harbour-example</artifactId>
@@ -24,17 +24,12 @@
         <dependency>
             <groupId>top.huanyv</groupId>
             <artifactId>harbour-start-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>top.huanyv</groupId>
-                    <artifactId>harbour-start-tomcat</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>top.huanyv</groupId>
-            <artifactId>harbour-start-jetty</artifactId>
-            <version>1.0</version>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>top.huanyv</groupId>-->
+<!--                    <artifactId>harbour-start-tomcat</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
 
         <dependency>
