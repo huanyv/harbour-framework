@@ -58,6 +58,16 @@
                 <artifactId>harbour-start-jetty</artifactId>
                 <version>${harbour.version}</version>
             </dependency>
+            <dependency>
+                <groupId>top.huanyv</groupId>
+                <artifactId>harbour-start-undertow</artifactId>
+                <version>${harbour.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>top.huanyv</groupId>
+                <artifactId>harbour-start-rpc</artifactId>
+                <version>1.0</version>
+            </dependency>
 
             <!-- data -->
             <dependency>
