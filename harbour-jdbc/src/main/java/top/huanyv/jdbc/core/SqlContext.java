@@ -124,9 +124,9 @@ public interface SqlContext {
     void rollback();
 
     /**
-     * 关闭事务
+     * 关闭连接
      */
-    void closeTransaction();
+    void close();
 
     /**
      * 根据类型，获取动态代理后的对象

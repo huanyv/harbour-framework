@@ -90,8 +90,8 @@ public class SqlContextManager implements SqlContext {
     }
 
     @Override
-    public void closeTransaction() {
-        SqlContextFactory.getSqlContext().closeTransaction();
+    public void close() {
+        SqlContextFactory.getSqlContext().close();
     }
 
     @Override

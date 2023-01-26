@@ -49,7 +49,7 @@ public class SimpleDataSource extends AbstractDataSource {
     }
 
     @Override
-    public Connection getConnection() throws SQLException {
+    public synchronized Connection getConnection() throws SQLException {
         if (connectionPool == null) {
             initConnectionPool();
         }

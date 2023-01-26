@@ -41,15 +41,15 @@ public class BookDaoImpl implements BookDao {
     public int updateBook(Book book) {
         SqlBuilder sb = new SqlBuilder("update t_book set")
                 .join(", ", j -> j
-                        .append(StringUtil.hasText(book.getBname()), "bname = ?", book.getBname())
-                        .append("author = ?", book.getAuthor())
-                        .append("pubcomp = ?", book.getPubcomp())
-                        .append("pubdate = ?", book.getPubdate())
-                        .append("bcount = ?", book.getBcount())
-                        .append("price = ?", book.getPrice())
+                        .append(StringUtil.hasText(book.getBname()), "bname = #{bname}")
+                        .append("author = #{author}")
+                        .append("pubcomp = #{pubcomp}")
+                        .append("pubdate = #{pubdate}")
+                        .append("bcount = #{bcount}")
+                        .append("price = #{price}")
                 )
-                .condition("where", condition -> condition.append("id = ?", book.getId()));
-        return sqlContext.update(sb.getSql(), sb.getArgs());
+                .condition("where", condition -> condition.append("id = #{id}"));
+        return sqlContext.update(sb.getSql(), book);
     }
 
     @Override
