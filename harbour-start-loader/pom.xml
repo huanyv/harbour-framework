@@ -20,11 +20,13 @@
 
     <modules>
 	    <module>harbour-start-web</module>
+	    <module>harbour-start-enjoy</module>
 	    <module>harbour-start-thymeleaf</module>
 	    <module>harbour-start-tomcat</module>
 	    <module>harbour-start-jetty</module>
 	    <module>harbour-start-undertow</module>
 	    <module>harbour-start-jdbc</module>
+	    <module>harbour-start-rpc</module>
 	</modules>
 
  	<build>

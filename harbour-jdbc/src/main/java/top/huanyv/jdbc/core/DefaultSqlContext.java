@@ -176,6 +176,8 @@ public class DefaultSqlContext implements SqlContext {
             this.connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            close();
         }
     }
 
@@ -187,13 +189,25 @@ public class DefaultSqlContext implements SqlContext {
             this.connection.rollback();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            close();
+        }
+    }
+
+    public void close() {
+        // 关闭事务，因为有是要归还的连接
+        closeTransaction();
+        try {
+            this.connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
     /**
      * 关闭事务
      */
-    public void closeTransaction() {
+    private void closeTransaction() {
         if (!isAutoClose) {
             isAutoClose = true;
             try {
@@ -203,6 +217,7 @@ public class DefaultSqlContext implements SqlContext {
             }
         }
     }
+
 
     /**
      * 根据类型，获取动态代理后的对象

@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <main.class>com.example.Main</main.class>
+        <main.class>top.huanyv.start.core.Main</main.class>
 
         <harbour.version>1.0</harbour.version>
         <lombok.version>1.18.16</lombok.version>
