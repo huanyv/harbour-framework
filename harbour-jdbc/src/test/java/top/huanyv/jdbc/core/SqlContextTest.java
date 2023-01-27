@@ -1,5 +1,6 @@
 package top.huanyv.jdbc.core;
 
+import org.junit.Before;
 import org.junit.Test;
 import top.huanyv.jdbc.dao.UserDao;
 import top.huanyv.jdbc.dao.impl.UserDaoImpl;
@@ -16,14 +17,14 @@ import static org.junit.Assert.*;
 
 public class SqlContextTest {
 
-    public JdbcConfigurer getConfig() {
+    @Before
+    public void getConfig() {
         InputStream inputStream = ClassLoaderUtil.getInputStream("jdbc.properties");
-        return JdbcConfigurer.create(inputStream);
+        JdbcConfigurer.create(inputStream);
     }
 
     @Test
     public void selectRow() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         User user = sqlContext.selectRow(User.class, "select * from t_user where id = ?", 1);
         System.out.println("user = " + user);
@@ -31,7 +32,6 @@ public class SqlContextTest {
 
     @Test
     public void selectList() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         List<User> users = sqlContext.selectList(User.class, "select * from t_user");
         System.out.println("users = " + users);
@@ -39,7 +39,6 @@ public class SqlContextTest {
 
     @Test
     public void selectMap() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         Map<String, Object> user = sqlContext.selectMap("select * from t_user");
         System.out.println("user = " + user);
@@ -47,7 +46,6 @@ public class SqlContextTest {
 
     @Test
     public void selectListMap() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         List<Map<String, Object>> users = sqlContext.selectListMap("select * from t_user");
         System.out.println("users = " + users);
@@ -55,7 +53,6 @@ public class SqlContextTest {
 
     @Test
     public void selectValue() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         Object o = sqlContext.selectValue("select max(id) from t_user");
         System.out.println(o);
@@ -64,7 +61,6 @@ public class SqlContextTest {
 
     @Test
     public void selectPage() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         Page<User> page = new Page<>(1,3);
         sqlContext.selectPage(page, User.class, "select * from t_user");
@@ -73,7 +69,6 @@ public class SqlContextTest {
 
     @Test
     public void selectPageMap() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         Page<Map<String, Object>> page = new Page<>(1,3);
         sqlContext.selectPageMap(page,  "select * from t_user");
@@ -86,7 +81,6 @@ public class SqlContextTest {
 
     @Test
     public void update() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         String sql = "insert into t_user (username, password) values(?, ?)";
         int count = sqlContext.update(sql, "user", "1234");
@@ -95,7 +89,6 @@ public class SqlContextTest {
 
     @Test
     public void update01() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         User user = new User();
         user.setUsername("user3");
@@ -108,7 +101,6 @@ public class SqlContextTest {
 
     @Test
     public void update02() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         Map<String, Object> map = new HashMap<>();
         map.put("username", "user4");
@@ -121,7 +113,6 @@ public class SqlContextTest {
 
     @Test
     public void update03() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         // 这个出现的作用是当你的参数，中间有其它干扰，可以避开
         String sql = "insert into t_user (username, password) values(#{arg0}, #{arg2})";
@@ -132,7 +123,6 @@ public class SqlContextTest {
 
     @Test
     public void insert() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         String sql = "insert into t_user (username, password) values(?, ?)";
         long id = sqlContext.insert(sql, "user2", "1234");
@@ -141,7 +131,6 @@ public class SqlContextTest {
 
     @Test
     public void testDao() {
-        getConfig();
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         UserDao userDao = sqlContext.getDao(UserDaoImpl.class);
         List<User> users = userDao.selectAll();
