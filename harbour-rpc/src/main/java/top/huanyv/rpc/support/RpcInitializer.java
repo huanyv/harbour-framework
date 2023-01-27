@@ -9,11 +9,7 @@ import top.huanyv.bean.ioc.BeanDefinitionRegistryPostProcessor;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.ClassBeanDefinition;
 import top.huanyv.rpc.annotation.Reference;
-import top.huanyv.rpc.load.Balance;
 import top.huanyv.rpc.provider.ProviderServer;
-import top.huanyv.rpc.register.Registry;
-import top.huanyv.rpc.register.ZookeeperRegistry;
-import top.huanyv.rpc.util.RpcConfigurer;
 import top.huanyv.tools.utils.ClassUtil;
 import top.huanyv.tools.utils.StringUtil;
 
@@ -45,9 +41,11 @@ public class RpcInitializer implements BeanDefinitionRegistryPostProcessor, Appl
             for (Field field : cls.getDeclaredFields()) {
                 Reference reference = field.getAnnotation(Reference.class);
                 if (reference != null && field.isAnnotationPresent(Inject.class)) {
+                    Class<?> type = field.getType();
+                    String beanName = StringUtil.firstLetterLower(type.getSimpleName());
                     BeanDefinition beanDefinition = new ClassBeanDefinition(ConsumerFactoryBean.class,
-                            field.getType(), reference.loadBalance(), reference.value());
-                    registry.register(beanDefinition);
+                            type, reference.loadBalance(), reference.value());
+                    registry.register(beanName, beanDefinition);
                 }
             }
         }

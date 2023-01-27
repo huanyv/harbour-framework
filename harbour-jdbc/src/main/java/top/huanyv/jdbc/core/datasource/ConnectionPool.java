@@ -57,14 +57,15 @@ public class ConnectionPool {
      * @param connection 连接
      */
     public synchronized void close(ConnectionDecorator connection) throws SQLException {
-        if (this.connections.size() >= this.maxActive) {
+        // 防止多次调用close()方法出现重复连接
+        if (contains(connection)) {
+            return;
+        }
+        if (getActiveCount() >= this.maxActive) {
             connection.realClose();
             return;
         }
-        // 防止多次调用close()方法出现重复连接
-        if (!this.connections.contains(connection)) {
-            this.connections.add(connection);
-        }
+        this.connections.add(connection);
     }
 
     /**
@@ -75,7 +76,7 @@ public class ConnectionPool {
     public synchronized Connection getConnection() throws SQLException {
 
         // 空闲连接数
-        if (this.connections.size() <= 0) {
+        if (getActiveCount() <= 0) {
             for (int i = 0; i <= minIdle; i++) {
                 this.connections.add(newConnection());
             }
@@ -99,11 +100,11 @@ public class ConnectionPool {
         return new ConnectionDecorator(connection, this);
     }
 
-    public boolean containsConnection(ConnectionDecorator connection) {
+    public boolean contains(ConnectionDecorator connection) {
         return this.connections.contains(connection);
     }
 
-    public int size() {
+    public int getActiveCount() {
         return this.connections.size();
     }
 

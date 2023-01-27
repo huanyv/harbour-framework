@@ -22,6 +22,7 @@ public class PageSqlTypeHandler implements SqlTypeHandler {
         SqlContext sqlContext = SqlContextFactory.getSqlContext();
         // 获取Page对象
         Page page = PageHolder.getPage();
+        PageHolder.remove();
         Type genericReturnType = method.getGenericReturnType();
         if (genericReturnType instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
