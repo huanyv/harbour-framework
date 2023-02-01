@@ -2,8 +2,8 @@ package top.huanyv.jdbc.handler.type;
 
 import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.SqlContextFactory;
-import top.huanyv.jdbc.util.Page;
-import top.huanyv.jdbc.util.PageHolder;
+import top.huanyv.jdbc.core.pagination.Page;
+import top.huanyv.jdbc.core.pagination.PageHolder;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;

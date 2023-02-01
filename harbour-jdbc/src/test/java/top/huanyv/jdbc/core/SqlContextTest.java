@@ -5,15 +5,13 @@ import org.junit.Test;
 import top.huanyv.jdbc.dao.UserDao;
 import top.huanyv.jdbc.dao.impl.UserDaoImpl;
 import top.huanyv.jdbc.entity.User;
-import top.huanyv.jdbc.util.Page;
+import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.tools.utils.ClassLoaderUtil;
 
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 public class SqlContextTest {
 

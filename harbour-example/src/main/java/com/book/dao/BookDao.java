@@ -2,7 +2,7 @@ package com.book.dao;
 
 import com.book.pojo.Book;
 import top.huanyv.jdbc.builder.BaseDao;
-import top.huanyv.jdbc.util.Page;
+import top.huanyv.jdbc.core.pagination.Page;
 
 
 public interface BookDao extends BaseDao<Book> {
