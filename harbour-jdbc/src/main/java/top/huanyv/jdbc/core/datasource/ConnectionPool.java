@@ -52,11 +52,11 @@ public class ConnectionPool {
     }
 
     /**
-     * 归还连接
+     * 回收连接
      *
      * @param connection 连接
      */
-    public synchronized void close(ConnectionDecorator connection) throws SQLException {
+    public synchronized void recycle(ConnectionDecorator connection) throws SQLException {
         // 防止多次调用close()方法出现重复连接
         if (contains(connection)) {
             return;

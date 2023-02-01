@@ -34,7 +34,7 @@ public class ConnectionDecorator implements Connection {
      */
     @Override
     public void close() throws SQLException {
-        this.connectionPool.close(this);
+        this.connectionPool.recycle(this);
         this.isClosed = true;
     }
 
