@@ -1,6 +1,4 @@
-package top.huanyv.jdbc.util;
-
-import top.huanyv.tools.utils.Assert;
+package top.huanyv.jdbc.core.pagination;
 
 import java.util.List;
 
@@ -83,18 +81,6 @@ public class Page<T> {
 
     public void setData(List<T> data) {
         this.data = data;
-    }
-
-    public String getPageSql(String sql) {
-        Assert.notNull(sql, "'sql' must not be null.");
-        int start = (getPageNum() - 1) * getPageSize();
-        int len = getPageSize();
-        sql = sql.trim();
-        // 去掉最后的分号
-        if (sql.endsWith(";")) {
-            sql = sql.substring(0, sql.length() - 1);
-        }
-        return sql + " limit " + start + ", " + len;
     }
 
     @Override

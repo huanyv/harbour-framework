@@ -1,6 +1,6 @@
 package top.huanyv.jdbc.core;
 
-import top.huanyv.jdbc.util.Page;
+import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.jdbc.util.SqlHandler;
 
 import java.sql.Connection;
@@ -62,8 +62,25 @@ public interface SqlContext {
      */
     Object selectValue(String sql, Object... args);
 
+    /**
+     * 根据JavaBean类型，进行分页查询
+     *
+     * @param page 分页对象
+     * @param type 类型
+     * @param sql  SQL语句
+     * @param args 参数
+     * @return {@link List}<{@link T}>
+     */
     <T> List<T> selectPage(Page<T> page, Class<T> type, String sql, Object... args);
 
+    /**
+     * 以Map类型分页查询
+     *
+     * @param page 分页对象
+     * @param sql  SQL语句
+     * @param args 参数
+     * @return {@link List}<{@link Map}<{@link String}, {@link Object}>>
+     */
     List<Map<String, Object>> selectPageMap(Page<Map<String, Object>> page, String sql, Object... args);
 
     /**

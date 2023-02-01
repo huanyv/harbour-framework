@@ -1,9 +1,15 @@
 package top.huanyv.jdbc.core;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import top.huanyv.jdbc.core.datasource.SimpleDataSource;
+import top.huanyv.jdbc.core.pagination.Page;
+import top.huanyv.jdbc.core.pagination.PagingSqlFactory;
+import top.huanyv.jdbc.core.pagination.PagingSqlHandler;
 import top.huanyv.tools.utils.Assert;
 
 import javax.sql.DataSource;
@@ -16,8 +22,6 @@ public class JdbcConfigurer {
 
     private DataSource dataSource;
 
-    private String scanPackages;
-
     private String driverClassName;
     private String url;
     private String username;
@@ -28,7 +32,8 @@ public class JdbcConfigurer {
      */
     private static JdbcConfigurer configuration;
 
-    private JdbcConfigurer() { }
+    private JdbcConfigurer() {
+    }
 
     private static class SingletonHolder {
         private static final JdbcConfigurer CONFIGURATION = new JdbcConfigurer();
@@ -48,7 +53,6 @@ public class JdbcConfigurer {
             config.setUrl(properties.getProperty("url"));
             config.setUsername(properties.getProperty("username"));
             config.setPassword(properties.getProperty("password"));
-            config.setScanPackages(properties.getProperty("dao.scan"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,14 +75,6 @@ public class JdbcConfigurer {
         this.password = password;
     }
 
-    public void setScanPackages(String scanPackages) {
-        this.scanPackages = scanPackages;
-    }
-
-    public String getScanPackages() {
-        return scanPackages;
-    }
-
     public DataSource getDataSource() {
         if (dataSource == null) {
             SimpleDataSource simpleDataSource = new SimpleDataSource();
@@ -89,6 +85,34 @@ public class JdbcConfigurer {
             dataSource = simpleDataSource;
         }
         return dataSource;
+    }
+
+    public static String getPageSql(String sql, Page<?> page) {
+        Connection connection = null;
+        String databaseProductName = null;
+        try {
+            // 获取数据库型号
+            connection = JdbcConfigurer.create().getDataSource().getConnection();
+            databaseProductName = connection.getMetaData().getDatabaseProductName();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (databaseProductName == null) {
+            throw new IllegalArgumentException("Database not recognized.");
+        }
+        PagingSqlHandler handler = PagingSqlFactory.getPageSql(databaseProductName.toLowerCase());
+        if (handler == null) {
+            throw new IllegalArgumentException("The '" + databaseProductName + "' database type cannot be handled.");
+        }
+        return handler.handle(sql, page.getPageNum(), page.getPageSize());
     }
 
     public void setDataSource(DataSource dataSource) {

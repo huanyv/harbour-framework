@@ -26,10 +26,6 @@ public class DaoScanner implements BeanDefinitionRegistryPostProcessor {
         this.scanPackages = scanPackages;
     }
 
-    public String getScanPackages() {
-        return scanPackages;
-    }
-
     public void setScanPackages(String scanPackages) {
         this.scanPackages = scanPackages;
     }
@@ -37,7 +33,7 @@ public class DaoScanner implements BeanDefinitionRegistryPostProcessor {
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
         if (scanPackages == null) {
-            scanPackages = JdbcConfigurer.create().getScanPackages();
+            throw new IllegalArgumentException("scanPackages not configured.");
         }
         Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(Dao.class, scanPackages);
         for (Class<?> cls : classes) {

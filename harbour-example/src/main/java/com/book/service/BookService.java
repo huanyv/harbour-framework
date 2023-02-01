@@ -1,7 +1,7 @@
 package com.book.service;
 
 import com.book.pojo.Book;
-import top.huanyv.jdbc.util.Page;
+import top.huanyv.jdbc.core.pagination.Page;
 
 public interface BookService {
 

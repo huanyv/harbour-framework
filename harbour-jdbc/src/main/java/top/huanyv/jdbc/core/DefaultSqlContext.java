@@ -4,7 +4,7 @@ import top.huanyv.jdbc.core.proxy.ClassDaoProxyHandler;
 import top.huanyv.jdbc.core.proxy.InterfaceDaoProxyHandler;
 import top.huanyv.jdbc.core.proxy.ProxyFactory;
 import top.huanyv.jdbc.handler.*;
-import top.huanyv.jdbc.util.Page;
+import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.jdbc.util.SqlAndArgs;
 import top.huanyv.jdbc.util.SqlHandler;
 import top.huanyv.jdbc.util.SqlParamParser;
@@ -68,7 +68,7 @@ public class DefaultSqlContext implements SqlContext {
         Assert.notNull(page, "'page' must not be null.");
         long total = selectCount(sql, args);
         page.setTotal(total);
-        sql = page.getPageSql(sql);
+        sql = JdbcConfigurer.getPageSql(sql, page);
         List<T> list = selectList(type, sql, args);
         page.setData(list);
         return list;
@@ -78,7 +78,7 @@ public class DefaultSqlContext implements SqlContext {
         Assert.notNull(page, "'page' must not be null.");
         long total = selectCount(sql, args);
         page.setTotal(total);
-        sql = page.getPageSql(sql);
+        sql = JdbcConfigurer.getPageSql(sql, page);
         List<Map<String, Object>> mapList = selectListMap(sql, args);
         page.setData(mapList);
         return mapList;

@@ -8,7 +8,7 @@ import top.huanyv.jdbc.annotation.Insert;
 import top.huanyv.jdbc.builder.*;
 import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.SqlContextManager;
-import top.huanyv.jdbc.util.Page;
+import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.tools.utils.StringUtil;
 
 /**

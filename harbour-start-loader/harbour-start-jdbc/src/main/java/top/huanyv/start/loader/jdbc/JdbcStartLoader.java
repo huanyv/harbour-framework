@@ -17,7 +17,7 @@ import top.huanyv.tools.utils.Assert;
  * @author huanyv
  * @date 2022/12/19 13:53
  */
-@ConfigurationProperties(prefix = "jdbc")
+@ConfigurationProperties(prefix = "harbour.jdbc")
 public class JdbcStartLoader implements ApplicationLoader {
 
     private String driverClassName;
@@ -35,7 +35,6 @@ public class JdbcStartLoader implements ApplicationLoader {
         Assert.notNull(driverClassName, "database 'driverClassName' property not configured!");
         Assert.notNull(url, "database 'url' property not configured!");
         Assert.notNull(username, "database 'username' property not configured!");
-        Assert.notNull(scanPackages, "'scanPackages' property not configured!");
 
         // 加载配置
         JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
@@ -47,13 +46,13 @@ public class JdbcStartLoader implements ApplicationLoader {
         simpleDataSource.setPassword(password);
 
         jdbcConfigurer.setDataSource(simpleDataSource);
-        jdbcConfigurer.setScanPackages(scanPackages);
     }
 
     @Bean
     @Conditional(ConditionOnMissingBean.class)
     public DaoScanner daoScanner() {
-        return new DaoScanner();
+        Assert.notNull(scanPackages, "'scanPackages' property not configured!");
+        return new DaoScanner(scanPackages);
     }
 
     public static class ConditionOnMissingBean implements Condition {

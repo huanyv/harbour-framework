@@ -1,6 +1,6 @@
 package top.huanyv.jdbc.core;
 
-import top.huanyv.jdbc.util.Page;
+import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.jdbc.util.SqlHandler;
 
 import java.sql.Connection;

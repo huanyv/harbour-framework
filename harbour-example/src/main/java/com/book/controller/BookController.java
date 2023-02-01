@@ -8,7 +8,7 @@ import com.book.service.BookService;
 import top.huanyv.bean.annotation.Component;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.bean.aop.Aop;
-import top.huanyv.jdbc.util.Page;
+import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.webmvc.annotation.*;
 import top.huanyv.webmvc.annotation.argument.Body;
 import top.huanyv.webmvc.annotation.argument.Param;
