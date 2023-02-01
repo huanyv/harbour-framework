@@ -14,5 +14,10 @@ public abstract class AbstractDataSourceAop implements AspectAdvice {
         DataSourceKeyHolder.set(getDataSourceKey());
     }
 
+    @Override
+    public void afterAdvice(Object[] args, Object result) {
+        DataSourceKeyHolder.remove();
+    }
+
     public abstract String getDataSourceKey();
 }
