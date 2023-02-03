@@ -1,9 +1,8 @@
 package top.huanyv.bean.ioc.definition;
 
 import top.huanyv.bean.annotation.Lazy;
-import top.huanyv.bean.annotation.Scope;
+import top.huanyv.bean.annotation.Prototype;
 import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,8 +25,7 @@ public class MethodBeanDefinition extends AbstractBeanDefinition {
 
         setBeanClass(method.getReturnType());
         setBeanName(method.getName());
-        Scope scope = method.getAnnotation(Scope.class);
-        setScope(scope != null ? scope.value() : BeanDefinition.SCOPE_SINGLETON);
+        setSingleton(!method.isAnnotationPresent(Prototype.class));
         setLazy(method.isAnnotationPresent(Lazy.class));
     }
 

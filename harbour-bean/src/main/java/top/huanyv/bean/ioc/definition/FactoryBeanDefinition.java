@@ -18,7 +18,7 @@ public class FactoryBeanDefinition extends AbstractBeanDefinition {
         this.factoryInstance = factoryBeanInstance;
         setBeanName(StringUtil.firstLetterLower(this.factoryInstance.getClass().getSimpleName()));
         setBeanClass(this.factoryInstance.getObjectType());
-        setScope(this.factoryInstance.isSingleton() ? BeanDefinition.SCOPE_SINGLETON : BeanDefinition.SCOPE_PROTOTYPE);
+        setSingleton(this.factoryInstance.isSingleton());
         setLazy(factoryBeanInstance.getClass().isAnnotationPresent(Lazy.class));
     }
 

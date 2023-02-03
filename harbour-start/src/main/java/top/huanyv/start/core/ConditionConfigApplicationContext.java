@@ -6,7 +6,6 @@ import top.huanyv.bean.ioc.AnnotationBeanDefinitionReader;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.MethodBeanDefinition;
-import top.huanyv.bean.utils.OrderUtil;
 import top.huanyv.start.anntation.Conditional;
 import top.huanyv.start.anntation.ConfigurationProperties;
 import top.huanyv.start.config.AppArguments;
@@ -48,7 +47,7 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
             loaders.add(applicationLoader);
         }
         // 排序
-        loaders.sort(new OrderUtil.OrderAsc());
+        loaders.sort((o1, o2) -> o1.getOrder() - o2.getOrder());
 
         // 执行加载器
         for (ApplicationLoader applicationLoader : loaders) {

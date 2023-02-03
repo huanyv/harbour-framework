@@ -2,7 +2,6 @@ package top.huanyv.start.core;
 
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.utils.BeanFactoryUtil;
-import top.huanyv.bean.utils.OrderUtil;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.config.CliArguments;
 import top.huanyv.start.server.NativeServletRegistry;
@@ -90,7 +89,7 @@ public class HarbourApplication {
         // 启动任务
         List<ApplicationRunner> runners = BeanFactoryUtil.getBeansByType(applicationContext, ApplicationRunner.class);
         // 排序
-        runners.sort(new OrderUtil.OrderAsc());
+        runners.sort((o1, o2) -> o1.getOrder() - o2.getOrder());
         for (ApplicationRunner runner : runners) {
             runner.run(this.appArguments);
         }

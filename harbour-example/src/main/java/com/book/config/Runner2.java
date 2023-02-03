@@ -1,7 +1,6 @@
 package com.book.config;
 
 import top.huanyv.bean.annotation.Component;
-import top.huanyv.bean.annotation.Order;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.core.ApplicationRunner;
 
@@ -10,8 +9,12 @@ import top.huanyv.start.core.ApplicationRunner;
  * @date 2022/12/26 15:28
  */
 @Component
-@Order(1)
 public class Runner2 implements ApplicationRunner {
+    @Override
+    public int getOrder() {
+        return 1;
+    }
+
     @Override
     public void run(AppArguments appArguments) {
         System.out.println("应用启动了2");

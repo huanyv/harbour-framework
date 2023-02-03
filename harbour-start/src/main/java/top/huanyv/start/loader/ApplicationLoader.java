@@ -1,6 +1,7 @@
 package top.huanyv.start.loader;
 
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.utils.Ordered;
 import top.huanyv.start.config.AppArguments;
 
 /**
@@ -10,7 +11,7 @@ import top.huanyv.start.config.AppArguments;
  * @author huanyv
  * @date 2022/12/17 16:30
  */
-public interface ApplicationLoader {
+public interface ApplicationLoader extends Ordered {
 
     default void load(ApplicationContext applicationContext, AppArguments appArguments) {
 

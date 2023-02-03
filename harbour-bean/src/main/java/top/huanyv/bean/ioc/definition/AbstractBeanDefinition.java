@@ -10,13 +10,13 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
 
     private Class<?> beanClass;
 
-    private String scope;
+    private boolean singleton;
 
     private boolean lazy;
 
     @Override
     public String getBeanName() {
-        return this.beanName;
+        return beanName;
     }
 
     @Override
@@ -26,7 +26,7 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
 
     @Override
     public Class<?> getBeanClass() {
-        return this.beanClass;
+        return beanClass;
     }
 
     @Override
@@ -35,13 +35,18 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
     }
 
     @Override
-    public String getScope() {
-        return this.scope;
+    public boolean isSingleton() {
+        return singleton;
     }
 
     @Override
-    public void setScope(String scope) {
-        this.scope = scope;
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
+    }
+
+    @Override
+    public boolean isLazy() {
+        return lazy;
     }
 
     @Override
@@ -49,8 +54,4 @@ public abstract class AbstractBeanDefinition implements BeanDefinition {
         this.lazy = lazy;
     }
 
-    @Override
-    public boolean isLazy() {
-        return this.lazy;
-    }
 }

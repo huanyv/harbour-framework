@@ -1,7 +1,7 @@
 package top.huanyv.bean.ioc.definition;
 
 import top.huanyv.bean.annotation.Lazy;
-import top.huanyv.bean.annotation.Scope;
+import top.huanyv.bean.annotation.Prototype;
 import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.StringUtil;
 
@@ -23,8 +23,7 @@ public class ClassBeanDefinition extends AbstractBeanDefinition {
         Assert.notNull(beanClass, "'beanClass' must not be null.");
         setBeanClass(beanClass);
         setBeanName(StringUtil.firstLetterLower(beanClass.getSimpleName()));
-        Scope scope = beanClass.getAnnotation(Scope.class);
-        setScope(scope != null ? scope.value() : BeanDefinition.SCOPE_SINGLETON);
+        setSingleton(!beanClass.isAnnotationPresent(Prototype.class));
         setLazy(beanClass.isAnnotationPresent(Lazy.class));
 
         if (constructorArgs != null) {

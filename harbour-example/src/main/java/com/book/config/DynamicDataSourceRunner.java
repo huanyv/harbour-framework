@@ -1,7 +1,6 @@
 package com.book.config;
 
 import top.huanyv.bean.annotation.Component;
-import top.huanyv.bean.annotation.Order;
 import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.jdbc.core.datasource.DynamicDatasource;
 import top.huanyv.jdbc.core.datasource.SimpleDataSource;
@@ -11,12 +10,8 @@ import top.huanyv.tools.utils.ClassLoaderUtil;
 import top.huanyv.tools.utils.PropertiesUtil;
 
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -25,6 +20,7 @@ import java.util.stream.Collectors;
  */
 //@Component
 public class DynamicDataSourceRunner implements ApplicationRunner {
+
     @Override
     public void run(AppArguments appArguments) {
         JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
