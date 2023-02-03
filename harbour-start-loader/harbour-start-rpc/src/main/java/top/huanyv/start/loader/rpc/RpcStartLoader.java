@@ -7,7 +7,7 @@ import top.huanyv.rpc.register.ZookeeperRegistry;
 import top.huanyv.rpc.support.RpcInitializer;
 import top.huanyv.rpc.util.RpcConfigurer;
 import top.huanyv.start.anntation.Conditional;
-import top.huanyv.start.anntation.ConfigurationProperties;
+import top.huanyv.start.anntation.Properties;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.start.loader.Condition;
@@ -16,7 +16,7 @@ import top.huanyv.start.loader.Condition;
  * @author huanyv
  * @date 2023/1/22 16:01
  */
-@ConfigurationProperties(prefix = "harbour.rpc")
+@Properties(prefix = "harbour.rpc.")
 public class RpcStartLoader implements ApplicationLoader {
 
     /**

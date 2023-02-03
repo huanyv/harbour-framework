@@ -10,8 +10,10 @@ import java.lang.annotation.Target;
  * @date 2022/12/18 13:50
  */
 
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConfigurationProperties {
+public @interface Properties {
     String prefix() default "";
+
+    String name() default "";
 }

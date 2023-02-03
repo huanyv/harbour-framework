@@ -6,7 +6,7 @@ import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.anntation.Conditional;
-import top.huanyv.start.anntation.ConfigurationProperties;
+import top.huanyv.start.anntation.Properties;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.start.loader.Condition;
@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
  * @author huanyv
  * @date 2022/12/18 14:55
  */
-@ConfigurationProperties(prefix = "harbour.view")
+@Properties(prefix = "harbour.view.")
 public class ThymeleafViewResolverStartLoader implements ApplicationLoader {
 
     private String prefix = "templates/";

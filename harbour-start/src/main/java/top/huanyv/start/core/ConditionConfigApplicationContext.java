@@ -7,12 +7,15 @@ import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.MethodBeanDefinition;
 import top.huanyv.start.anntation.Conditional;
-import top.huanyv.start.anntation.ConfigurationProperties;
+import top.huanyv.start.anntation.Properties;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.start.loader.Condition;
+import top.huanyv.tools.utils.NumberUtil;
 import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.tools.utils.StringUtil;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,10 +56,11 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
         for (ApplicationLoader applicationLoader : loaders) {
             Class<? extends ApplicationLoader> cls = applicationLoader.getClass();
 
-            // 获取配置属性前缀
-            String propertiesPrefix = getPropertiesPrefix(cls);
-            // 配置属性填充
-            appArguments.populate(propertiesPrefix, applicationLoader);
+            // 填充属性
+            populateLoader(applicationLoader, appArguments);
+
+            // 执行加载方法
+            applicationLoader.load(this, appArguments);
 
             // 方法Bean注入
             for (Method method : cls.getDeclaredMethods()) {
@@ -65,17 +69,39 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
                     registerBeanDefinition(beanDefinition.getBeanName(), beanDefinition);
                 }
             }
-            // 执行加载方法
-            applicationLoader.load(this, appArguments);
         }
     }
 
-    public String getPropertiesPrefix(Class<? extends ApplicationLoader> cls) {
-        ConfigurationProperties annotation = cls.getAnnotation(ConfigurationProperties.class);
-        if (annotation != null) {
-            return annotation.prefix() + ".";
+    public void populateLoader(ApplicationLoader loader, AppArguments arguments) {
+        Class<? extends ApplicationLoader> cls = loader.getClass();
+        String basePrefix = "";
+        Properties clsAnnotation = cls.getAnnotation(Properties.class);
+        if (clsAnnotation != null) {
+            basePrefix = clsAnnotation.prefix().trim();
         }
-        return "";
+        for (Field field : cls.getDeclaredFields()) {
+            field.setAccessible(true);
+            String prefixName = basePrefix;
+            String configName = field.getName();
+            Properties fieldAnnotation = field.getAnnotation(Properties.class);
+            if (fieldAnnotation != null) {
+                prefixName = fieldAnnotation.prefix().trim();
+                if (StringUtil.hasText(fieldAnnotation.name())) {
+                    configName = fieldAnnotation.name().trim();
+                }
+            }
+            String strVal = arguments.get(prefixName + configName);
+            if (StringUtil.hasText(strVal)) {
+                Object val = NumberUtil.parse(field.getType(), strVal);
+                try {
+                    if (val != null) {
+                        field.set(loader, val);
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**

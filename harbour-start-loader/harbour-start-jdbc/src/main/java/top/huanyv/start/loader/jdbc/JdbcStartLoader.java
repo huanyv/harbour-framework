@@ -7,7 +7,7 @@ import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.jdbc.core.datasource.SimpleDataSource;
 import top.huanyv.jdbc.support.DaoScanner;
 import top.huanyv.start.anntation.Conditional;
-import top.huanyv.start.anntation.ConfigurationProperties;
+import top.huanyv.start.anntation.Properties;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.start.loader.Condition;
@@ -17,7 +17,7 @@ import top.huanyv.tools.utils.Assert;
  * @author huanyv
  * @date 2022/12/19 13:53
  */
-@ConfigurationProperties(prefix = "harbour.jdbc")
+@Properties(prefix = "harbour.jdbc.")
 public class JdbcStartLoader implements ApplicationLoader {
 
     private String driverClassName;
