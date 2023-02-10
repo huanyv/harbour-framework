@@ -108,7 +108,8 @@ public class JdbcConfigurer {
         if (databaseProductName == null) {
             throw new IllegalArgumentException("Database not recognized.");
         }
-        PagingSqlHandler handler = PagingSqlFactory.getPageSql(databaseProductName.toLowerCase());
+        // 获取分页SQL处理器
+        PagingSqlHandler handler = PagingSqlFactory.getPageSql(databaseProductName);
         if (handler == null) {
             throw new IllegalArgumentException("The '" + databaseProductName + "' database type cannot be handled.");
         }

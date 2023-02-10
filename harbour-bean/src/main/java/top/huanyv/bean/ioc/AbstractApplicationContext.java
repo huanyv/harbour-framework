@@ -21,7 +21,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
     private final AopContext aopContext;
 
-    private final BeanDefinitionRegistry beanDefinitionRegistry;
+    protected final BeanDefinitionRegistry beanDefinitionRegistry;
 
     // 一级缓存，单例池
     private final Map<String, Object> singletonObjects;
@@ -312,10 +312,6 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     public boolean containsBean(String beanName) {
         Assert.notNull(beanName, "'beanName' must not be null.");
         return beanDefinitionRegistry.containsBeanDefinition(beanName);
-    }
-
-    public BeanDefinitionRegistry getBeanDefinitionRegistry() {
-        return beanDefinitionRegistry;
     }
 
 }

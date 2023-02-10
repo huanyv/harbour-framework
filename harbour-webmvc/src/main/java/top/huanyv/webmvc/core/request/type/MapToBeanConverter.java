@@ -1,7 +1,6 @@
 package top.huanyv.webmvc.core.request.type;
 
 import top.huanyv.tools.utils.BeanUtil;
-import top.huanyv.tools.utils.FieldUtil;
 import top.huanyv.tools.utils.ReflectUtil;
 import top.huanyv.webmvc.utils.ClassDesc;
 
@@ -26,14 +25,14 @@ public class MapToBeanConverter implements TypeConverter<Map<String, String[]>, 
             String[] values = entry.getValue();
 
             // 如果类中没有这个属性跳出[本次]循环
-            if (!FieldUtil.hasField(targetType, name)) {
+            if (!ReflectUtil.hasField(targetType, name)) {
                 continue;
             }
 
             try {
                 Field field = targetType.getDeclaredField(name);
                 field.setAccessible(true);
-                Method method = FieldUtil.getSetterMethod(targetType, field);
+                Method method = ReflectUtil.getSetter(targetType, field);
                 method.setAccessible(true);
 
                 ClassDesc classDesc = ClassDesc.parseField(field);
@@ -42,7 +41,7 @@ public class MapToBeanConverter implements TypeConverter<Map<String, String[]>, 
                 TypeConverter typeConverter = TypeConverterFactory.getTypeConverter(String[].class, classDesc.getType());
                 val = typeConverter == null ? null : typeConverter.convert(values, classDesc);
                 method.invoke(target, val);
-            } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException e) {
+            } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
             }
         }

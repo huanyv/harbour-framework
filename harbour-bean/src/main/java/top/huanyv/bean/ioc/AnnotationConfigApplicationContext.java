@@ -6,7 +6,7 @@ public class AnnotationConfigApplicationContext extends AbstractApplicationConte
 
     public AnnotationConfigApplicationContext(String... scanPackages) {
         super();
-        reader = new AnnotationBeanDefinitionReader(getBeanDefinitionRegistry());
+        reader = new AnnotationBeanDefinitionReader(this.beanDefinitionRegistry);
         reader.read(scanPackages);
         refresh();
     }

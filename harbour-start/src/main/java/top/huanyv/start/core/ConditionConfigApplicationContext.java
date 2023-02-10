@@ -31,7 +31,7 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
 
     public ConditionConfigApplicationContext(String... scanPackages) {
         super();
-        reader = new AnnotationBeanDefinitionReader(getBeanDefinitionRegistry());
+        reader = new AnnotationBeanDefinitionReader(this.beanDefinitionRegistry);
         reader.read(scanPackages);
         initialization();
     }

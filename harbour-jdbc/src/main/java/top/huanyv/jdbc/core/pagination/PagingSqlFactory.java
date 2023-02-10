@@ -2,6 +2,7 @@ package top.huanyv.jdbc.core.pagination;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author huanyv
@@ -9,7 +10,7 @@ import java.util.Map;
  */
 public class PagingSqlFactory {
 
-    private final static Map<String, PagingSqlHandler> handlers = new HashMap<>();
+    private final static Map<String, PagingSqlHandler> handlers = new ConcurrentHashMap<>();
 
     static {
         handlers.put("mysql", new MySQLPagingSqlHandler());
@@ -19,17 +20,17 @@ public class PagingSqlFactory {
     }
 
     public static PagingSqlHandler getPageSql(String dbType) {
-        return handlers.get(dbType);
+        return handlers.get(dbType.toLowerCase());
     }
 
     /**
      * 设置分页处理程序
      *
-     * @param dbType  数据库类型，小写字母
+     * @param dbType  数据库类型
      * @param handler 处理程序
      */
     public static void setHandler(String dbType, PagingSqlHandler handler) {
-        handlers.put(dbType, handler);
+        handlers.put(dbType.toLowerCase(), handler);
     }
 
 }
