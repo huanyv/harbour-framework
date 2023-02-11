@@ -187,7 +187,7 @@ public class SqlSessionDecorator implements SqlSession {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            // 每个方法增强，生成新的 SqlSession
+            // 每个方法增强，生成新的 SqlSession，以保证线程安全
             SqlSession sqlSession = SqlSessionDecorator.this.sqlSessionFactory.openSession();
             Object result = method.invoke(sqlSession, args);
             sqlSession.commit(true);

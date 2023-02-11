@@ -16,6 +16,7 @@ import top.huanyv.tools.utils.StringUtil;
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author huanyv
@@ -29,7 +30,7 @@ public class MapperScanner implements BeanDefinitionRegistryPostProcessor {
     private String configLocation;
 
     /**
-     * Mapper接口所在的包，生成代理类放到IOC中
+     * Mapper接口所在的包，生成代理类放到IOC中，会自动扫描Mapper接口，自动绑定
      */
     private String basePackage;
 
@@ -43,9 +44,18 @@ public class MapperScanner implements BeanDefinitionRegistryPostProcessor {
         Set<Class<?>> classes = ClassUtil.getClasses(basePackage);
         InputStream inputStream = ClassLoaderUtil.getInputStream(configLocation);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        // 获取mybatis配置信息
+        Configuration configuration = sqlSessionFactory.getConfiguration();
+
+        // 绑定Mapper接口与文件，只绑定没有配置的
+        Set<String> mapperPackages = configuration.getMapperRegistry().getMappers()
+                .stream().map(cls -> cls.getPackage().getName()) .collect(Collectors.toSet());
+        if (!mapperPackages.contains(basePackage)) {
+            configuration.addMappers(basePackage);
+        }
+
         // 如果使用了三方数据源
         if (dataSource != null) {
-            Configuration configuration = sqlSessionFactory.getConfiguration();
             Environment oldEnv = configuration.getEnvironment();
             TransactionFactory transactionFactory = oldEnv.getTransactionFactory();
             String envId = oldEnv.getId();

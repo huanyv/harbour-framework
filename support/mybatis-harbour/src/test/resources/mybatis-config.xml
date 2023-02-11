@@ -18,9 +18,9 @@
         </environment>
     </environments>
 
-    <!-- 导入mapper.xml映射文件-->
-    <mappers>
-        <package name="top.huanyv.jdbc.mybatis.mapper"/>
-    </mappers>
+    <!--&lt;!&ndash; 绑定mapper.xml映射文件&ndash;&gt;-->
+    <!--<mappers>-->
+    <!--    <package name="top.huanyv.jdbc.mybatis.mapper"/>-->
+    <!--</mappers>-->
 
 </configuration>
