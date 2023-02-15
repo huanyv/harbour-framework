@@ -1,10 +1,11 @@
 package top.huanyv.webmvc.core;
 
-import top.huanyv.tools.utils.Assert;
+import top.huanyv.webmvc.core.action.ActionResult;
 import top.huanyv.webmvc.core.request.FunctionRequestHandler;
 import top.huanyv.webmvc.core.request.RequestHandlerRegistry;
 import top.huanyv.webmvc.enums.RequestMethod;
-import top.huanyv.webmvc.interfaces.ServletHandler;
+
+import java.nio.channels.AcceptPendingException;
 
 /**
  * @author admin
@@ -24,8 +25,8 @@ public class DefaultRouting implements Routing {
     private final RequestHandlerRegistry requestRegistry = RequestHandlerRegistry.single();
 
     @Override
-    public void register(String urlPattern, RequestMethod method, ServletHandler handler) {
-        requestRegistry.registerHandler(base + urlPattern, method, new FunctionRequestHandler(handler));
+    public void register(String urlPattern, RequestMethod method, ActionResult result) {
+        requestRegistry.registerHandler(base + urlPattern, method, new FunctionRequestHandler(result));
     }
 
     @Override

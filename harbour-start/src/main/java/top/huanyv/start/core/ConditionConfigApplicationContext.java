@@ -75,6 +75,7 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
     public void populateLoader(ApplicationLoader loader, AppArguments arguments) {
         Class<? extends ApplicationLoader> cls = loader.getClass();
         String basePrefix = "";
+        // 加载类上的配置
         Properties clsAnnotation = cls.getAnnotation(Properties.class);
         if (clsAnnotation != null) {
             basePrefix = clsAnnotation.prefix().trim();
@@ -83,6 +84,7 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
             field.setAccessible(true);
             String prefixName = basePrefix;
             String configName = field.getName();
+            // 属性单独配置
             Properties fieldAnnotation = field.getAnnotation(Properties.class);
             if (fieldAnnotation != null) {
                 prefixName = fieldAnnotation.prefix().trim();
@@ -91,14 +93,12 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
                 }
             }
             String strVal = arguments.get(prefixName + configName);
-            if (StringUtil.hasText(strVal)) {
+            if (String.class.equals(field.getType()) && strVal != null) {
+                ReflectUtil.setField(field, loader, strVal);
+            } else if (StringUtil.hasText(strVal)) {
                 Object val = NumberUtil.parse(field.getType(), strVal);
-                try {
-                    if (val != null) {
-                        field.set(loader, val);
-                    }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                if (val != null) {
+                    ReflectUtil.setField(field, loader, val);
                 }
             }
         }

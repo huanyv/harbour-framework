@@ -4,11 +4,9 @@ import top.huanyv.tools.utils.ReflectUtil;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
 import top.huanyv.webmvc.core.request.method.*;
+import top.huanyv.webmvc.core.action.ActionResult;
 import top.huanyv.webmvc.utils.ClassDesc;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +33,7 @@ public class MethodRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void handle(HttpRequest req, HttpResponse resp) throws InvocationTargetException, IllegalAccessException, ServletException, IOException {
+    public void handle(HttpRequest req, HttpResponse resp) throws Exception {
         method.setAccessible(true);
         if (controllerInstance == null) {
             controllerInstance = ReflectUtil.newInstance(controller);
@@ -56,6 +54,11 @@ public class MethodRequestHandler implements RequestHandler {
         }
 
         Object returnValue = method.invoke(controllerInstance, args);
+
+        if (returnValue instanceof ActionResult) {
+            ((ActionResult) returnValue).execute(req, resp);
+            return;
+        }
 
         if (returnResolver.support(method)) {
             returnResolver.resolve(req, resp, returnValue, method);

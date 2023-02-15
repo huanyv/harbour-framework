@@ -2,8 +2,8 @@ package top.huanyv.webmvc.core.request;
 
 import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.webmvc.core.action.ActionResult;
 import top.huanyv.webmvc.enums.RequestMethod;
-import top.huanyv.webmvc.interfaces.ServletHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +35,8 @@ public class RequestHandlerRegistry {
     private List<RequestMapping> registry = new ArrayList<>();
 
 
-    public void register(String urlPattern, ServletHandler servletHandler) {
-        registerHandler(urlPattern, new FunctionRequestHandler(servletHandler));
+    public void register(String urlPattern, ActionResult result) {
+        registerHandler(urlPattern, new FunctionRequestHandler(result));
     }
 
     public void registerHandler(String urlPattern, RequestHandler requestHandler) {

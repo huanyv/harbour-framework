@@ -1,7 +1,7 @@
 package top.huanyv.webmvc.core;
 
+import top.huanyv.webmvc.core.action.ActionResult;
 import top.huanyv.webmvc.enums.RequestMethod;
-import top.huanyv.webmvc.interfaces.ServletHandler;
 
 /**
  * @author admin
@@ -10,35 +10,35 @@ import top.huanyv.webmvc.interfaces.ServletHandler;
  */
 public interface Routing {
 
-    default Routing get(String urlPattern, ServletHandler handler) {
-        register(urlPattern, RequestMethod.GET, handler);
+    default Routing get(String urlPattern, ActionResult result) {
+        register(urlPattern, RequestMethod.GET, result);
         return this;
     }
 
-    default Routing post(String urlPattern, ServletHandler handler) {
-        register(urlPattern, RequestMethod.POST, handler);
+    default Routing post(String urlPattern, ActionResult result) {
+        register(urlPattern, RequestMethod.POST, result);
         return this;
     }
 
-    default Routing put(String urlPattern, ServletHandler handler) {
-        register(urlPattern, RequestMethod.PUT, handler);
+    default Routing put(String urlPattern, ActionResult result) {
+        register(urlPattern, RequestMethod.PUT, result);
         return this;
     }
 
-    default Routing delete(String urlPattern, ServletHandler handler) {
-        register(urlPattern, RequestMethod.DELETE, handler);
+    default Routing delete(String urlPattern, ActionResult result) {
+        register(urlPattern, RequestMethod.DELETE, result);
         return this;
     }
 
-    default Routing route(String urlPattern, ServletHandler handler) {
-        register(urlPattern, RequestMethod.GET, handler);
-        register(urlPattern, RequestMethod.POST, handler);
-        register(urlPattern, RequestMethod.PUT, handler);
-        register(urlPattern, RequestMethod.DELETE, handler);
+    default Routing route(String urlPattern, ActionResult result) {
+        register(urlPattern, RequestMethod.GET, result);
+        register(urlPattern, RequestMethod.POST, result);
+        register(urlPattern, RequestMethod.PUT, result);
+        register(urlPattern, RequestMethod.DELETE, result);
         return this;
     }
 
-    void register(String urlPattern, RequestMethod method, ServletHandler handler);
+    void register(String urlPattern, RequestMethod method, ActionResult result);
 
     default Routing view(String urlPattern, String viewName) {
         route(urlPattern, ((req, resp) -> req.view(viewName)));

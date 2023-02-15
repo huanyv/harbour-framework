@@ -2,10 +2,10 @@ package top.huanyv.start.web;
 
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.start.core.HarbourApplication;
+import top.huanyv.webmvc.core.action.ActionResult;
 import top.huanyv.webmvc.core.request.FunctionRequestHandler;
 import top.huanyv.webmvc.core.request.RequestHandlerRegistry;
 import top.huanyv.webmvc.enums.RequestMethod;
-import top.huanyv.webmvc.interfaces.ServletHandler;
 
 public class Harbour {
 
@@ -25,36 +25,36 @@ public class Harbour {
      */
     private final RequestHandlerRegistry requestRegistry = RequestHandlerRegistry.single();
 
-    public Harbour get(String urlPattern, ServletHandler handler) {
-        register(urlPattern, RequestMethod.GET, handler);
+    public Harbour get(String urlPattern, ActionResult result) {
+        register(urlPattern, RequestMethod.GET, result);
         return this;
     }
 
-    public Harbour post(String urlPattern, ServletHandler handler) {
-        register(urlPattern, RequestMethod.POST, handler);
+    public Harbour post(String urlPattern, ActionResult result) {
+        register(urlPattern, RequestMethod.POST, result);
         return this;
     }
 
-    public Harbour put(String urlPattern, ServletHandler handler) {
-        register(urlPattern, RequestMethod.PUT, handler);
+    public Harbour put(String urlPattern, ActionResult result) {
+        register(urlPattern, RequestMethod.PUT, result);
         return this;
     }
 
-    public Harbour delete(String urlPattern, ServletHandler handler) {
-        register(urlPattern, RequestMethod.DELETE, handler);
+    public Harbour delete(String urlPattern, ActionResult result) {
+        register(urlPattern, RequestMethod.DELETE, result);
         return this;
     }
 
-    public Harbour route(String urlPattern, ServletHandler handler) {
-        register(urlPattern, RequestMethod.GET, handler);
-        register(urlPattern, RequestMethod.POST, handler);
-        register(urlPattern, RequestMethod.PUT, handler);
-        register(urlPattern, RequestMethod.DELETE, handler);
+    public Harbour route(String urlPattern, ActionResult result) {
+        register(urlPattern, RequestMethod.GET, result);
+        register(urlPattern, RequestMethod.POST, result);
+        register(urlPattern, RequestMethod.PUT, result);
+        register(urlPattern, RequestMethod.DELETE, result);
         return this;
     }
 
-    private void register(String urlPattern, RequestMethod method, ServletHandler handler) {
-        this.requestRegistry.registerHandler(urlPattern, method, new FunctionRequestHandler(handler));
+    private void register(String urlPattern, RequestMethod method, ActionResult result) {
+        this.requestRegistry.registerHandler(urlPattern, method, new FunctionRequestHandler(result));
     }
 
     public Harbour view(String urlPattern, String viewName) {

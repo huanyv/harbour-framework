@@ -2,7 +2,7 @@ package top.huanyv.webmvc.core.request;
 
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
-import top.huanyv.webmvc.interfaces.ServletHandler;
+import top.huanyv.webmvc.core.action.ActionResult;
 
 /**
  * @author huanyv
@@ -10,14 +10,14 @@ import top.huanyv.webmvc.interfaces.ServletHandler;
  */
 public class FunctionRequestHandler implements RequestHandler {
 
-    private ServletHandler servletHandler;
+    private ActionResult actionResult;
 
-    public FunctionRequestHandler(ServletHandler servletHandler) {
-        this.servletHandler = servletHandler;
+    public FunctionRequestHandler(ActionResult actionResult) {
+        this.actionResult = actionResult;
     }
 
     @Override
     public void handle(HttpRequest req, HttpResponse resp) throws Exception {
-        servletHandler.handle(req, resp);
+        actionResult.execute(req, resp);
     }
 }
