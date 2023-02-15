@@ -33,7 +33,7 @@ public abstract class InitRouterServlet extends TemplateServlet {
                 String basePath = route.value();
                 // 遍历方法
                 for (Method method : cls.getDeclaredMethods()) {
-                    RequestHandler requestHandler = new MethodRequestHandler(cls, method);
+                    RequestHandler requestHandler = new MethodRequestHandler(applicationContext, cls, method);
                     Route methodRoute = method.getAnnotation(Route.class);
                     if (methodRoute != null) {
                         // 拼接上子路由

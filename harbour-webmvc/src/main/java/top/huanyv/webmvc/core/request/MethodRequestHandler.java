@@ -1,5 +1,6 @@
 package top.huanyv.webmvc.core.request;
 
+import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.tools.utils.ReflectUtil;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
@@ -17,17 +18,23 @@ import java.util.List;
  */
 public class MethodRequestHandler implements RequestHandler {
 
+    // IOC容器
+    private ApplicationContext context;
+
+    // 控制器类型
     private Class<?> controller;
 
+    // 控制器方法
     private Method method;
 
-    private Object controllerInstance;
-
+    // 请求参数解析器
     private MethodArgumentResolverComposite argumentResolver;
 
+    // 控制器方法返回值解析器
     private MethodReturnResolverComposite returnResolver;
 
-    public MethodRequestHandler(Class<?> controller, Method method) {
+    public MethodRequestHandler(ApplicationContext context, Class<?> controller, Method method) {
+        this.context = context;
         this.controller = controller;
         this.method = method;
     }
@@ -35,12 +42,14 @@ public class MethodRequestHandler implements RequestHandler {
     @Override
     public void handle(HttpRequest req, HttpResponse resp) throws Exception {
         method.setAccessible(true);
-        if (controllerInstance == null) {
-            controllerInstance = ReflectUtil.newInstance(controller);
-        }
 
+        // 获取控制器实例
+        Object controllerInstance = context.getBean(controller);
+
+        // 初始化解析器
         initResolver();
 
+        // 请求参数解析
         List<ClassDesc> methodParameters = ClassDesc.parseMethodParameter(method);
         Object[] args = new Object[methodParameters.size()];
         int index = 0;
@@ -55,15 +64,14 @@ public class MethodRequestHandler implements RequestHandler {
 
         Object returnValue = method.invoke(controllerInstance, args);
 
+        // 控制器方法返回值解析
         if (returnValue instanceof ActionResult) {
             ((ActionResult) returnValue).execute(req, resp);
             return;
         }
-
         if (returnResolver.support(method)) {
             returnResolver.resolve(req, resp, returnValue, method);
         }
-
     }
 
     private void initResolver() {
@@ -89,28 +97,4 @@ public class MethodRequestHandler implements RequestHandler {
         return result;
     }
 
-
-    public Class<?> getController() {
-        return controller;
-    }
-
-    public void setController(Class<?> controller) {
-        this.controller = controller;
-    }
-
-    public Method getMethod() {
-        return method;
-    }
-
-    public void setMethod(Method method) {
-        this.method = method;
-    }
-
-    public Object getControllerInstance() {
-        return controllerInstance;
-    }
-
-    public void setControllerInstance(Object controllerInstance) {
-        this.controllerInstance = controllerInstance;
-    }
 }

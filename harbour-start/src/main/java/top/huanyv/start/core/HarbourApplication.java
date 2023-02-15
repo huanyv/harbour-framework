@@ -55,7 +55,7 @@ public class HarbourApplication {
         ApplicationContext applicationContext = createApplicationContext();
 
         // 打印banner
-        System.out.println(createBanner());
+        System.out.print(createBanner());
 
         if (isWebApplication()) {
             // 启动服务

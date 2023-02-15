@@ -88,13 +88,6 @@ public class RouterServlet extends InitRouterServlet {
 
         // 判断处理器是否存在
         if (requestHandler != null) {
-            // 如果是Controller从容器中获取，多例
-            if (requestHandler instanceof MethodRequestHandler) {
-                MethodRequestHandler methodRequestHandler = (MethodRequestHandler) requestHandler;
-                Object bean = applicationContext.getBean(methodRequestHandler.getController());
-                methodRequestHandler.setControllerInstance(bean);
-            }
-
             // 处理请求
             requestHandler.handle(httpRequest, httpResponse);
         } else {
