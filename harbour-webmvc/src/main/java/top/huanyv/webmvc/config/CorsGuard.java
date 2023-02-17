@@ -2,6 +2,7 @@ package top.huanyv.webmvc.config;
 
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
+import top.huanyv.webmvc.core.request.RequestHandler;
 import top.huanyv.webmvc.guard.NavigationGuard;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class CorsGuard implements NavigationGuard {
 
 
     @Override
-    public boolean beforeEach(HttpRequest req, HttpResponse resp) {
+    public boolean beforeEach(HttpRequest req, HttpResponse resp, RequestHandler handler) {
         resp.setHeader("Access-Control-Allow-Origin", this.allowedOriginPatterns);
         resp.setHeader("Access-Control-Allow-Methods", String.join(", ", this.allowedMethods));
         resp.setHeader("Access-Control-Max-Age", this.maxAge.toString());

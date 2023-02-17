@@ -136,7 +136,7 @@ public abstract class TemplateServlet extends HttpServlet {
         }
     }
 
-    abstract void doRouting(HttpRequest httpRequest, HttpResponse httpResponse) throws Exception;
+    abstract void doRouting(HttpRequest request, HttpResponse response) throws Exception;
 
 
     abstract void doException(HttpRequest req, HttpResponse resp, Exception ex);

@@ -10,6 +10,7 @@ import top.huanyv.webmvc.utils.ClassDesc;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -97,4 +98,16 @@ public class MethodRequestHandler implements RequestHandler {
         return result;
     }
 
+    public Class<?> getController() {
+        return controller;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    @Override
+    public String toString() {
+        return controller.getName() + "#" + method.getName() + "()";
+    }
 }

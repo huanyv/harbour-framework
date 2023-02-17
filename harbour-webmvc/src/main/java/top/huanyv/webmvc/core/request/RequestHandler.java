@@ -7,8 +7,7 @@ import top.huanyv.webmvc.core.HttpResponse;
  * @author admin
  * @date 2022/7/24 16:52
  */
+@FunctionalInterface
 public interface RequestHandler {
-
     void handle(HttpRequest req, HttpResponse resp) throws Exception;
-
 }

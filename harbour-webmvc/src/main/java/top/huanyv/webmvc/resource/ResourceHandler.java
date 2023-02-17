@@ -68,4 +68,8 @@ public class ResourceHandler {
         this.resourceMappingRegistry = resourceMappingRegistry;
     }
 
+    @Override
+    public String toString() {
+        return resourceMappingRegistry.getResourceMappings().toString();
+    }
 }

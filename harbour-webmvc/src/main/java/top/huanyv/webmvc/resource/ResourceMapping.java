@@ -34,7 +34,7 @@ public class ResourceMapping {
 
     @Override
     public String toString() {
-        return "ResourceMapping{" +
+        return "{" +
                 "urlPattern='" + urlPattern + '\'' +
                 ", locations=" + locations +
                 '}';

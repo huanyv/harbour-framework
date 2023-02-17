@@ -13,6 +13,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Guard {
     String[] value();
-    String[] exclude();
+    String[] exclude() default {};
     int order() default 0;
 }
