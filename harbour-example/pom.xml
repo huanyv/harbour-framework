@@ -32,6 +32,11 @@
             <!--</exclusions>-->
         </dependency>
 
+        <!--<dependency>-->
+        <!--    <groupId>top.huanyv</groupId>-->
+        <!--    <artifactId>harbour-start-jetty</artifactId>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>top.huanyv</groupId>
             <artifactId>harbour-start-enjoy</artifactId>

@@ -1,5 +1,6 @@
 package com.book.aspect;
 
+import lombok.extern.slf4j.Slf4j;
 import top.huanyv.bean.aop.AspectAdvice;
 import top.huanyv.bean.aop.JoinPoint;
 import top.huanyv.webmvc.core.HttpRequest;
@@ -14,6 +15,7 @@ import java.util.Date;
  * @author admin
  * @date 2022/8/5 17:19
  */
+@Slf4j
 public class LogAop implements AspectAdvice {
     @Override
     public Object aroundAdvice(JoinPoint point) throws InvocationTargetException, IllegalAccessException {
@@ -23,16 +25,14 @@ public class LogAop implements AspectAdvice {
 
         Object result = point.invoke();
 
-        Date now = new Date();
-        String nowTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(now);
-        System.out.println(nowTime + " -------------- " + "=======Start=======");
-        System.out.println(nowTime + " -------------- " + "URL            : " + request.getUri());
-        System.out.println(nowTime + " -------------- " + "HTTP Method    : " + request.method());
-        System.out.println(nowTime + " -------------- " + "Class Method   : " + point.getTarget().getClass().getName() + "." + point.getMethod().getName());
-        System.out.println(nowTime + " -------------- " + "IP             : " + request.raw().getRemoteAddr());
-        System.out.println(nowTime + " -------------- " + "Request Args   : " + Arrays.toString(args));
-        System.out.println(nowTime + " -------------- " + "Response       : " + result);
-        System.out.println(nowTime + " -------------- " + "========End========");
+        log.info("=======Start=======");
+        log.info("URL            : " + request.getUri());
+        log.info("HTTP Method    : " + request.method());
+        log.info("Class Method   : " + point.getTarget().getClass().getName() + "." + point.getMethod().getName());
+        log.info("IP             : " + request.raw().getRemoteAddr());
+        log.info("Request Args   : " + Arrays.toString(args));
+        log.info("Response       : " + result);
+        log.info("========End========");
 
         return result;
     }
