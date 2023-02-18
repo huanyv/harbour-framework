@@ -52,7 +52,7 @@ public class RouterServlet extends InitRouterServlet {
         navigationGuardChain.handleAfter(request, response);
     }
 
-    public RequestHandler getHandler(HttpRequest request) throws Exception {
+    private RequestHandler getHandler(HttpRequest request) throws Exception {
         RequestMethod requestMethod = RequestMethod.valueOf(request.method().toUpperCase());
         // 非用户定义请求
         if (RequestMethod.OPTIONS.equals(requestMethod)) {
@@ -74,6 +74,8 @@ public class RouterServlet extends InitRouterServlet {
                 return new FunctionRequestHandler((req, resp) ->
                         resp.error(405, "Request method '" + requestMethod.toString() + "' not supported."));
             }
+            // 路径变量
+            request.setPathVariables(requestMapping.parsePathVars(uri));
             return requestHandler;
         }
         // 静态资源
@@ -109,7 +111,7 @@ public class RouterServlet extends InitRouterServlet {
         }
     }
 
-    public NavigationGuardChain getNavigationGuardChain(String uri, RequestHandler handler) {
+    private NavigationGuardChain getNavigationGuardChain(String uri, RequestHandler handler) {
         NavigationGuardChain navigationGuardChain = new NavigationGuardChain(handler);
 
         // 过滤，与url pattern匹配，不可与exclude url匹配

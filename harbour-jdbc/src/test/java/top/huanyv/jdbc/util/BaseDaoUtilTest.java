@@ -1,28 +1,33 @@
 package top.huanyv.jdbc.util;
 
-import top.huanyv.jdbc.annotation.Column;
-import top.huanyv.jdbc.annotation.TableId;
-import top.huanyv.jdbc.annotation.TableName;
+import org.junit.Test;
 import top.huanyv.jdbc.builder.BaseDao;
+import top.huanyv.jdbc.entity.User;
 import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.StringUtil;
 
-import java.lang.reflect.Field;
+import java.awt.print.Book;
+import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
-/**
- * @author huanyv
- * @date 2022/9/1 10:21
- */
-public class BaseDaoUtil {
+import static org.junit.Assert.*;
 
-    /**
-     * 获取 baseDao 的泛型类型 Class
-     *
-     * @param type 接口或类
-     * @return 泛型 Class
-     */
+public class BaseDaoUtilTest {
+
+    @Test
+    public void getType() {
+        Class<?> cls = proxy.class;
+        Class<?> type = getType(cls);
+        System.out.println(type);
+
+        System.out.println("getType(proxy2.class) = " + getType(proxy2.class));
+
+        for (Type genericInterface : proxy2.class.getGenericInterfaces()) {
+            System.out.println("genericInterface = " + genericInterface.getTypeName());
+        }
+    }
+
     public static Class<?> getType(Type type) {
         Assert.notNull(type, "'type' must not be null.");
         if (type instanceof Class) {
@@ -58,45 +63,21 @@ public class BaseDaoUtil {
         return null;
     }
 
-    /**
-     * 获取表id名
-     *
-     * @param clazz clazz对象
-     * @return table id 的字段名
-     */
-    public static String getTableId(Class<?> clazz) {
-        Assert.notNull(clazz);
-        for (Field field : clazz.getDeclaredFields()) {
-            if (field.isAnnotationPresent(TableId.class)) {
-                Column column = field.getAnnotation(Column.class);
-                return column != null ? column.value() : field.getName();
-            }
-        }
-        return "id";
-    }
+}
 
-    /**
-     * 获取表名
-     *
-     * @param clazz 类型class
-     * @return 表名称
-     */
-    public static String getTableName(Class<?> clazz) {
-        Assert.notNull(clazz);
-        TableName tableName = clazz.getAnnotation(TableName.class);
-        if (tableName != null) {
-            return tableName.value();
-        }
-        return StringUtil.firstLetterLower(clazz.getSimpleName());
-    }
 
-    public static Field getIdField(Class<?> cls) throws NoSuchFieldException {
-        Assert.notNull(cls);
-        for (Field field : cls.getDeclaredFields()) {
-            if (field.isAnnotationPresent(TableId.class)) {
-                return field;
-            }
-        }
-        return cls.getDeclaredField("id");
-    }
+class proxy extends DaoImpl implements Serializable {
+
+}
+
+class proxy2 implements Serializable, dao {
+
+}
+
+class DaoImpl implements dao {
+
+}
+
+interface dao extends BaseDao<User> {
+
 }

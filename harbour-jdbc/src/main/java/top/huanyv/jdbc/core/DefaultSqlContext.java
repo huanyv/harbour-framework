@@ -230,6 +230,12 @@ public class DefaultSqlContext implements SqlContext {
         if (type.isInterface()) {
             return ProxyFactory.getImpl(type, new InterfaceDaoProxyHandler());
         }
+        if (type.isEnum()) {
+            throw new IllegalArgumentException("'type' must not be enum.");
+        }
+        if (type.isArray()) {
+            throw new IllegalArgumentException("'type' must not be array.");
+        }
         if (Modifier.isAbstract(type.getModifiers())) {
             throw new IllegalArgumentException("'type' must not be abstract class.");
         }

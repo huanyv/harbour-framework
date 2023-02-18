@@ -22,7 +22,7 @@ import java.util.StringJoiner;
  * @author admin
  * @date 2022/7/23 15:05
  */
-public abstract class AbstractDaoProxyHandler implements InvocationHandler, BaseDao<Object> {
+public abstract class AbstractDaoProxyHandler implements BaseDao<Object> {
 
     private Object proxy;
 

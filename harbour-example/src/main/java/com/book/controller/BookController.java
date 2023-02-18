@@ -18,7 +18,7 @@ import top.huanyv.webmvc.annotation.argument.Path;
 @Component
 @Route("/admin/book")
 @Aop(LogAop.class)
-//@Prototype
+// @Prototype
 @Body
 public class BookController {
 

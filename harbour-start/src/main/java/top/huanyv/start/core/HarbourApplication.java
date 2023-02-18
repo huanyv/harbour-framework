@@ -1,5 +1,7 @@
 package top.huanyv.start.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.config.AppArguments;
@@ -23,6 +25,8 @@ import static top.huanyv.start.config.StartConstants.FUOZU_BANNER;
  * @date 2022/7/6 16:46
  */
 public class HarbourApplication {
+
+    private static final Logger log = LoggerFactory.getLogger(HarbourApplication.class);
 
     /**
      * 主方法类
@@ -63,6 +67,9 @@ public class HarbourApplication {
             // 注册原生的 Servlet
             registerServlet(applicationContext, webServer);
             webServer.start();
+            log.info("Running on http://localhost:{}{}",
+                    appArguments.getInt("server.port", 2333),
+                    appArguments.get("server.contextPath", "/"));
         }
 
         // 启动任务和定时任务

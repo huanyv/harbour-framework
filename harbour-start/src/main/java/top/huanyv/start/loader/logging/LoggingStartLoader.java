@@ -31,7 +31,7 @@ public class LoggingStartLoader implements ApplicationLoader {
     public void load(ApplicationContext applicationContext, AppArguments appArguments) {
         LoggerContext loggerContext = LogbackUtil.getContext();
         if (loggerContext != null) {
-            // log level setting.
+            // 设置日志级别
             String levelConfigName = getLevelConfigName(appArguments);
             if (StringUtil.hasText(levelConfigName)) {
                 String loggerName = StringUtil.removePrefix(levelConfigName, LEVEL_PREFIX);
@@ -39,13 +39,14 @@ public class LoggingStartLoader implements ApplicationLoader {
                 Logger logger = loggerContext.getLogger(loggerName);
                 logger.setLevel(Level.toLevel(levelValue));
             }
-
+            // 日志输出目录
             Logger root = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME);
             if (StringUtil.hasText(this.path)) {
                 LogbackUtil.setAppender(root, new InfoRollingFileAppenderFactory("RollingFileInfo", path, loggerContext));
                 LogbackUtil.setAppender(root, new ErrorRollingFileAppenderFactory("RollingFileError", path, loggerContext));
             }
 
+            // windows日志非彩色
             if (SystemUtil.isWindows() && !SystemUtil.isIntellijIDEA()) {
                 ConsoleAppender<ILoggingEvent> consoleAppender = (ConsoleAppender<ILoggingEvent>) root.getAppender("STDOUT");
                 LogbackUtil.setAppenderEncoderPattern(consoleAppender.getEncoder(), AppenderFactory.DEFAULT_LOG_PATTERN);

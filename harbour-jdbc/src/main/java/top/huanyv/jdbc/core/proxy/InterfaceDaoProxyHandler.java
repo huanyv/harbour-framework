@@ -2,13 +2,14 @@ package top.huanyv.jdbc.core.proxy;
 
 import top.huanyv.jdbc.builder.BaseDao;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
  * @author admin
  * @date 2022/7/23 15:05
  */
-public class InterfaceDaoProxyHandler extends AbstractDaoProxyHandler {
+public class InterfaceDaoProxyHandler extends AbstractDaoProxyHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

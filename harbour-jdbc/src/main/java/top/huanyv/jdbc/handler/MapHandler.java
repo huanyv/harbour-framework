@@ -15,7 +15,7 @@ public class MapHandler implements ResultSetHandler<Map<String, Object>>{
     public Map<String, Object> handle(ResultSet rs) throws SQLException {
         Map<String, Object> result = new HashMap<>();
         ResultSetMetaData metaData = rs.getMetaData();
-        while (rs.next()) {
+        if (rs.next()) {
             for (int i = 1; i <= metaData.getColumnCount(); i++) {
                 String columnName = metaData.getColumnName(i);
                 Object val = rs.getObject(columnName);
