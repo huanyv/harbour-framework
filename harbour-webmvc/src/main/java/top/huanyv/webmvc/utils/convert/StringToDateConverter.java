@@ -1,4 +1,4 @@
-package top.huanyv.webmvc.core.request.type;
+package top.huanyv.webmvc.utils.convert;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import top.huanyv.tools.utils.StringUtil;
@@ -12,21 +12,17 @@ import java.util.Date;
  * @author huanyv
  * @date 2022/11/11 10:08
  */
-public class StringToDateConverter implements TypeConverter<String, Date> {
-
-
-    private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat();
-
+public class StringToDateConverter implements TypeConverter {
     @Override
-    public Date convert(String source, ClassDesc targetClassDesc) {
+    public Object convert(Object source, ClassDesc targetClassDesc) {
         String format = "yyyy-MM-dd";
         JsonFormat dateFormatter = targetClassDesc.getAnnotation(JsonFormat.class);
         if (dateFormatter != null && StringUtil.hasText(dateFormatter.pattern())) {
             format = dateFormatter.pattern();
         }
-        DATE_FORMAT.applyPattern(format);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
         try {
-            return DATE_FORMAT.parse(source);
+            return dateFormat.parse((String) source);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -34,8 +30,7 @@ public class StringToDateConverter implements TypeConverter<String, Date> {
     }
 
     @Override
-    public boolean isType(Class<?> sourceType, Class<?> targetType) {
-        return String.class.equals(sourceType) && Date.class.equals(targetType);
+    public boolean isType(Object source, ClassDesc targetClassDesc) {
+        return source instanceof String && Date.class.equals(targetClassDesc.getType());
     }
-
 }

@@ -1,11 +1,8 @@
 package top.huanyv.webmvc.core.request.method;
 
 import top.huanyv.webmvc.annotation.argument.Cookie;
-import top.huanyv.webmvc.annotation.argument.Path;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
-import top.huanyv.webmvc.core.request.type.TypeConverter;
-import top.huanyv.webmvc.core.request.type.TypeConverterFactory;
 import top.huanyv.webmvc.utils.ClassDesc;
 
 import javax.servlet.ServletException;

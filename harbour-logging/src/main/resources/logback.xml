@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<configuration debug="false"><!--debug=false表示不打印logback的debug信息-->
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+    <!--自定义颜色配置-->
+    <conversionRule conversionWord="levelColor" converterClass="top.huanyv.logging.LevelColor"/>
+    <!--控制台输出日志格式-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %date{yyyy-MM-dd HH:mm:ss.sss} %levelColor(%-5level) [%magenta(%15.15thread)] %cyan(%-35.35class{36}) : %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
