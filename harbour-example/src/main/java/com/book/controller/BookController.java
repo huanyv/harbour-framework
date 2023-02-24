@@ -28,8 +28,8 @@ public class BookController {
     @Get
     public ResponseResult listBook(@Param("bname") String bname, @Param("page") int pageNum, @Param("limit") int pageSize) {
         // 异常处理器测试
-//        Object o = null;
-//        System.out.println(o.toString());
+        // Object o = null;
+        // System.out.println(o.toString());
         Page<Book> bookPage = bookService.listBook(bname, pageNum, pageSize);
         return new ResponseResult(0, "", bookPage.getTotal(), bookPage.getData());
     }

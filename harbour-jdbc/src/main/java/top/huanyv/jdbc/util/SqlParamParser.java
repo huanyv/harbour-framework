@@ -79,38 +79,4 @@ public class SqlParamParser {
         return new SqlAndArgs(sql, args.toArray());
     }
 
-    public static String generateInsert(Class<?> cls) {
-        StringBuilder sql = new StringBuilder("insert into ").append(StringUtil.firstLetterLower(cls.getSimpleName()));
-        // (column1, column2, column3, .....)
-        StringJoiner columns = new StringJoiner(", ", "(", ")");
-        // (?, ?, ?, ......)
-        StringJoiner values = new StringJoiner(", ", "(", ")");
-
-        for (Field field : cls.getDeclaredFields()) {
-            field.setAccessible(true);
-            String fieldName = field.getName();
-            Column column = field.getAnnotation(Column.class);
-            String columnName = column != null ? column.value() : fieldName;
-            columns.add(columnName);
-            values.add("#{" + fieldName + "}");
-        }
-        sql.append(columns).append(" values").append(values);
-        return sql.toString();
-    }
-
-    public static String generateUpdate(Class<?> cls) {
-        StringBuilder sql = new StringBuilder("update ").append(StringUtil.firstLetterLower(cls.getSimpleName())).append(" set ");
-        // column1 = ?, column2 = ?, ......
-        StringJoiner columns = new StringJoiner(", ");
-        for (Field field : cls.getDeclaredFields()) {
-            field.setAccessible(true);
-            String fieldName = field.getName();
-            Column column = field.getAnnotation(Column.class);
-            String columnName = column != null ? column.value() : fieldName;
-            columns.add(columnName + " = #{" + fieldName + "}");
-        }
-        sql.append(columns);
-        return sql.toString();
-    }
-
 }

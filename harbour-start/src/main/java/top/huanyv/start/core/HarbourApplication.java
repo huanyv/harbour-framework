@@ -6,19 +6,20 @@ import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.config.CliArguments;
+import top.huanyv.start.exception.PortInUseException;
 import top.huanyv.start.server.NativeServletRegistry;
 import top.huanyv.start.server.WebServer;
 import top.huanyv.start.server.servlet.Registration;
 import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.ClassUtil;
+import top.huanyv.tools.utils.NetUtil;
 import top.huanyv.tools.utils.ResourceUtil;
 
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import static top.huanyv.start.config.StartConstants.BANNER_FILE_NAME;
-import static top.huanyv.start.config.StartConstants.FUOZU_BANNER;
+import static top.huanyv.start.config.StartConstants.*;
 
 /**
  * @author admin
@@ -59,16 +60,20 @@ public class HarbourApplication {
         ApplicationContext applicationContext = createApplicationContext();
 
         // 打印banner
-        System.out.print(createBanner());
+        System.out.println(createBanner());
 
         if (isWebApplication()) {
-            // 启动服务
+            int port = appArguments.getInt("server.port", DEFAULT_PORT);
+            if (!NetUtil.isAvailablePort(port)) {
+                // 端口被占用
+                throw new PortInUseException("Web server failed to start. Port " + port + " was already in use.");
+            }
             WebServer webServer = applicationContext.getBean(WebServer.class);
             // 注册原生的 Servlet
             registerServlet(applicationContext, webServer);
+            // 启动服务
             webServer.start();
-            log.info("Running on http://localhost:{}{}",
-                    appArguments.getInt("server.port", 2333),
+            log.info("Running on http://localhost:{}{}", port,
                     appArguments.get("server.contextPath", "/"));
         }
 

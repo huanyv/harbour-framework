@@ -27,8 +27,6 @@ public class ArrayParamMethodArgumentResolver implements MethodArgumentResolver{
             return values;
         }
         return typeConverter.convert(values, methodParameterDesc);
-        // TypeConverter typeConverter = TypeConverterFactory.getTypeConverter(String[].class, type);
-        // return typeConverter == null ? null : typeConverter.convert(values, methodParameterDesc);
     }
 
     @Override

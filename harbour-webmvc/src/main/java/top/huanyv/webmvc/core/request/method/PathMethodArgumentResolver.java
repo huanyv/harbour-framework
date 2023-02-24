@@ -25,8 +25,6 @@ public class PathMethodArgumentResolver implements MethodArgumentResolver{
             return value;
         }
         return typeConverter.convert(value, methodParameterDesc);
-        // TypeConverter typeConverter = TypeConverterFactory.getTypeConverter(String.class, type);
-        // return typeConverter == null ? null : typeConverter.convert(value, methodParameterDesc);
     }
 
     @Override

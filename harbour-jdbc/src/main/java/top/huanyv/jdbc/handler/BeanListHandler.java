@@ -14,7 +14,7 @@ import java.util.List;
  * @author huanyv
  * @date 2022/9/3 20:46
  */
-public class BeanListHandler<T> implements ResultSetHandler<List<T>> {
+public class BeanListHandler<T> extends AbstractBeanHandler<List<T>> {
 
     private Class<T> type;
 

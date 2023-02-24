@@ -11,7 +11,7 @@ import java.sql.SQLException;
  * @author huanyv
  * @date 2022/9/3 20:34
  */
-public class BeanHandler<T> implements ResultSetHandler<T> {
+public class BeanHandler<T> extends AbstractBeanHandler<T> {
 
     private Class<T> type;
 

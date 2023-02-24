@@ -8,6 +8,10 @@ public class StartConstants {
 
     public static final String DEFAULT_CONFIG_FILE_NAME = "application.properties";
 
+    public static final int DEFAULT_PORT = 2333;
+
+    public static final String DEFAULT_CONTEXT_PATH = "";
+
     public static final String BANNER_FILE_NAME = "banner.txt";
     public static final String FUOZU_BANNER = "                   _ooOoo_\n" +
                                                 "                  o8888888o\n" +

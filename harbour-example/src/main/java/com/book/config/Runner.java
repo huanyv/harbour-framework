@@ -8,7 +8,7 @@ import top.huanyv.start.core.ApplicationRunner;
  * @author huanyv
  * @date 2022/12/26 15:28
  */
-@Component
+// @Component
 public class Runner implements ApplicationRunner {
     @Override
     public int getOrder() {
