@@ -2,16 +2,16 @@ package top.huanyv.jdbc.core.proxy;
 
 import top.huanyv.jdbc.annotation.*;
 import top.huanyv.jdbc.builder.BaseDao;
-import top.huanyv.jdbc.core.DefaultSqlContext;
+import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.SqlContextFactory;
 import top.huanyv.jdbc.handler.type.SqlTypeHandler;
 import top.huanyv.jdbc.handler.type.SqlTypeHandlerComposite;
 import top.huanyv.jdbc.util.BaseDaoUtil;
 import top.huanyv.tools.utils.Assert;
+import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public abstract class AbstractDaoProxyHandler implements BaseDao<Object> {
             return doUpdate(update.value(), method, args);
         }
         Insert insert = method.getAnnotation(Insert.class);
-        if (insert != null ) {
+        if (insert != null) {
             if (insert.getId()) {
                 return SqlContextFactory.getSqlContext().insert(insert.value(), args);
             } else {
@@ -83,11 +83,11 @@ public abstract class AbstractDaoProxyHandler implements BaseDao<Object> {
         Class<?> beanType = BaseDaoUtil.getType(cls);
         Assert.notNull(beanType, "BaseDao not set <generic>!");
 
-        String tableId = BaseDaoUtil.getTableId(beanType);
+        String tableIdName = BaseDaoUtil.getIdColumnName(beanType);
         String tableName = BaseDaoUtil.getTableName(beanType);
 
         StringBuilder sql = new StringBuilder("select * from ")
-                .append(tableName).append(" where ").append(tableId).append(" = ?");
+                .append(tableName).append(" where ").append(tableIdName).append(" = ?");
         return SqlContextFactory.getSqlContext().selectRow(beanType, sql.toString(), id);
     }
 
@@ -103,19 +103,22 @@ public abstract class AbstractDaoProxyHandler implements BaseDao<Object> {
         // (?, ?, ?, ......)
         StringJoiner values = new StringJoiner(", ", "(", ")");
 
-        String tableId = BaseDaoUtil.getTableId(cls);
+        String tableId = BaseDaoUtil.getIdColumnName(cls);
         try {
             for (Field field : cls.getDeclaredFields()) {
                 field.setAccessible(true);
                 // 获取属性值
                 Object arg = field.get(o);
                 // 非ID
-                if (arg != null && !field.getName().equals(tableId)) {
+                String fieldName = field.getName();
+                if (arg != null && !fieldName.equals(tableId)) {
+                    String columnName = JdbcConfigurer.create().isMapUnderscoreToCamelCase()
+                            ? StringUtil.camelCaseToUnderscore(fieldName) : fieldName;
                     Column column = field.getAnnotation(Column.class);
-                    String columnName = column != null ? column.value() : field.getName();
-                    columns.add(columnName);
-                    values.add("?");
-                    args.add(arg);
+                    columnName = column != null ? column.value() : columnName;
+                    columns.add(columnName); // 列名
+                    values.add("?"); // 占位符
+                    args.add(arg); //参数
                 }
             }
             sql.append(columns).append(" values").append(values);
@@ -127,7 +130,7 @@ public abstract class AbstractDaoProxyHandler implements BaseDao<Object> {
             idField.setAccessible(true);
             idField.set(o, id);
             return id != -1 ? 1 : -1;
-        } catch (IllegalAccessException | NoSuchFieldException e) {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
         return 0;
@@ -141,21 +144,25 @@ public abstract class AbstractDaoProxyHandler implements BaseDao<Object> {
             // 获取表名
             String tableName = BaseDaoUtil.getTableName(cls);
             // 获取ID列名
-            String tableIdName = BaseDaoUtil.getTableId(cls);
+            String tableIdName = BaseDaoUtil.getIdColumnName(cls);
             // sql语句
             StringBuilder sql = new StringBuilder("update ").append(tableName).append(" set ");
             // column1 = ?, column2 = ?, ......
             StringJoiner columns = new StringJoiner(", ");
             // 参数
             List<Object> args = new ArrayList<>();
-            Object tableId = null;
+            Object tableIdVal = null;
             for (Field field : cls.getDeclaredFields()) {
                 field.setAccessible(true);
-                Object val = field.get(o);
+                String fieldName = field.getName();
+                String columnName = JdbcConfigurer.create().isMapUnderscoreToCamelCase()
+                        ? StringUtil.camelCaseToUnderscore(fieldName) : fieldName;
                 Column column = field.getAnnotation(Column.class);
-                String columnName = column != null ? column.value() : field.getName();
+                columnName = column != null ? column.value() : columnName;
+
+                Object val = field.get(o);
                 if (columnName.equals(tableIdName)) {
-                    tableId = val;
+                    tableIdVal = val;
                 }
                 if (!columnName.equals(tableIdName) && val != null) {
                     columns.add(columnName + " = ?");
@@ -165,8 +172,8 @@ public abstract class AbstractDaoProxyHandler implements BaseDao<Object> {
             sql.append(columns);
             // 指定id
             sql.append(" where ").append(tableIdName).append(" = ?");
-            Assert.notNull(tableId, "table id not set!");
-            args.add(tableId);
+            Assert.notNull(tableIdVal, "table id not set!");
+            args.add(tableIdVal);
 
             SqlContext sqlContext = SqlContextFactory.getSqlContext();
             return sqlContext.update(sql.toString(), args.toArray());
@@ -183,7 +190,7 @@ public abstract class AbstractDaoProxyHandler implements BaseDao<Object> {
         Class<?> type = BaseDaoUtil.getType(cls);
         Assert.notNull(type, "BaseDao not set <generic>!");
 
-        String tableId = BaseDaoUtil.getTableId(type);
+        String tableId = BaseDaoUtil.getIdColumnName(type);
         String tableName = BaseDaoUtil.getTableName(type);
         StringBuilder sql = new StringBuilder("delete from ").append(tableName)
                 .append(" where ").append(tableId).append(" = ?");

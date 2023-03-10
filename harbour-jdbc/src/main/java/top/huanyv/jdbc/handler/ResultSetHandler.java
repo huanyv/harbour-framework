@@ -9,6 +9,7 @@ import java.sql.SQLException;
  * @author huanyv
  * @date 2022/9/3 20:26
  */
+@FunctionalInterface
 public interface ResultSetHandler<T> {
 
     T handle(ResultSet rs) throws SQLException;

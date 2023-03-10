@@ -1,6 +1,7 @@
 package top.huanyv.jdbc.core;
 
 import top.huanyv.jdbc.core.pagination.Page;
+import top.huanyv.jdbc.handler.ResultSetHandler;
 import top.huanyv.jdbc.util.SqlHandler;
 
 import java.sql.Connection;
@@ -13,6 +14,11 @@ import java.util.Map;
  * @date 2023/1/11 14:44
  */
 public class SqlContextManager implements SqlContext {
+
+    @Override
+    public <T> T select(String sql, ResultSetHandler<T> handler, Object... args) {
+        return SqlContextFactory.getSqlContext().select(sql, handler, args);
+    }
 
     @Override
     public <T> T selectRow(Class<T> type, String sql, Object... args) {

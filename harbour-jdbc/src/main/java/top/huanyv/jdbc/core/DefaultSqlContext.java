@@ -24,44 +24,52 @@ import java.util.Map;
  */
 public class DefaultSqlContext implements SqlContext {
 
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     private Connection connection;
 
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private final JdbcHelper jdbcHelper = new JdbcHelper();
 
     // 是否自动关闭连接，事务开启后会 false
     private boolean isAutoClose = true;
 
+    private final JdbcConfigurer config;
+
     public DefaultSqlContext() {
         // 配置类
-        JdbcConfigurer config = JdbcConfigurer.create();
+        this.config = JdbcConfigurer.create();
         this.dataSource = config.getDataSource();
+    }
+
+    @Override
+    public <T> T select(String sql, ResultSetHandler<T> handler, Object... args) {
+        return sqlExecute(sql, args, (connection, sqlAndArgs) ->
+                jdbcHelper.query(connection, sqlAndArgs.getSql(), handler, sqlAndArgs.getArgs()));
     }
 
     public <T> T selectRow(Class<T> type, String sql, Object... args) {
         return sqlExecute(sql, args, (connection, sqlAndArgs) ->
-                jdbcTemplate.query(connection, sqlAndArgs.getSql(), new BeanHandler<>(type), sqlAndArgs.getArgs()));
+                jdbcHelper.query(connection, sqlAndArgs.getSql(), new BeanHandler<>(type, config.isMapUnderscoreToCamelCase()), sqlAndArgs.getArgs()));
     }
 
     public <T> List<T> selectList(Class<T> type, String sql, Object... args) {
         return sqlExecute(sql, args, (connection, sqlAndArgs) ->
-                jdbcTemplate.query(connection, sqlAndArgs.getSql(), new BeanListHandler<>(type), sqlAndArgs.getArgs()));
+                jdbcHelper.query(connection, sqlAndArgs.getSql(), new BeanListHandler<>(type, config.isMapUnderscoreToCamelCase()), sqlAndArgs.getArgs()));
     }
 
     public Map<String, Object> selectMap(String sql, Object... args) {
         return sqlExecute(sql, args, (connection, sqlAndArgs) ->
-                jdbcTemplate.query(connection, sqlAndArgs.getSql(), new MapHandler(), sqlAndArgs.getArgs()));
+                jdbcHelper.query(connection, sqlAndArgs.getSql(), new MapHandler(), sqlAndArgs.getArgs()));
     }
 
     public List<Map<String, Object>> selectListMap(String sql, Object... args) {
         return sqlExecute(sql, args, (connection, sqlAndArgs) ->
-                jdbcTemplate.query(connection, sqlAndArgs.getSql(), new MapListHandler(), sqlAndArgs.getArgs()));
+                jdbcHelper.query(connection, sqlAndArgs.getSql(), new MapListHandler(), sqlAndArgs.getArgs()));
     }
 
     public Object selectValue(String sql, Object... args) {
         return sqlExecute(sql, args, (connection, sqlAndArgs) ->
-                jdbcTemplate.query(connection, sqlAndArgs.getSql(), new ScalarHandler<>(), sqlAndArgs.getArgs()));
+                jdbcHelper.query(connection, sqlAndArgs.getSql(), new ScalarHandler<>(), sqlAndArgs.getArgs()));
     }
 
     public <T> List<T> selectPage(Page<T> page, Class<T> type, String sql, Object... args) {
@@ -104,7 +112,7 @@ public class DefaultSqlContext implements SqlContext {
      */
     public int update(String sql, Object... args) {
         return sqlExecute(sql, args, (connection, sqlAndArgs) ->
-                jdbcTemplate.update(connection, sqlAndArgs.getSql(), sqlAndArgs.getArgs()), 0);
+                jdbcHelper.update(connection, sqlAndArgs.getSql(), sqlAndArgs.getArgs()), 0);
     }
 
     /**
@@ -116,7 +124,7 @@ public class DefaultSqlContext implements SqlContext {
      */
     public long insert(String sql, Object... args) {
         return sqlExecute(sql, args, (connection, sqlAndArgs) ->
-                jdbcTemplate.insert(connection, sqlAndArgs.getSql(), sqlAndArgs.getArgs()), -1L);
+                jdbcHelper.insert(connection, sqlAndArgs.getSql(), sqlAndArgs.getArgs()), -1L);
     }
 
     public <T> T sqlExecute(String sql, Object[] args, SqlHandler<T> handler) {

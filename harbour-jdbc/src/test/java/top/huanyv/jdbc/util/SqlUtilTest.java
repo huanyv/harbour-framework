@@ -19,6 +19,12 @@ public class SqlUtilTest {
         String sql = SqlUtil.generateUpdate(SysUser.class, false);
         System.out.println("sql = " + sql);
     }
+
+    @Test
+    public void generateUpdateCode() {
+        String code = SqlUtil.generateUpdateDynamicCode(SysUser.class, "user",true);
+        System.out.println(code);
+    }
 }
 
 

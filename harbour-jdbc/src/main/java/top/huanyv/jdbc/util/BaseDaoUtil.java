@@ -4,6 +4,7 @@ import top.huanyv.jdbc.annotation.Column;
 import top.huanyv.jdbc.annotation.TableId;
 import top.huanyv.jdbc.annotation.TableName;
 import top.huanyv.jdbc.builder.BaseDao;
+import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.tools.utils.Assert;
 import top.huanyv.tools.utils.StringUtil;
 
@@ -18,7 +19,7 @@ import java.lang.reflect.Type;
 public class BaseDaoUtil {
 
     /**
-     * 获取 baseDao 的泛型类型 Class
+     * 获取 BaseDao 的泛型类型 Class
      *
      * @param type 接口或类
      * @return 泛型 Class
@@ -59,20 +60,18 @@ public class BaseDaoUtil {
     }
 
     /**
-     * 获取表id名
+     * 获取表id字段名称
      *
-     * @param clazz clazz对象
+     * @param cls Class对象
      * @return table id 的字段名
      */
-    public static String getTableId(Class<?> clazz) {
-        Assert.notNull(clazz);
-        for (Field field : clazz.getDeclaredFields()) {
-            if (field.isAnnotationPresent(TableId.class)) {
-                Column column = field.getAnnotation(Column.class);
-                return column != null ? column.value() : field.getName();
-            }
-        }
-        return "id";
+    public static String getIdColumnName(Class<?> cls) {
+        Assert.notNull(cls);
+        Field field = getIdField(cls);
+        String columnName = JdbcConfigurer.create().isMapUnderscoreToCamelCase()
+                ? StringUtil.camelCaseToUnderscore(field.getName()) : field.getName();
+        Column column = field.getAnnotation(Column.class);
+        return column != null ? column.value() : columnName;
     }
 
     /**
@@ -90,13 +89,17 @@ public class BaseDaoUtil {
         return StringUtil.firstLetterLower(clazz.getSimpleName());
     }
 
-    public static Field getIdField(Class<?> cls) throws NoSuchFieldException {
+    public static Field getIdField(Class<?> cls) {
         Assert.notNull(cls);
         for (Field field : cls.getDeclaredFields()) {
             if (field.isAnnotationPresent(TableId.class)) {
                 return field;
             }
         }
-        return cls.getDeclaredField("id");
+        try {
+            return cls.getDeclaredField("id");
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException("No id found, please use the '@TableId' annotation on the corresponding id field.");
+        }
     }
 }

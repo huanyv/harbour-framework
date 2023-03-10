@@ -20,6 +20,9 @@ import javax.sql.DataSource;
  */
 public class JdbcConfigurer {
 
+    /**
+     * 数据源
+     */
     private DataSource dataSource;
 
     private String driverClassName;
@@ -28,17 +31,18 @@ public class JdbcConfigurer {
     private String password;
 
     /**
+     * 下线线转驼峰映射
+     */
+    private boolean mapUnderscoreToCamelCase;
+
+    /**
      * 单例
      */
-    private static JdbcConfigurer configuration;
-
     private JdbcConfigurer() {
     }
-
     private static class SingletonHolder {
         private static final JdbcConfigurer CONFIGURATION = new JdbcConfigurer();
     }
-
     public static JdbcConfigurer create() {
         return SingletonHolder.CONFIGURATION;
     }
@@ -77,12 +81,12 @@ public class JdbcConfigurer {
 
     public DataSource getDataSource() {
         if (dataSource == null) {
-            SimpleDataSource simpleDataSource = new SimpleDataSource();
-            simpleDataSource.setDriverClassName(this.driverClassName);
-            simpleDataSource.setUrl(this.url);
-            simpleDataSource.setUsername(this.username);
-            simpleDataSource.setPassword(this.password);
-            dataSource = simpleDataSource;
+            SimpleDataSource ds = new SimpleDataSource();
+            ds.setDriverClassName(this.driverClassName);
+            ds.setUrl(this.url);
+            ds.setUsername(this.username);
+            ds.setPassword(this.password);
+            dataSource = ds;
         }
         return dataSource;
     }
@@ -114,6 +118,19 @@ public class JdbcConfigurer {
             throw new IllegalArgumentException("The '" + databaseProductName + "' database type cannot be handled.");
         }
         return handler.handle(sql, page.getPageNum(), page.getPageSize());
+    }
+
+    /**
+     * 是否开启了下划线转驼峰映射，数据库字段为下划线格式，对象属性为驼峰格式
+     *
+     * @return boolean
+     */
+    public boolean isMapUnderscoreToCamelCase() {
+        return mapUnderscoreToCamelCase;
+    }
+
+    public void setMapUnderscoreToCamelCase(boolean mapUnderscoreToCamelCase) {
+        this.mapUnderscoreToCamelCase = mapUnderscoreToCamelCase;
     }
 
     public void setDataSource(DataSource dataSource) {

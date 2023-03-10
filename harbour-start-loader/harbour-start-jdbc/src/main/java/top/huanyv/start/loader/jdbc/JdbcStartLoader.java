@@ -30,6 +30,11 @@ public class JdbcStartLoader implements ApplicationLoader {
 
     private String scanPackages;
 
+    /**
+     * 是否开启下线线转驼峰
+     */
+    private boolean u2c = true;
+
     @Override
     public void load(ApplicationContext applicationContext, AppArguments appArguments) {
         Assert.notNull(driverClassName, "database 'driverClassName' property not configured!");
@@ -43,9 +48,11 @@ public class JdbcStartLoader implements ApplicationLoader {
         simpleDataSource.setUrl(url);
         simpleDataSource.setDriverClassName(driverClassName);
         simpleDataSource.setUsername(username);
-        simpleDataSource.setPassword(password);
+        simpleDataSource.setPassword(password == null ? "" : password);
 
         jdbcConfigurer.setDataSource(simpleDataSource);
+        // 是否开启下线线转驼峰
+        jdbcConfigurer.setMapUnderscoreToCamelCase(u2c);
     }
 
     @Bean
@@ -56,7 +63,6 @@ public class JdbcStartLoader implements ApplicationLoader {
     }
 
     public static class ConditionOnMissingBean implements Condition {
-
         @Override
         public boolean matchers(ApplicationContext applicationContext, AppArguments appArguments) {
             return BeanFactoryUtil.isNotPresent(applicationContext, DaoScanner.class);

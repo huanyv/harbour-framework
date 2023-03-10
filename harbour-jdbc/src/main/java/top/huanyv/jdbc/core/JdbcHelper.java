@@ -3,23 +3,35 @@ package top.huanyv.jdbc.core;
 import top.huanyv.jdbc.handler.ResultSetHandler;
 import top.huanyv.tools.utils.Assert;
 
+import javax.sql.DataSource;
 import java.sql.*;
 
 /**
- * jdbc模板
+ * jdbc查询
  *
  * @author huanyv
  * @date 2022/9/3 20:25
  */
-public class JdbcTemplate {
+public class JdbcHelper {
 
-    public JdbcTemplate() {
+    private DataSource dataSource;
+
+    public JdbcHelper() {
     }
 
-    public <T> T query(Connection connection, String sql, ResultSetHandler<T> resultSetHandler, Object... args) throws SQLException {
+    public JdbcHelper(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public <T> T query(String sql, ResultSetHandler<T> handler, Object... args) throws SQLException {
+        Assert.notNull(dataSource, "'dataSource' must not be null.");
+        return query(dataSource.getConnection(), sql, handler, args);
+    }
+
+    public <T> T query(Connection connection, String sql, ResultSetHandler<T> handler, Object... args) throws SQLException {
         Assert.notNull(connection, "'connection' must not be null.");
         Assert.notNull(sql, "'sql' must not be null.");
-        Assert.notNull(resultSetHandler, "'resultSetHandler' must not be null.");
+        Assert.notNull(handler, "'handler' must not be null.");
         ResultSet resultSet = null;
         PreparedStatement ps = null;
         try {
@@ -30,7 +42,7 @@ public class JdbcTemplate {
                 }
             }
             resultSet = ps.executeQuery();
-            return resultSetHandler.handle(resultSet);
+            return handler.handle(resultSet);
         } finally {
             if (resultSet != null) {
                 resultSet.close();
@@ -39,6 +51,11 @@ public class JdbcTemplate {
                 ps.close();
             }
         }
+    }
+
+    public int update(String sql, Object... args) throws SQLException {
+        Assert.notNull(dataSource, "'dataSource' must not be null.");
+        return update(dataSource.getConnection(), sql, args);
     }
 
     /**
@@ -65,6 +82,11 @@ public class JdbcTemplate {
                 ps.close();
             }
         }
+    }
+
+    public long insert(String sql, Object... args) throws SQLException {
+        Assert.notNull(dataSource, "'dataSource' must not be null.");
+        return insert(dataSource.getConnection(), sql, args);
     }
 
     /**
@@ -100,6 +122,18 @@ public class JdbcTemplate {
             }
         }
         return -1;
+    }
+
+    public static void close(AutoCloseable... closeables) {
+        for (AutoCloseable closeable : closeables) {
+            if (closeable != null) {
+                try {
+                    closeable.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

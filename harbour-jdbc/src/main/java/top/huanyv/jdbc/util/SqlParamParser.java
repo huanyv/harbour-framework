@@ -3,6 +3,7 @@ package top.huanyv.jdbc.util;
 import top.huanyv.jdbc.annotation.Column;
 import top.huanyv.tools.utils.BeanUtil;
 import top.huanyv.tools.utils.ClassUtil;
+import top.huanyv.tools.utils.ReflectUtil;
 import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Field;
@@ -53,19 +54,20 @@ public class SqlParamParser {
                 // 获取属性名与值
                 for (Field field : cls.getDeclaredFields()) {
                     field.setAccessible(true);
-                    String name = field.getName();
-                    Object o = null;
+                    String fieldName = field.getName();
+                    Object val = null;
                     try {
-                        o = field.get(param);
+                        val = field.get(param);
                     } catch (IllegalAccessException e) {
-                        o = null;
+                        val = null;
                     }
-                    sqlParamMapping.put(name, o);
+                    sqlParamMapping.put(fieldName, val);
                 }
             }
         }
+
+        String sql = placeholderSql.replaceAll(PLACEHOLDER_REGEX, "?");
         List<Object> args = new ArrayList<>();
-        String sql = "";
         Matcher matcher = PATTERN.matcher(placeholderSql);
         while (matcher.find()) {
             String group = matcher.group();
@@ -73,8 +75,6 @@ public class SqlParamParser {
             Object val = sqlParamMapping.get(paramName);
             args.add(val);
         }
-
-        sql = placeholderSql.replaceAll(PLACEHOLDER_REGEX, "?");
 
         return new SqlAndArgs(sql, args.toArray());
     }

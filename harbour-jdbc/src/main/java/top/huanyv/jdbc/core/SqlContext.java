@@ -1,6 +1,7 @@
 package top.huanyv.jdbc.core;
 
 import top.huanyv.jdbc.core.pagination.Page;
+import top.huanyv.jdbc.handler.ResultSetHandler;
 import top.huanyv.jdbc.util.SqlHandler;
 
 import java.sql.Connection;
@@ -13,6 +14,8 @@ import java.util.Map;
  * @date 2022/9/1 15:19
  */
 public interface SqlContext {
+
+    <T> T select(String sql, ResultSetHandler<T> handler, Object... args);
 
     /**
      * 查询第一行的数据，返回type类型对象
