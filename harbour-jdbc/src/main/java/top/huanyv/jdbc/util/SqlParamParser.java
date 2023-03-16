@@ -52,7 +52,7 @@ public class SqlParamParser {
             // 是否JavaBean
             if (BeanUtil.isJavaBean(cls)) {
                 // 获取属性名与值
-                for (Field field : cls.getDeclaredFields()) {
+                for (Field field : ReflectUtil.getAllDeclaredFields(cls)) {
                     field.setAccessible(true);
                     String fieldName = field.getName();
                     Object val = null;

@@ -6,6 +6,7 @@ import top.huanyv.jdbc.annotation.TableName;
 import top.huanyv.jdbc.builder.BaseDao;
 import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.tools.utils.Assert;
+import top.huanyv.tools.utils.ReflectUtil;
 import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Field;
@@ -91,13 +92,13 @@ public class BaseDaoUtil {
 
     public static Field getIdField(Class<?> cls) {
         Assert.notNull(cls);
-        for (Field field : cls.getDeclaredFields()) {
+        for (Field field : ReflectUtil.getAllDeclaredFields(cls)) {
             if (field.isAnnotationPresent(TableId.class)) {
                 return field;
             }
         }
         try {
-            return cls.getDeclaredField("id");
+            return ReflectUtil.getAllDeclaredField(cls, "id");
         } catch (NoSuchFieldException e) {
             throw new IllegalArgumentException("No id found, please use the '@TableId' annotation on the corresponding id field.");
         }

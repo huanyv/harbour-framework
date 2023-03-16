@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  *
  * <pre>{@code
  *   SqlBuilder sb = new SqlBuilder("update t_book")
- *       .join(", ", "set", j -> j
+ *       .join("set", ", ", j -> j
  *           .append(StringUtil.hasText(book.getBname()), "bname = ?", book.getBname())
  *           .append("author = ?", book.getAuthor())
  *           .append("pubcomp = ?", book.getPubcomp())
@@ -92,18 +92,18 @@ public class SqlBuilder implements Serializable {
     }
 
     public SqlBuilder join(String separator, Consumer<SqlJoiner> joiner) {
-        return join(separator, "", "", joiner);
+        return join("", "", separator, joiner);
     }
 
-    public SqlBuilder join(String separator, String prefix, Consumer<SqlJoiner> joiner) {
-        return join(separator, prefix, "", joiner);
+    public SqlBuilder join(String prefix, String separator, Consumer<SqlJoiner> joiner) {
+        return join(prefix, separator, "", joiner);
     }
 
     /**
      * 以指定前缀、后缀、分割符号连接SQL字符串，适合 update 操作
      * <pre>{@code
      *   SqlBuilder sb = new SqlBuilder("update t_book")
-     *       .join(", ", "set", j -> j
+     *       .join("set", ", ", j -> j
      *           .append(StringUtil.hasText(book.getBname()), "bname = ?", book.getBname())
      *           .append("author = ?", book.getAuthor())
      *           .append("pubcomp = ?", book.getPubcomp())
@@ -115,13 +115,13 @@ public class SqlBuilder implements Serializable {
      * }
      * </pre>
      *
-     * @param separator 分隔符
      * @param prefix    前缀
      * @param suffix    后缀
+     * @param separator 分隔符
      * @param j         连接器
      * @return {@link SqlBuilder}
      */
-    public SqlBuilder join(String separator, String prefix, String suffix, Consumer<SqlJoiner> j) {
+    public SqlBuilder join(String prefix, String suffix, String separator, Consumer<SqlJoiner> j) {
         SqlJoiner joiner = new SqlJoiner(separator);
         j.accept(joiner);
         if (!joiner.isEmpty()) {

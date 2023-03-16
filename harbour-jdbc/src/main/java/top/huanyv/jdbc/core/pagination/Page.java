@@ -53,7 +53,7 @@ public class Page<T> {
             pageNum = 1;
             prePage = 1;
             nextPage = pageNum + 1;
-        } else if (pageNum > pages) {
+        } else if (pageNum > pages && pages > 0) {
             pageNum = pages;
             nextPage = pages;
             prePage = pageNum - 1;

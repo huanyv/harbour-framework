@@ -1,6 +1,7 @@
 package top.huanyv.jdbc.handler;
 
 import top.huanyv.jdbc.annotation.Column;
+import top.huanyv.tools.utils.ReflectUtil;
 import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Field;
@@ -21,7 +22,7 @@ public abstract class AbstractBeanHandler<T> implements ResultSetHandler<T> {
      * @param mapUnderscoreToCamelCase 强调映射到驼峰式大小写
      */
     public void populateBean(ResultSet rs, Object t, boolean mapUnderscoreToCamelCase) {
-        for (Field field : t.getClass().getDeclaredFields()) {
+        for (Field field : ReflectUtil.getAllDeclaredFields(t.getClass())) {
             field.setAccessible(true);
             try {
                 String columnName = field.getName();
@@ -35,7 +36,7 @@ public abstract class AbstractBeanHandler<T> implements ResultSetHandler<T> {
                 if (val != null) {
                     field.set(t, val);
                 }
-            } catch (SQLException | IllegalAccessException e) {
+            } catch (SQLException | IllegalAccessException ignored) {
             }
         }
     }

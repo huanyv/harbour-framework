@@ -1,6 +1,7 @@
 package top.huanyv.jdbc.util;
 
 import top.huanyv.jdbc.annotation.Column;
+import top.huanyv.tools.utils.ReflectUtil;
 import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Field;
@@ -23,7 +24,7 @@ public class SqlUtil {
         // (?, ?, ?, ......)
         StringJoiner values = new StringJoiner(", ", "(", ")");
 
-        for (Field field : cls.getDeclaredFields()) {
+        for (Field field : ReflectUtil.getAllDeclaredFields(cls)) {
             field.setAccessible(true);
             String fieldName = field.getName();
             // 驼峰转下划线
@@ -46,7 +47,7 @@ public class SqlUtil {
         StringBuilder sql = new StringBuilder("update ").append(StringUtil.firstLetterLower(cls.getSimpleName())).append(" set ");
         // column1 = ?, column2 = ?, ......
         StringJoiner columns = new StringJoiner(", ");
-        for (Field field : cls.getDeclaredFields()) {
+        for (Field field : ReflectUtil.getAllDeclaredFields(cls)) {
             field.setAccessible(true);
             String fieldName = field.getName();
             // 驼峰转下划线
@@ -67,7 +68,7 @@ public class SqlUtil {
         StringBuilder sb = new StringBuilder("SqlBuilder sb = new SqlBuilder(\"update ");
         sb.append(StringUtil.firstLetterLower(cls.getSimpleName())).append(" set").append("\")");
         sb.append("\n\t.join(\", \", join -> join");
-        for (Field field : cls.getDeclaredFields()) {
+        for (Field field : ReflectUtil.getAllDeclaredFields(cls)) {
             String fieldName = field.getName();
             if (String.class.equals(field.getType())) {
                 sb.append("\n\t\t.append(StringUtil.hasText(").append(oName);

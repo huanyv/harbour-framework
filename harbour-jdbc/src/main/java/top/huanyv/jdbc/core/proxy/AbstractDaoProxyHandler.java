@@ -9,6 +9,7 @@ import top.huanyv.jdbc.handler.type.SqlTypeHandler;
 import top.huanyv.jdbc.handler.type.SqlTypeHandlerComposite;
 import top.huanyv.jdbc.util.BaseDaoUtil;
 import top.huanyv.tools.utils.Assert;
+import top.huanyv.tools.utils.ReflectUtil;
 import top.huanyv.tools.utils.StringUtil;
 
 import java.lang.reflect.Field;
@@ -105,7 +106,7 @@ public abstract class AbstractDaoProxyHandler implements BaseDao<Object> {
 
         String tableId = BaseDaoUtil.getIdColumnName(cls);
         try {
-            for (Field field : cls.getDeclaredFields()) {
+            for (Field field : ReflectUtil.getAllDeclaredFields(cls)) {
                 field.setAccessible(true);
                 // 获取属性值
                 Object arg = field.get(o);
@@ -124,11 +125,15 @@ public abstract class AbstractDaoProxyHandler implements BaseDao<Object> {
             sql.append(columns).append(" values").append(values);
 
             SqlContext sqlContext = SqlContextFactory.getSqlContext();
-            int id = (int) sqlContext.insert(sql.toString(), args.toArray());
+            long id = sqlContext.insert(sql.toString(), args.toArray());
             // 设置ID
             Field idField = BaseDaoUtil.getIdField(cls);
             idField.setAccessible(true);
-            idField.set(o, id);
+            if (long.class.equals(idField.getType()) || Long.class.equals(idField.getType())) {
+                idField.set(o, id);
+            } else if(int.class.equals(idField.getType()) || Integer.class.equals(idField.getType())) {
+                idField.set(o, (int) id);
+            }
             return id != -1 ? 1 : -1;
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -152,7 +157,7 @@ public abstract class AbstractDaoProxyHandler implements BaseDao<Object> {
             // 参数
             List<Object> args = new ArrayList<>();
             Object tableIdVal = null;
-            for (Field field : cls.getDeclaredFields()) {
+            for (Field field : ReflectUtil.getAllDeclaredFields(cls)) {
                 field.setAccessible(true);
                 String fieldName = field.getName();
                 String columnName = JdbcConfigurer.create().isMapUnderscoreToCamelCase()
