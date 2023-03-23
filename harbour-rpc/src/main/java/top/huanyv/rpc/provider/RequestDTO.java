@@ -46,8 +46,7 @@ public class RequestDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "RequestDTO{" +
-                "serviceName='" + serviceName + '\'' +
+        return "{serviceName='" + serviceName + '\'' +
                 ", methodName='" + methodName + '\'' +
                 ", methodParameterTypes=" + Arrays.toString(methodParameterTypes) +
                 ", methodArgs=" + Arrays.toString(methodArgs) +

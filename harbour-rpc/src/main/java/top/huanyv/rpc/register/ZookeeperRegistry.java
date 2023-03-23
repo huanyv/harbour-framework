@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ZookeeperRegistry extends AbstractRegistry {
 
@@ -23,7 +24,7 @@ public class ZookeeperRegistry extends AbstractRegistry {
     private static final int SLEEP_TIME_MS = 1000;
     private static final int MAX_RETRIES = 2;
 
-    private final Map<String, List<String>> serviceProviderMap = new HashMap<>();
+    private final Map<String, List<String>> serviceProviderMap = new ConcurrentHashMap<>();
     private CuratorFramework curatorFramework;
 
     public ZookeeperRegistry() {
@@ -58,9 +59,8 @@ public class ZookeeperRegistry extends AbstractRegistry {
 
             curatorFramework.create().withMode(CreateMode.EPHEMERAL)
                     .forPath(provider);
-            logger.info("provider:{} is registered to {}", providerAddress, servicePath);
+            logger.info("Provider:[{}] is registered to {}", servicePath, providerAddress);
         } catch (Exception e) {
-
             logger.error(e.getMessage(), e);
         }
     }

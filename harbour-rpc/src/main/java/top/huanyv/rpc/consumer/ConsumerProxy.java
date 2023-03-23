@@ -1,6 +1,8 @@
 package top.huanyv.rpc.consumer;
 
 import top.huanyv.rpc.load.Balance;
+import top.huanyv.rpc.provider.NettyProviderServer;
+import top.huanyv.rpc.provider.ProviderServer;
 import top.huanyv.rpc.provider.RequestDTO;
 import top.huanyv.rpc.register.Registry;
 import top.huanyv.rpc.register.ZookeeperRegistry;
@@ -14,6 +16,8 @@ import java.lang.reflect.Proxy;
 public class ConsumerProxy {
 
     private static final Registry registry = RpcConfigurer.create().getRegistry();
+
+    private static final ConsumerServer server = new NettyConsumerServer();
 
     public static <T> T create(final Class<T> interfaceClass) {
         return create(interfaceClass, Balance.ROUND);
@@ -47,7 +51,7 @@ public class ConsumerProxy {
                         String serviceAddress = registry.discover(finalServiceName, loadBalance);
 
                         // 远程调用
-                        return new NettyConsumerServer().execute(serviceAddress, requestDTO);
+                        return server.execute(serviceAddress, requestDTO);
                     }
                 });
         return (T) o;
