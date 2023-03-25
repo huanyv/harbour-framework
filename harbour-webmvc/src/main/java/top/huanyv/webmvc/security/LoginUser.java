@@ -12,6 +12,8 @@ import java.util.Collections;
  */
 public class LoginUser implements User {
 
+    private String id;
+
     private String username;
 
     private String password;
@@ -20,24 +22,32 @@ public class LoginUser implements User {
 
     private String[] permissions;
 
-    public LoginUser(String username, String password, boolean status) {
+    public LoginUser(String id, String username, String password, boolean status) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.status = status;
     }
 
-    public LoginUser(String username, String password, boolean status, String... permissions) {
+    public LoginUser(String id, String username, String password, boolean status, String... permissions) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.status = status;
         this.permissions = permissions;
     }
 
-    public LoginUser(String username, String password, boolean status, Collection<String> permissions) {
+    public LoginUser(String id, String username, String password, boolean status, Collection<String> permissions) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.status = status;
         this.permissions = permissions.toArray(new String[0]);
+    }
+
+    @Override
+    public String getId() {
+        return this.id;
     }
 
     @Override

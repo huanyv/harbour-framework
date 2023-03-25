@@ -5,6 +5,7 @@ import top.huanyv.webmvc.enums.RequestMethod;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class RequestMapping {
 
@@ -38,20 +39,14 @@ public class RequestMapping {
     }
 
     /**
-     * 判断请求方式是否有具体处理器
-     * @param method 请求方式
-     * @return 是true/否false
-     */
-    public boolean containsHandler(RequestMethod method) {
-        return handlerMapping.containsKey(method);
-    }
-
-    /**
      * 模糊比较地址
      * @param url 精确地址
      * @return 是否相同
      */
     public boolean compareUrl(String url) {
+        if (Objects.equals(this.urlPattern, url)) {
+            return true;
+        }
         // 模糊地址
         String[] arr1 = this.urlPattern.split(WebMvcGlobalConfig.PATH_SEPARATOR);
         // 精确地址

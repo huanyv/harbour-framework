@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 public interface User extends Serializable {
 
+    String getId();
     /**
      * 获得用户名
      *
@@ -25,7 +26,7 @@ public interface User extends Serializable {
     String getPassword();
 
     /**
-     * 是状态
+     * 是否可用
      *
      * @return boolean
      */

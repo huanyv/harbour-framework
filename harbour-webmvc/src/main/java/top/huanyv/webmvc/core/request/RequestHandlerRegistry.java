@@ -8,6 +8,9 @@ import top.huanyv.webmvc.enums.RequestMethod;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * 注册器
@@ -51,24 +54,20 @@ public class RequestHandlerRegistry {
         Assert.isTrue(StringUtil.hasText(urlPattern), "'urlPattern' must not be empty.");
         Assert.notNull(requestMethod, "'requestMethod' must not be null.");
         Assert.notNull(requestHandler, "'requestHandler' must not be null.");
-        RequestMapping mapping = getRequestMapping(urlPattern);
-        mapping.addHandlerMapping(requestMethod, requestHandler);
-    }
-
-
-    /**
-     * 注册容器中是否有该地址
-     *
-     * @param urlPattern 地址，一般是精确的
-     * @return true/false
-     */
-    public boolean containsRequest(String urlPattern) {
+        // 精确匹配
         for (RequestMapping mapping : this.registry) {
-            if (mapping.compareUrl(urlPattern)) {
-                return true;
+            if (urlPattern.equals(mapping.getUrlPattern())) {
+                // 匹配到了
+                mapping.addHandlerMapping(requestMethod, requestHandler);
+                return;
             }
         }
-        return false;
+        // 匹配不到，创建一个
+        RequestMapping mapping = new RequestMapping();
+        mapping.setUrlPattern(urlPattern);
+        mapping.setHandler(new ConcurrentHashMap<>());
+        mapping.addHandlerMapping(requestMethod, requestHandler);
+        this.registry.add(mapping);
     }
 
     /**
@@ -78,17 +77,19 @@ public class RequestHandlerRegistry {
      * @return RequestMapping
      */
     public RequestMapping getRequestMapping(String urlPattern) {
+        // 优先精确匹配URL地址
+        for (RequestMapping mapping : this.registry) {
+            if (urlPattern.equals(mapping.getUrlPattern())) {
+                // 精确匹配到了
+                return mapping;
+            }
+        }
         for (RequestMapping mapping : this.registry) {
             if (mapping.compareUrl(urlPattern)) {
                 return mapping;
             }
         }
-        // 不存在，新建一个,添加进去
-        RequestMapping mapping = new RequestMapping();
-        mapping.setUrlPattern(urlPattern);
-        mapping.setHandler(new HashMap<>());
-        this.registry.add(mapping);
-        return mapping;
+        return null;
     }
 
 }

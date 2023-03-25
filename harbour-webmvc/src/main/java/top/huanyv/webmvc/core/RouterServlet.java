@@ -64,9 +64,9 @@ public class RouterServlet extends InitRouterServlet {
         }
         // 用户请求处理
         String uri = request.getUri();
-        if (this.requestRegistry.containsRequest(uri)) {
-            // 获取请求映射
-            RequestMapping requestMapping = this.requestRegistry.getRequestMapping(uri);
+        // 获取请求映射
+        RequestMapping requestMapping = this.requestRegistry.getRequestMapping(uri);
+        if (requestMapping != null) {
             // 获取请求处理器
             RequestHandler requestHandler = requestMapping.getRequestHandler(requestMethod);
             if (requestHandler == null) {
@@ -78,7 +78,7 @@ public class RouterServlet extends InitRouterServlet {
             request.setPathVariables(requestMapping.parsePathVars(uri));
             return requestHandler;
         }
-        // 静态资源
+        // 请求映射不存在，静态资源处理
         return new ResourceRequestHandler(this.resourceHandler);
     }
 
@@ -86,7 +86,8 @@ public class RouterServlet extends InitRouterServlet {
     void doException(HttpRequest req, HttpResponse resp, Exception ex) {
         Method exceptionMethod = null;
         exceptionHandler = (ExceptionHandler) AopUtil.getTargetObject(exceptionHandler);
-        point:for (Method method : exceptionHandler.getClass().getDeclaredMethods()) {
+        point:
+        for (Method method : exceptionHandler.getClass().getDeclaredMethods()) {
             ExceptionPoint exceptionPoint = method.getAnnotation(ExceptionPoint.class);
             if (exceptionPoint != null) {
                 for (Class<? extends Throwable> cls : exceptionPoint.value()) {
