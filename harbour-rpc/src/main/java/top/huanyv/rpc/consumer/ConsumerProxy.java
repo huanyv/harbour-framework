@@ -27,6 +27,10 @@ public class ConsumerProxy {
         return create(interfaceClass, loadBalance, null);
     }
 
+    public static <T> T create(Class<T> interfaceClass, Balance loadBalance, String serviceName) {
+        return create(interfaceClass, loadBalance, serviceName, 3);
+    }
+
     /**
      * 创建消费者使用的代理类
      *
@@ -35,7 +39,7 @@ public class ConsumerProxy {
      * @param serviceName    服务名称
      * @return {@link T}
      */
-    public static <T> T create(Class<T> interfaceClass, Balance loadBalance, String serviceName) {
+    public static <T> T create(Class<T> interfaceClass, Balance loadBalance, String serviceName, int timeout) {
         Object o = Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[]{interfaceClass}
                 , new InvocationHandler() {
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -51,7 +55,7 @@ public class ConsumerProxy {
                         String serviceAddress = registry.discover(finalServiceName, loadBalance);
 
                         // 远程调用
-                        return server.execute(serviceAddress, requestDTO);
+                        return server.execute(serviceAddress, requestDTO, timeout);
                     }
                 });
         return (T) o;

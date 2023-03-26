@@ -6,9 +6,11 @@ import top.huanyv.webmvc.core.request.MethodRequestHandler;
 import top.huanyv.webmvc.core.request.RequestHandler;
 import top.huanyv.webmvc.guard.NavigationGuard;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 鉴权器
@@ -33,6 +35,7 @@ public abstract class Authorizer implements NavigationGuard {
                         return true;
                     }
                 }
+                noPermissionHandle(req, resp);
                 return false;
             }
         }
@@ -41,4 +44,10 @@ public abstract class Authorizer implements NavigationGuard {
 
     public abstract List<String> getPermissions(HttpRequest req, HttpResponse resp, RequestHandler handler);
 
+    public void noPermissionHandle(HttpRequest req, HttpResponse resp) throws IOException {
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", 403);
+        map.put("msg", "没有权限");
+        resp.json(map);
+    }
 }

@@ -18,5 +18,17 @@ public @interface Reference {
      */
     String value() default "";
 
+    /**
+     * 负载均衡策略
+     *
+     * @return {@link Balance}
+     */
     Balance loadBalance() default Balance.RANDOM;
+
+    /**
+     * 超时时间，单位秒
+     *
+     * @return int
+     */
+    int timeout() default 3;
 }

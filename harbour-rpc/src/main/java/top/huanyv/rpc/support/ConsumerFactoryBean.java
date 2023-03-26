@@ -16,6 +16,8 @@ public class ConsumerFactoryBean implements FactoryBean {
 
     private String serviceName;
 
+    private int timeout;
+
     public ConsumerFactoryBean(Class<?> interfaceClass) {
         this.interfaceClass = interfaceClass;
     }
@@ -31,9 +33,16 @@ public class ConsumerFactoryBean implements FactoryBean {
         this.serviceName = serviceName;
     }
 
+    public ConsumerFactoryBean(Class<?> interfaceClass, Balance loadBalance, String serviceName, Integer timeout) {
+        this.interfaceClass = interfaceClass;
+        this.loadBalance = loadBalance;
+        this.serviceName = serviceName;
+        this.timeout = timeout;
+    }
+
     @Override
     public Object getObject() throws Exception {
-        return ConsumerProxy.create(interfaceClass, loadBalance, serviceName);
+        return ConsumerProxy.create(interfaceClass, loadBalance, serviceName, timeout);
     }
 
     @Override

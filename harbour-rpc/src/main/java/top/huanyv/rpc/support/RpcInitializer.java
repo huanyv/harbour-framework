@@ -44,7 +44,7 @@ public class RpcInitializer implements BeanDefinitionRegistryPostProcessor, Appl
                     Class<?> type = field.getType();
                     String beanName = StringUtil.firstLetterLower(type.getSimpleName());
                     BeanDefinition beanDefinition = new ClassBeanDefinition(ConsumerFactoryBean.class,
-                            type, reference.loadBalance(), reference.value());
+                            type, reference.loadBalance(), reference.value(), reference.timeout());
                     registry.register(beanName, beanDefinition);
                 }
             }
