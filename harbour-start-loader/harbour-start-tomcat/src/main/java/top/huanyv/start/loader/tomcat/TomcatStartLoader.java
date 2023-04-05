@@ -10,6 +10,7 @@ import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.start.loader.Condition;
 import top.huanyv.start.server.WebServer;
 import top.huanyv.start.tomcat.TomcatServer;
+import top.huanyv.tools.utils.FileUtil;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;
 import top.huanyv.webmvc.core.RouterServlet;
 
@@ -28,12 +29,12 @@ public class TomcatStartLoader implements ApplicationLoader {
     /**
      * 最大上传文件
      */
-    private long maxFileSize = 1048576;
+    private String maxFileSize = "1MB";
 
     /**
      * 最大请求文件
      */
-    private long maxRequestSize = 10485760;
+    private String maxRequestSize = "10MB";
 
     /**
      * 端口号
@@ -73,8 +74,8 @@ public class TomcatStartLoader implements ApplicationLoader {
         ServletRegistration.Dynamic servletRegistration = tomcatServer.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, servlet);
         servletRegistration.addMapping("/");
         servletRegistration.setLoadOnStartup(1);
-        servletRegistration.setMultipartConfig(new MultipartConfigElement("", maxFileSize, maxRequestSize, 0));
-
+        servletRegistration.setMultipartConfig(new MultipartConfigElement("",
+                FileUtil.parseSize(maxFileSize), FileUtil.parseSize(maxRequestSize), 0));
         return tomcatServer;
     }
 

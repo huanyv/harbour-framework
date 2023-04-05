@@ -5,6 +5,7 @@ import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.config.CliArguments;
 import top.huanyv.start.core.HarbourApplication;
 import top.huanyv.start.web.servlet.ServletContextRegistry;
+import top.huanyv.tools.utils.FileUtil;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;
 import top.huanyv.webmvc.core.RouterServlet;
 
@@ -32,9 +33,12 @@ public abstract class HarbourApplicationInitializer implements WebStartupInitial
         RouterServlet routerServlet = new RouterServlet(applicationContext);
         ServletRegistration.Dynamic router = ctx.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, routerServlet);
         router.setLoadOnStartup(1);
-        router.setMultipartConfig(new MultipartConfigElement("",
-                appArguments.getLong("server.maxFileSize", 1048576L),
-                appArguments.getLong("server.maxRequestSize", 10485760L), 0));
+        // 文件上传配置，默认最大单文件大小1MB，最大请求大小10MB
+        long maxFileSize = FileUtil.parseSize(appArguments.get("server.maxFileSize", "1MB"));
+        long maxRequestSize = FileUtil.parseSize(appArguments.get("server.maxRequestSize", "10MB"));
+        System.out.println("maxFileSize = " + maxFileSize);
+        System.out.println("maxRequestSize = " + maxRequestSize);
+        router.setMultipartConfig(new MultipartConfigElement("", maxFileSize, maxRequestSize, 0));
         router.addMapping("/");
 
         // 注册原生的 Servlet

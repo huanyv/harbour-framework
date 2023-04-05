@@ -9,7 +9,7 @@ import top.huanyv.jdbc.util.SqlParamParser;
  */
 public class GenerateSql {
     public static void main(String[] args) {
-        String sql = SqlParamParser.generateInsert(Book.class);
-        System.out.println(sql);
+        // String sql = SqlParamParser.generateInsert(Book.class);
+        // System.out.println(sql);
     }
 }
