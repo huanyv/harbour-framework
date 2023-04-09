@@ -14,6 +14,10 @@ public class MDPasswordDigester implements PasswordDigester {
 
     private final String algorithm;
 
+    public MDPasswordDigester() {
+        this("MD5");
+    }
+
     public MDPasswordDigester(String algorithm) {
         this.algorithm = algorithm;
     }

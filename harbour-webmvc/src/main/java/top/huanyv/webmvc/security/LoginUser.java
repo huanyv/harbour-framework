@@ -1,8 +1,6 @@
 package top.huanyv.webmvc.security;
 
-import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * 用户认证后的主体类
@@ -23,10 +21,7 @@ public class LoginUser implements User {
     private String[] permissions;
 
     public LoginUser(String id, String username, String password, boolean status) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.status = status;
+        this(id, username, password, status, new String[0]);
     }
 
     public LoginUser(String id, String username, String password, boolean status, String... permissions) {
@@ -38,11 +33,7 @@ public class LoginUser implements User {
     }
 
     public LoginUser(String id, String username, String password, boolean status, Collection<String> permissions) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.status = status;
-        this.permissions = permissions.toArray(new String[0]);
+        this(id, username, password, status, permissions.toArray(new String[0]));
     }
 
     @Override

@@ -7,7 +7,9 @@ import top.huanyv.webmvc.core.request.RequestHandler;
 import top.huanyv.webmvc.guard.NavigationGuard;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,23 +20,25 @@ import java.util.Map;
  * @author huanyv
  * @date 2023/3/23 20:31
  */
-public abstract class Authorizer implements NavigationGuard {
+public class Authorizer implements NavigationGuard {
 
     @Override
     public boolean beforeEach(HttpRequest req, HttpResponse resp, RequestHandler handler) throws Exception {
         if (handler instanceof MethodRequestHandler) {
-            MethodRequestHandler requestHandler = (MethodRequestHandler) handler;
+            MethodRequestHandler methodHandler = (MethodRequestHandler) handler;
             // 获取控制器方法
-            Method method = requestHandler.getMethod();
+            Method method = methodHandler.getMethod();
             // 是否用了权限注解
             HasPermission hasPermission = method.getAnnotation(HasPermission.class);
             if (hasPermission != null) {
+                // 获取当前登录用户权限列表
                 List<String> permissions = getPermissions(req, resp, handler);
                 for (String permission : hasPermission.value()) {
                     if (permissions.contains(permission)) {
                         return true;
                     }
                 }
+                // 没有权限处理
                 noPermissionHandle(req, resp);
                 return false;
             }
@@ -42,7 +46,11 @@ public abstract class Authorizer implements NavigationGuard {
         return true;
     }
 
-    public abstract List<String> getPermissions(HttpRequest req, HttpResponse resp, RequestHandler handler);
+    public List<String> getPermissions(HttpRequest req, HttpResponse resp, RequestHandler handler) {
+        StorageStrategy strategy = SubjectHolder.getStrategy();
+        User subject = strategy.getSubject();
+        return Arrays.asList(subject.getPermissions());
+    }
 
     public void noPermissionHandle(HttpRequest req, HttpResponse resp) throws IOException {
         Map<String, Object> map = new HashMap<>();

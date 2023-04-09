@@ -12,7 +12,7 @@ public class AuthenticatorTest {
         String username = "admin";
         String password = "123456";
 
-        Authenticator authenticator = new Authenticator(user, new MDPasswordDigester("MD5"));
+        Authenticator authenticator = new Authenticator(user, new MDPasswordDigester());
 
         boolean authenticate = authenticator.authenticate(username, password);
 
