@@ -10,10 +10,8 @@ import top.huanyv.bean.test.ioc.dao.UserDao;
  */
 @Configuration
 public class Config {
-
     @Bean
     private MapperFactoryBean mapperFactoryBean() {
         return new MapperFactoryBean(UserDao.class);
     }
-
 }

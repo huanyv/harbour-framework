@@ -6,7 +6,9 @@ import top.huanyv.tools.utils.Assert;
  * @author huanyv
  * @date 2023/1/9 17:21
  */
-public class PageHolder {
+public final class PageHolder {
+    private PageHolder() {
+    }
 
     private static final ThreadLocal<Page> pageThreadLocal = new ThreadLocal<>();
 

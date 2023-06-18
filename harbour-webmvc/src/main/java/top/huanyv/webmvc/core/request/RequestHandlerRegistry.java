@@ -6,11 +6,8 @@ import top.huanyv.webmvc.core.action.ActionResult;
 import top.huanyv.webmvc.enums.RequestMethod;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * 注册器
@@ -35,7 +32,7 @@ public class RequestHandlerRegistry {
     /**
      * 注册容器，所有的请求都会注册到这个容器中
      */
-    private List<RequestMapping> registry = new ArrayList<>();
+    private final List<RequestMapping> mappings = new ArrayList<>();
 
 
     public void register(String urlPattern, ActionResult result) {
@@ -55,7 +52,7 @@ public class RequestHandlerRegistry {
         Assert.notNull(requestMethod, "'requestMethod' must not be null.");
         Assert.notNull(requestHandler, "'requestHandler' must not be null.");
         // 精确匹配
-        for (RequestMapping mapping : this.registry) {
+        for (RequestMapping mapping : this.mappings) {
             if (urlPattern.equals(mapping.getUrlPattern())) {
                 // 匹配到了
                 mapping.addHandlerMapping(requestMethod, requestHandler);
@@ -65,9 +62,8 @@ public class RequestHandlerRegistry {
         // 匹配不到，创建一个
         RequestMapping mapping = new RequestMapping();
         mapping.setUrlPattern(urlPattern);
-        mapping.setHandler(new ConcurrentHashMap<>());
         mapping.addHandlerMapping(requestMethod, requestHandler);
-        this.registry.add(mapping);
+        this.mappings.add(mapping);
     }
 
     /**
@@ -78,18 +74,22 @@ public class RequestHandlerRegistry {
      */
     public RequestMapping getRequestMapping(String urlPattern) {
         // 优先精确匹配URL地址
-        for (RequestMapping mapping : this.registry) {
+        for (RequestMapping mapping : this.mappings) {
             if (urlPattern.equals(mapping.getUrlPattern())) {
                 // 精确匹配到了
                 return mapping;
             }
         }
-        for (RequestMapping mapping : this.registry) {
+        for (RequestMapping mapping : this.mappings) {
             if (mapping.compareUrl(urlPattern)) {
                 return mapping;
             }
         }
         return null;
+    }
+
+    public List<RequestMapping> getMappings() {
+        return Collections.unmodifiableList(this.mappings);
     }
 
 }

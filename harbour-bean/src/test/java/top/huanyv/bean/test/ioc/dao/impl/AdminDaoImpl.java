@@ -12,8 +12,6 @@ import top.huanyv.bean.test.ioc.dao.UserDao;
 @Component("adminDao")
 public class AdminDaoImpl implements UserDao {
 
-    @Inject
-    private UserDaoImpl userDao;
 
     @Override
     public User getUserById(Integer id) {

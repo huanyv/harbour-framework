@@ -15,7 +15,7 @@ import java.io.InputStream;
  */
 public class ResourceRequestHandler implements RequestHandler {
 
-    private ResourceHandler resourceHandler;
+    private final ResourceHandler resourceHandler;
 
     public ResourceRequestHandler(ResourceHandler resourceHandler) {
         this.resourceHandler = resourceHandler;
@@ -29,6 +29,7 @@ public class ResourceRequestHandler implements RequestHandler {
             resp.contentType(mimeType);
             ServletOutputStream outputStream = resp.getOutputStream();
             IoUtil.copy(inputStream, outputStream);
+            IoUtil.close(inputStream, outputStream);
         } else {
             // 静态资源不存在
             resp.error(404, "Resources not found.");

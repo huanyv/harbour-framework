@@ -17,7 +17,10 @@ import java.lang.reflect.Type;
  * @author huanyv
  * @date 2022/9/1 10:21
  */
-public class BaseDaoUtil {
+public final class BaseDaoUtil {
+
+    private BaseDaoUtil() {
+    }
 
     /**
      * 获取 BaseDao 的泛型类型 Class

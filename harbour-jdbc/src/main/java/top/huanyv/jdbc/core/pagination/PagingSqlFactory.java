@@ -8,7 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author huanyv
  * @date 2023/2/1 17:23
  */
-public class PagingSqlFactory {
+public final class PagingSqlFactory {
+
+    private PagingSqlFactory() {
+    }
 
     private final static Map<String, PagingSqlHandler> handlers = new ConcurrentHashMap<>();
 

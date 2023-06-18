@@ -10,7 +10,10 @@ import java.util.*;
  * @author admin
  * @date 2022/7/28 14:50
  */
-public class BeanFactoryUtil {
+public final class BeanFactoryUtil {
+
+    private BeanFactoryUtil() {
+    }
 
     public static Map<String, Object> getBeanMap(ApplicationContext applicationContext) {
         Map<String, Object> beanMap = new HashMap<>();

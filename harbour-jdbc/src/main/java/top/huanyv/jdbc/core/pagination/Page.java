@@ -1,11 +1,14 @@
 package top.huanyv.jdbc.core.pagination;
 
+import top.huanyv.tools.annotation.JavaBean;
+
 import java.util.List;
 
 /**
  * @author admin
  * @date 2022/8/1 16:28
  */
+@JavaBean(false)
 public class Page<T> {
     private int pageNum; // 当前页码
     private int pageSize; // 每页数据条数

@@ -11,7 +11,10 @@ import java.util.StringJoiner;
  * @author huanyv
  * @date 2023/2/24 16:26
  */
-public class SqlUtil {
+public final class SqlUtil {
+
+    private SqlUtil() {
+    }
 
     public static String generateInsert(Class<?> cls) {
         return generateInsert(cls, true);

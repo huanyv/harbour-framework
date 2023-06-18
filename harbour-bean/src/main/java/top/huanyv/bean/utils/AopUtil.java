@@ -11,7 +11,10 @@ import java.lang.reflect.Proxy;
  * @author huanyv
  * @date 2022/8/7 16:40
  */
-public class AopUtil {
+public final class AopUtil {
+
+    private AopUtil() {
+    }
 
     public static Class<?> getTargetClass(Object proxy) {
         return getTargetObject(proxy).getClass();

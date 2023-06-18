@@ -3,9 +3,11 @@ package top.huanyv.webmvc.core.request;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;
 import top.huanyv.webmvc.enums.RequestMethod;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestMapping {
 
@@ -27,7 +29,7 @@ public class RequestMapping {
      *     DELETE: handler4
      * }
      */
-    private Map<RequestMethod, RequestHandler> handlerMapping;
+    private final Map<RequestMethod, RequestHandler> handlerMapping = new ConcurrentHashMap<>();
 
     /**
      * 通过请求方法，获取具体的处理器，如果不存在返回null
@@ -70,11 +72,9 @@ public class RequestMapping {
      *
      * @param method  方法
      * @param handler 处理程序
-     * @return {@link RequestMapping}
      */
-    public RequestMapping addHandlerMapping(RequestMethod method, RequestHandler handler) {
+    public void addHandlerMapping(RequestMethod method, RequestHandler handler) {
         this.handlerMapping.put(method, handler);
-        return this;
     }
 
     /**
@@ -106,8 +106,8 @@ public class RequestMapping {
         this.urlPattern = urlPattern;
     }
 
-    public void setHandler(Map<RequestMethod, RequestHandler> handler) {
-        this.handlerMapping = handler;
+    public Map<RequestMethod, RequestHandler> getHandlerMapping() {
+        return Collections.unmodifiableMap(this.handlerMapping);
     }
 
     @Override

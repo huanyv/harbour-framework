@@ -139,7 +139,7 @@ public class HarbourApplication {
      */
     public String createBanner() {
         // 获取banner
-        String banner = ResourceUtil.readStr(BANNER_FILE_NAME, FUOZU_BANNER);
+        String banner = ResourceUtil.readStr(BANNER_FILE_NAME, DEFAULT_BANNER);
         return "\n" + banner + "\n";
     }
 

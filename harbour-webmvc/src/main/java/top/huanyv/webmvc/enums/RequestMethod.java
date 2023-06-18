@@ -7,7 +7,7 @@ public enum RequestMethod {
     DELETE("DELETE"),
     OPTIONS("OPTIONS"),
     HEAD("HEAD"),
-    TRACE("TRACE");;
+    TRACE("TRACE");
 
     private String method;
 
