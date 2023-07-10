@@ -1,0 +1,144 @@
+<div class="layuimini-container layuimini-page-anim">
+
+    <div class="layuimini-main">
+        <!--信息搜索-->
+        <div class="layui-row">
+            <div class="layui-card">
+                <div class="layui-card-header">搜索信息</div>
+                <div class="layui-card-body">
+                    <form class="layui-form layui-form-pane">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">路由地址：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="url" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button type="button" class="layui-btn "
+                                        lay-submit lay-filter="data-search-btn">
+                                    <i class="layui-icon layui-icon-search"></i>搜索
+                                </button>
+                                <button type="reset" class="layui-btn layui-btn-primary"
+                                        lay-submit>
+                                    <i class="layui-icon layui-icon-refresh"></i>重置
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- 表格-->
+        <div class="layui-row">
+            <table id="dataTable" lay-filter="dataTable"></table>
+        </div>
+    </div>
+</div>
+
+<!--添加与修改窗口表单-->
+<div id="beanInfoWindow" style="display: none;padding: 50px">
+    <div class="layui-card">
+        <div class="layui-card-header">路由地址：</div>
+        <div class="layui-card-body" id="urlPattern"></div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header">方法：</div>
+        <div class="layui-card-body" id="method"></div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header">请求参数：</div>
+        <div class="layui-card-body" id="req"></div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header">响应参数：</div>
+        <div class="layui-card-body" id="resp"></div>
+    </div>
+</div>
+
+<!--表格行工具-->
+<script type="text/html" id="barDemo">
+    <button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="info">
+        <i class="layui-icon layui-icon-read"></i>查看信息
+    </button>
+</script>
+
+<!--项目的上下文根路径-->
+<span id="ctxPath" style="display: none">#(ctxPath)</span>
+
+<script>
+    layui.use(['layer', 'table', 'laydate', 'form'], function () {
+        var table = layui.table;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var form = layui.form;
+
+        var baseUrl = $("#ctxPath").text();
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#pubdate' //指定元素
+            , type: 'date'
+        });
+
+        //表格渲染
+        table.render({
+            elem: '#dataTable'
+            , url: `${baseUrl}/admin/monitor/route` // 数据接口
+            , page: true // 开启分页
+            , cols: [[
+                {field: 'urlPattern', title: '路由地址', width: 300},
+                {field: 'routeMethod', title: '方法', width: 100},
+                {field: 'routeType', title: '类型', width: 150, align: "center"},
+                {field: 'routeArgs', title: '参数', width: 200, hide: "true"},
+                {field: 'routeResp', title: '响应', width: 300, align: "center", templet: d => d.routeResp.substring(d.routeResp.lastIndexOf('.') + 1)},
+                {fixed: 'right', title: '操作', minWidth: 120, align: 'center', toolbar: '#barDemo'}
+            ]]
+        });
+
+
+        // 信息搜索
+        form.on("submit(data-search-btn)", function (data) {
+            table.reload('dataTable', {
+                where: data.field
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        })
+
+        // 工具条事件
+        // 注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('tool(dataTable)', function (obj) {
+            var data = obj.data; // 获得当前行数据
+            switch (obj.event) {
+                case 'info':
+                    openBeanInfoWindow(data);
+                    break;
+            }
+        });
+
+        function openBeanInfoWindow(data) {
+            windownIndex = layer.open({
+                type: 1,
+                title: '信息',
+                content: $('#beanInfoWindow'),
+                area: ['500px', '600px'],
+                btn:["<i class='layui-icon layui-icon-close'></i>关闭"],
+                zIndex: 1,
+                success: function (layero, index) {
+                    console.log(data)
+                    $('#urlPattern').text(data.urlPattern)
+                    $('#method').text(data.routeMethod)
+                    $('#resp').text(data.routeResp)
+                    $('#req').text("")
+                    for (let i = 0; i < data.routeArgs.length; i++) {
+                        $('#req').append(data.routeArgs[i]).append("<br />")
+                    }
+                }
+            });
+        }
+
+
+    })
+</script>

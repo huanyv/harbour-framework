@@ -1,0 +1,159 @@
+<div class="layuimini-container layuimini-page-anim">
+
+    <div class="layuimini-main">
+        <!--信息搜索-->
+        <div class="layui-row">
+            <div class="layui-card">
+                <div class="layui-card-header">搜索信息</div>
+                <div class="layui-card-body">
+                    <form class="layui-form layui-form-pane">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">bean名称：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="beanName" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">bean类型：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="beanClass" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button type="button" class="layui-btn "
+                                        lay-submit lay-filter="data-search-btn">
+                                    <i class="layui-icon layui-icon-search"></i>搜索
+                                </button>
+                                <button type="reset" class="layui-btn layui-btn-primary"
+                                        lay-submit>
+                                    <i class="layui-icon layui-icon-refresh"></i>重置
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- 表格-->
+        <div class="layui-row">
+            <table id="dataTable" lay-filter="dataTable"></table>
+        </div>
+    </div>
+</div>
+
+<!--添加与修改窗口表单-->
+<div id="beanInfoWindow" style="display: none;padding: 50px">
+    <div class="layui-card">
+        <div class="layui-card-header">超类：</div>
+        <div class="layui-card-body" id="superclass">
+
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header">接口：</div>
+        <div class="layui-card-body" id="interfaces"></div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header">属性：</div>
+        <div class="layui-card-body" id="fields"></div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header">方法：</div>
+        <div class="layui-card-body" id="methods"></div>
+    </div>
+</div>
+
+<!--表格行工具-->
+<script type="text/html" id="barDemo">
+    <button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="info">
+        <i class="layui-icon layui-icon-read"></i>查看信息
+    </button>
+</script>
+
+<!--项目的上下文根路径-->
+<span id="ctxPath" style="display: none">#(ctxPath)</span>
+
+<script>
+    layui.use(['layer', 'table', 'laydate', 'form'], function () {
+        var table = layui.table;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var form = layui.form;
+
+        var baseUrl = $("#ctxPath").text();
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#pubdate' //指定元素
+            , type: 'date'
+        });
+
+        //表格渲染
+        table.render({
+            elem: '#dataTable'
+            // ,height: 550
+            , url: baseUrl + '/admin/monitor/beans' // 数据接口
+            , page: true // 开启分页
+            // ,toolbar: '#toolbarDemo'
+            , cols: [[
+                {field: 'beanName', title: 'Bean名称', width: 200},
+                {field: 'beanClass', title: 'Bean类型', width: 400},
+                {field: 'beanType', title: 'Bean定义', width: 200},
+                {field: 'interfaces', title: '接口列表', width: 200, hide: "true"},
+                {field: 'singleton', title: '是否单例', width: 100, align: "center", templet: data => data.singleton ? "是" : "否"},
+                {field: 'lazy', title: '是否懒加载', width: 100, align: "center", templet: data => data.lazy ? "是" : "否"},
+                {field: 'aop', title: '是否被切面', align: "center", width: 100, templet: data => data.aop ? '是' : '否'},
+                {fixed: 'right', title: '操作', minWidth: 120, align: 'center', toolbar: '#barDemo'} //这里的toolbar值是模板元素的选择器
+            ]]
+        });
+
+
+        // 信息搜索
+        form.on("submit(data-search-btn)", function (data) {
+            table.reload('dataTable', {
+                where: data.field
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        })
+
+        // 工具条事件
+        // 注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('tool(dataTable)', function (obj) {
+            var data = obj.data; // 获得当前行数据
+            switch (obj.event) {
+                case 'info':
+                    openBeanInfoWindow(data);
+                    break;
+            }
+        });
+
+        function openBeanInfoWindow(data) {
+            windownIndex = layer.open({
+                type: 1,
+                title: '信息',
+                content: $('#beanInfoWindow'),
+                area: ['400px', '600px'],
+                btn:["<i class='layui-icon layui-icon-close'></i>关闭"],
+                zIndex: 1,
+                success: function (layero, index) {
+                    console.log(data)
+                    $('#interfaces').text(data.interfaces)
+                    $('#superclass').text(data.superclass)
+                    $('#fields').text("")
+                    for (let i = 0; i < data.fields.length; i++) {
+                        $('#fields').append(data.fields[i]).append("<br />")
+                    }
+                    $('#methods').text("")
+                    for (let i = 0; i < data.methods.length; i++) {
+                        $('#methods').append(data.methods[i]).append("<br />")
+                    }
+                }
+            });
+        }
+
+
+    })
+</script>

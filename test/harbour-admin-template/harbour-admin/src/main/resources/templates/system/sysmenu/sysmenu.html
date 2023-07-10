@@ -1,0 +1,324 @@
+<link rel="stylesheet" href="#(ctxPath)/static/layui/js/lay-module/dtree/dtree.css">
+<link rel="stylesheet" href="#(ctxPath)/static/layui/js/lay-module/dtree/font/dtreefont.css">
+<style>
+    .layui-btn:not(.layui-btn-lg ):not(.layui-btn-sm):not(.layui-btn-xs) {
+        height: 34px;
+        line-height: 34px;
+        padding: 0 8px;
+    }
+</style>
+<body>
+<!--主体-->
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+        <div>
+            <div class="layui-btn-group">
+                <button class="layui-btn" id="btn-expand">
+                    <i class="layui-icon layui-icon-triangle-d"></i>全部展开
+                </button>
+                <button class="layui-btn" id="btn-fold">
+                    <i class="layui-icon layui-icon-triangle-r"></i>全部折叠
+                </button>
+                <button class="layui-btn layui-btn-normal" lay-event="add" id="addMenu">
+                    <i class="layui-icon layui-icon-add-circle-fine"></i>添加
+                </button>
+            </div>
+            <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
+        </div>
+    </div>
+</div>
+<!-- 行操作 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">
+        <i class="layui-icon layui-icon-edit"></i>编辑
+    </a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">
+        <i class="layui-icon layui-icon-delete"></i>删除
+    </a>
+</script>
+
+<!--添加与修改窗口表单-->
+<div id="addAndUpdateWindow" style="display: none;padding: 30px">
+    <form id="addAndUpdateForm" class="layui-form layui-form-pane" lay-filter="addAndUpdateForm" style="width: 90%">
+        <input type="hidden" id="menuId" name="menuId">
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="menuName">菜单名称：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="menuName" id="menuName" class="layui-input"
+                       lay-verify="required" autocomplete="off">
+            </div>
+            <label class="layui-form-label" for="parentId">父级菜单：</label>
+            <div class="layui-input-inline">
+                <ul id="parentMenuSelect" class="dtree" data-id="0" ></ul>
+                <input type="hidden" name="parentId" id="parentId" class="layui-input"
+                       lay-verify="required" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="perms">权限标识：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="perms" id="perms" class="layui-input"
+                       lay-verify="required" autocomplete="off">
+            </div>
+            <label class="layui-form-label" for="component">路由路径：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="component" id="component" class="layui-input" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="icon">图标：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="icon" id="icon" lay-filter="icon" class="hide">
+            </div>
+            <label class="layui-form-label" for="orderNum">排序序号：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="orderNum" id="orderNum" class="layui-input"
+                       lay-verify="required" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="menuType">菜单类型：</label>
+            <div class="layui-input-inline">
+                <select name="menuType" autocomplete="off" class="layui-input" id="menuType">
+                    <option value="M">目录</option>
+                    <option value="C">菜单</option>
+                    <option value="F">按钮</option>
+                </select>
+            </div>
+            <label class="layui-form-label" for="status">菜单状态：</label>
+            <div class="layui-input-inline">
+                <select name="status" autocomplete="off" class="layui-input" id="status">
+                    <option value="0">正常</option>
+                    <option value="1">停用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea class="layui-textarea" name="remark" id="remark"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <div class="layui-input-block" style="text-align: center;">
+                <button type="button" class="layui-btn" lay-submit lay-filter="doSubmit">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    var baseUrl = $("#ctxPath").text();
+
+    layui.use(['table', 'treetable', 'layer', 'form', 'iconPickerFa', 'dtree'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+        var layer = layui.layer;
+        var form = layui.form;
+        var iconPickerFa = layui.iconPickerFa;
+        var dtree = layui.dtree;
+
+        // 下拉菜单树
+        dtree.renderSelect({
+            elem: "#parentMenuSelect",
+            width: "100%", // 指定树的宽度
+            url: baseUrl + "/admin/menu/listMenuTree",
+            dataStyle: "layuiStyle",  //使用layui风格的数据格式
+            dataFormat: "list",  //配置data的风格为list
+            response:{message:"msg",statusCode:0},  //修改response中返回数据的定义
+            selectTips: "请选择",
+            selectCardHeight: "400",
+            menubar: true,
+            line: true,
+            skin: "laySimple",  // laySimple主题风格
+        });
+
+        dtree.on("node('parentMenuSelect')" ,obj => {
+            console.log(obj.param.nodeId)
+            $("#parentId").val(obj.param.nodeId);
+        });
+
+        // 渲染表格
+        renderTreeTable();
+        function renderTreeTable() {
+            layer.load(2);
+            treetable.render({
+                treeColIndex: 1,
+                treeSpid: 0,
+                treeIdName: 'menuId',
+                treePidName: 'parentId',
+                elem: '#munu-table',
+                url: baseUrl + '/admin/menu',
+                page: false,
+                cols: [[
+                    {type: 'numbers'},
+                    {field: 'menuName', width: 250, title: '权限名称'},
+                    {field: 'perms', width: 180, title: '权限标识'},
+                    {field: 'component', width: 120, title: '组件地址'},
+                    {field: 'icon', width: 120, align: 'center', title: '图标', templet: data => {
+                            return '<i class="' + data.icon + '"></i>'
+                        }},
+                    {field: 'orderNum', width: 80, align: 'center', title: '排序号'},
+                    {field: 'menuType', width: 80, align: 'center', templet: function (d) {
+                            if (d.menuType == 'F') {
+                                return '<span class="layui-badge layui-bg-gray">按钮</span>';
+                            } else if (d.menuType == 'M') {
+                                return '<span class="layui-badge layui-bg-blue">目录</span>';
+                            } else {
+                                return '<span class="layui-badge-rim">菜单</span>';
+                            }
+                        }, title: '类型'},
+                    {field: 'status', title: '状态', width: 100, align: "center", templet: data => {
+                            if (data.status == 0) {
+                                return "<span class='layui-badge layui-bg-green'>正常</span>"
+                            } else {
+                                return "<span class='layui-badge'>停用</span>"
+                            }
+                        }},
+                    {fixed: 'right', title: '操作', align: 'center', toolbar: '#auth-state'} //这里的toolbar值是模板元素的选择器
+                ]],
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
+
+        // 渲染图标
+        iconPickerFa.render({
+            // 选择器，推荐使用input
+            elem: '#icon',
+            // fa 图标接口
+            url: baseUrl + "/static/layui/lib/font-awesome-4.7.0/less/variables.less",
+            // 是否开启搜索：true/false，默认true
+            search: true,
+            // 是否开启分页：true/false，默认true
+            page: true,
+            // 每页显示数量，默认12
+            limit: 12,
+            // 点击回调
+            click: function (data) {
+                $("#icon").val("fa "+ data.icon);
+            },
+            // 渲染成功后的回调
+            success: function (d) {
+            }
+        });
+
+        $('#btn-expand').click(function () {
+            treetable.expandAll('#munu-table');
+        });
+
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#munu-table');
+        });
+
+        //监听工具条
+        table.on('tool(munu-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'del') {
+                deleteById('【' + data.menuName + '】', data.menuId)
+            } else if (layEvent === 'edit') {
+                openUpdateWindow(data);
+            }
+        });
+
+        $("#addMenu").on('click', function () {
+            openAddWindow();
+        })
+
+        let requestMethod = '';
+
+        // 打开修改窗口
+        function openUpdateWindow(data) {
+            windownIndex = layer.open({
+                type: 1,
+                title: '修改菜单',
+                content: $('#addAndUpdateWindow'),
+                area: ['800px', '600px'],
+                zIndex: 1,
+                success: function (layero, index) {
+                    form.val("addAndUpdateForm", data) // 表单回显
+                    iconPickerFa.checkIcon('icon', data.icon); // 图标回显
+                    $("#icon").val(data.icon);
+                    // 下拉回显
+                    dtree.dataInit("parentMenuSelect", data.parentId);
+                    dtree.selectVal("parentMenuSelect");
+                    // 设置PUT提交方式
+                    requestMethod = "PUT";
+                }
+            });
+        }
+
+        // 打开修改窗口
+        function openAddWindow() {
+            windownIndex = layer.open({
+                type: 1,
+                title: '添加菜单',
+                content: $('#addAndUpdateWindow'),
+                area: ['800px', '600px'],
+                zIndex: 1,
+                success: function (layero, index) {
+                    $("#addAndUpdateForm")[0].reset() // 表单数据清空
+                    iconPickerFa.checkIcon('icon', "#"); // 图标回显
+                    $("#icon").val("#");
+                    $("#parentId").val(0);
+                    // 设置POST提交方式
+                    requestMethod = "POST";
+                }
+            });
+        }
+
+        // 添加与修改表单提交事件
+        form.on("submit(doSubmit)", function (data) {
+            delete data.field.parentMenuSelect_select_nodeId
+            delete data.field.parentMenuSelect_select_input
+            fetch(baseUrl + "/admin/menu", {
+                method: requestMethod,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data.field),
+            }).then((res) => res.json()).then((data) => {
+                if (data.code === 0) {
+                    layer.msg(data.msg, {"icon": "1"});
+                    // 表格重载
+                    renderTreeTable();
+                    // 下拉重载
+                    dtree.reload('parentMenuSelect');
+                    layer.close(windownIndex)
+                } else {
+                    layer.msg(data.msg, {"icon": "2"});
+                    layer.close(windownIndex)
+                }
+            });
+        })
+
+        function deleteById(name, id) {
+            layer.confirm('确定要删除' + name + '吗？', {icon: 3, title:'提示'}, function(index){
+                fetch(baseUrl + "/admin/menu/" + id, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                }).then(res => res.json()).then(data => {
+                    if (data.code === 0) {
+                        layer.msg(data.msg,{"icon":"1"});
+                        // 表格重载
+                        renderTreeTable();
+                        // 下拉重载
+                        dtree.reload('parentMenuSelect');
+                        layer.close(windownIndex)
+                    } else{
+                        layer.msg(data.msg,{"icon":"2"});
+                    }
+                });
+                layer.close(index);
+            });
+        }
+    });
+</script>
+</body>

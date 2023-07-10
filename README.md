@@ -30,6 +30,10 @@
 * 内置多种常用功能
 * Jdk8 + Servlet4
 
+## 项目结构
+
+* harbour
+
 ## 快速上手
 
 ### HelloWorld

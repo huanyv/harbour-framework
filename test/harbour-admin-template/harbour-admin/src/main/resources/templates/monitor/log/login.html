@@ -1,0 +1,191 @@
+<div class="layuimini-container layuimini-page-anim">
+
+    <div class="layuimini-main">
+        <!--信息搜索-->
+        <div class="layui-row">
+            <div class="layui-card">
+                <div class="layui-card-header">搜索信息</div>
+                <div class="layui-card-body">
+                    <form class="layui-form layui-form-pane">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">登录用户：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="loginUser" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">登录地址：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="loginAddr" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">登录状态：</label>
+                                <div class="layui-input-inline">
+                                    <select name="status" lay-verify="">
+                                        <option value="" selected>请选择</option>
+                                        <option value="1">登录成功</option>
+                                        <option value="0">登录失败</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">登录时间：</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="loginDateRange" autocomplete="off" class="layui-input" id="loginDate">
+                            </div>
+                            <div class="layui-inline">
+                                <button type="button" class="layui-btn " lay-submit lay-filter="data-search-btn">
+                                    <i class="layui-icon layui-icon-search"></i>搜索
+                                </button>
+                                <button type="reset" class="layui-btn layui-btn-primary" lay-submit>
+                                    <i class="layui-icon layui-icon-refresh"></i>重置
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 表格-->
+        <div class="layui-row">
+            <table id="dataTable" lay-filter="dataTable"></table>
+        </div>
+    </div>
+</div>
+
+<!--表格头工具-->
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">
+            <i class="layui-icon layui-icon-delete"></i>删除
+        </button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="clear">
+            <i class="layui-icon layui-icon-fonts-clear"></i>清空
+        </button>
+    </div>
+</script>
+
+<!--项目的上下文根路径-->
+<span id="ctxPath" style="display: none">#(ctxPath)</span>
+
+<script>
+    layui.use(['layer', 'table', 'laydate', 'form'], function () {
+        var table = layui.table;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var form = layui.form;
+
+        var baseUrl = $("#ctxPath").text();
+        //日期时间范围选择
+        laydate.render({
+            elem: '#loginDate'
+            , type: 'datetime'
+            , range: true
+        });
+
+        //表格渲染
+        table.render({
+            elem: '#dataTable'
+            // ,height: 550
+            , url: baseUrl + '/admin/monitor/login' // 数据接口
+            , page: true // 开启分页
+            , toolbar: '#toolbarDemo'
+            , cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'logId', title: '登录编号', width: 130},
+                {field: 'loginUser', title: '登录用户', width: 150},
+                {field: 'loginIp', title: '登录IP', width: 180},
+                {field: 'loginAddr', title: '登录地址', width: 180},
+                {field: 'browser', title: '登录浏览器', width: 200},
+                {
+                    field: 'status', title: '状态', width: 100, align: "center", templet: data => {
+                        if (data.status == 1) {
+                            return "<span class='layui-badge layui-bg-green'>登录成功</span>"
+                        } else {
+                            return "<span class='layui-badge'>登录失败</span>"
+                        }
+                    }
+                },
+                {field: 'loginDate', title: '登录时间', minWidth: 160, sort: true, align: "center"},
+            ]]
+        });
+
+
+        // 信息搜索
+        form.on("submit(data-search-btn)", function (data) {
+            table.reload('dataTable', {
+                where: data.field
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        })
+
+        // 触发事件
+        table.on('toolbar(dataTable)', function (obj) {
+            switch (obj.event) {
+                case "clear":
+                    clearData();
+                    break;
+                case 'del':
+                    var checkStatus = table.checkStatus('dataTable');
+                    var logs = checkStatus.data;
+                    if (logs.length === 0) {
+                        layer.msg("没有选择数据");
+                        break;
+                    }
+                    var logIds = [];
+                    for (let i = 0; i < logs.length; i++) {
+                        logIds[i] = logs[i].logId;
+                    }
+                    var ids = logIds.join(',')
+                    deleteById("这些数据", ids)
+                    break;
+            }
+        });
+
+        function deleteById(name, id) {
+            layer.confirm('确定要删除' + name + '吗？', {icon: 3, title: '提示'}, function (index) {
+                fetch(`${baseUrl}/admin/monitor/login/${id}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                }).then(res => res.json()).then(data => {
+                    if (data.code === 0) {
+                        layer.msg(data.msg, {"icon": "1"});
+                        // 表格重载
+                        table.reload('dataTable');
+                        layer.close(windownIndex)
+                    } else {
+                        layer.msg(data.msg, {"icon": "2"});
+                    }
+                });
+                layer.close(index);
+            });
+        }
+
+        function clearData() {
+            layer.confirm('确定要清空所有日志吗？', {icon: 3, title: '提示'}, function (index) {
+                fetch(`${baseUrl}/admin/monitor/login/clear`, {
+                    method: "DELETE",
+                }).then(res => res.json()).then(data => {
+                    if (data.code === 0) {
+                        layer.msg(data.msg, {"icon": "1"});
+                        // 表格重载
+                        table.reload('dataTable');
+                        layer.close(windownIndex)
+                    } else {
+                        layer.msg(data.msg, {"icon": "2"});
+                    }
+                });
+                layer.close(index);
+            });
+        }
+
+    })
+</script>

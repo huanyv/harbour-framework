@@ -1,0 +1,410 @@
+<div class="layuimini-container layuimini-page-anim">
+
+    <div class="layuimini-main">
+        <!--信息搜索-->
+        <div class="layui-row">
+            <div class="layui-card">
+                <div class="layui-card-header">搜索信息</div>
+                <div class="layui-card-body">
+                    <form class="layui-form layui-form-pane">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">用户名称：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="userName" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">用户昵称：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="nickName" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">邮箱：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="email" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">手机号码：</label>
+                                <div class="layui-input-inline">
+                                    <input type="email" name="phonenumber" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">性别：</label>
+                                <div class="layui-input-inline">
+                                    <select name="sex">
+                                        <option value="">请选择</option>
+                                        <option value="0">男</option>
+                                        <option value="1">女</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button type="button" class="layui-btn "
+                                        lay-submit lay-filter="data-search-btn">
+                                        <i class="layui-icon layui-icon-search"></i>搜索
+                                </button>
+                                <button type="reset" class="layui-btn layui-btn-primary"
+                                        lay-submit>
+                                        <i class="layui-icon layui-icon-refresh"></i>重置
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- 表格-->
+        <div class="layui-row">
+            <table id="dataTable" lay-filter="dataTable"></table>
+        </div>
+    </div>
+</div>
+
+<!--添加与修改窗口表单-->
+<div id="addAndUpdateWindow" style="display: none;padding: 30px">
+    <form id="addAndUpdateForm" class="layui-form layui-form-pane" lay-filter="addAndUpdateForm" style="width: 90%">
+        <input type="hidden" id="userId" name="userId">
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="userName" >用户名称：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="userName" id="userName" class="layui-input"
+                       lay-verify="required" autocomplete="off" >
+            </div>
+            <label class="layui-form-label" for="nickName" >用户昵称：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="nickName" id="nickName" class="layui-input"
+                       lay-verify="required" autocomplete="off" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="email" >邮箱：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="email" id="email" class="layui-input"
+                       lay-verify="required" autocomplete="off" >
+            </div>
+            <label class="layui-form-label" for="phonenumber" >手机号码：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="phonenumber" id="phonenumber" class="layui-input"
+                       lay-verify="required" autocomplete="off" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="sex" >性别：</label>
+            <div class="layui-input-inline">
+                <select name="sex" autocomplete="off" class="layui-input" id="sex">
+                    <option value="0">男</option>
+                    <option value="1">女</option>
+                </select>
+            </div>
+            <label class="layui-form-label" for="status" >用户状态：</label>
+            <div class="layui-input-inline">
+                <select name="status" autocomplete="off" class="layui-input" id="status">
+                    <option value="0">正常</option>
+                    <option value="1">停用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" for="sex" >部门：</label>
+            <div class="layui-input-inline">
+                <select name="deptId" autocomplete="off" class="layui-input" id="deptId">
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户备注</label>
+            <div class="layui-input-block">
+                <textarea class="layui-textarea" name="remark" id="remark"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <div class="layui-input-block" style="text-align: center;">
+                <button type="button" class="layui-btn" lay-submit lay-filter="doSubmit">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--修改添加角色窗口-->
+<div id="updateRoleWindow" style="display: none; padding: 30px">
+    <table id="roleTable" lay-filter="roleTableData"></table>
+</div>
+
+<!--表格行工具-->
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">
+        <i class="layui-icon layui-icon-edit"></i>编辑
+    </a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">
+        <i class="layui-icon layui-icon-delete"></i>删除
+    </a>
+    <a class="layui-btn layui-btn-xs" lay-event="role">
+        <i class="layui-icon layui-icon-username"></i>分配角色
+    </a>
+</script>
+
+<!--表格头工具-->
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">
+            <i class="layui-icon layui-icon-add-circle-fine"></i>添加
+        </button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">
+            <i class="layui-icon layui-icon-delete"></i>删除
+        </button>
+    </div>
+</script>
+
+<!--项目的上下文根路径-->
+<span id="ctxPath" style="display: none">#(ctxPath)</span>
+
+<script>
+    var baseUrl = $("#ctxPath").text();
+
+    layui.use(['layer','table','laydate','form'],function () {
+        var table = layui.table;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var form = layui.form;
+
+        // 部门列表下拉加载
+        fetch(baseUrl + "/admin/dept/listAll", {
+            method: "GET"
+        }).then(res => res.json()).then(data => data.data).then(data => {
+            var html = "<option value=''>请选择</option>";
+            for(let i = 0; i < data.length; i++) {
+                html += "<option value='" + data[i].deptId + "'>" + data[i].deptName + "</option>"
+            }
+            document.querySelector("#deptId").innerHTML = html;
+        })
+
+        // 渲染下拉菜单
+        form.render('select');
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#pubdate' //指定元素
+            ,type: 'date'
+        });
+
+        //表格渲染
+        table.render({
+            elem: '#dataTable'
+            // ,height: 550
+            ,url: baseUrl + '/admin/user' // 数据接口
+            ,page: true // 开启分页
+            ,toolbar: '#toolbarDemo'
+            ,cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'userId', title: '用户编号', width:100},
+                {field: 'userName', title: '登录名称', width:120},
+                {field: 'nickName', title: '用户昵称', width:120},
+                {field: 'deptName', title: '所属部门', width:120, templet: data => {
+                    if (data.dept == null) {
+                        return "暂无部门"
+                    }
+                    if (data.dept.deptName == null) {
+                        return "暂无部门"
+                    }
+                    return data.dept.deptName;
+                }},
+                {field: 'email', title: '邮箱', width:200},
+                {field: 'phonenumber', title: '手机号码', width: 150},
+                {field: 'sex', title: '性别', width: 80, align: "center", templet: data => data.sex == 0 ? "男" : "女"},
+                {field: 'status', title: '状态', width: 80, align: "center", templet: data => {
+                        if (data.status == 0) {
+                            return "<span class='layui-badge layui-bg-green'>正常</span>"
+                        } else {
+                            return "<span class='layui-badge'>停用</span>"
+                        }
+                    }},
+                {fixed: 'right', title:'操作', minWidth:120, align:'center', toolbar: '#barDemo'} //这里的toolbar值是模板元素的选择器
+            ]]
+        });
+
+
+        // 信息搜索
+        form.on("submit(data-search-btn)",function (data) {
+            table.reload('dataTable', {
+                where: data.field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        })
+
+        // 工具条事件
+        // 注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('tool(dataTable)', function(obj){
+            var data = obj.data; // 获得当前行数据
+            switch (obj.event) {
+                case 'edit':
+                    openUpdateWindow(data);
+                    break;
+                case 'del':
+                    deleteById('【' + data.userName + '】', data.userId);
+                    break;
+                case 'role':
+                    openAddRoleWindow(data);
+                    break;
+            }
+        });
+
+        // 触发事件
+        table.on('toolbar(dataTable)', function(obj){
+            switch(obj.event){
+                case 'add':
+                    openAddWindow();
+                    break;
+                case 'del':
+                    var checkStatus = table.checkStatus('dataTable');
+                    var users = checkStatus.data;
+                    if (users.length === 0) {
+                        layer.msg("没有选择数据");
+                        break;
+                    }
+                    var userIds = [];
+                    for (let i = 0; i < users.length; i++) {
+                        userIds[i] = users[i].userId;
+                    }
+                    var ids = userIds.join(',')
+                    deleteById("这些数据", ids)
+                    break;
+            }
+        });
+
+        let requestMethod = "PUT";
+
+        // 打开添加窗口
+        function openAddWindow() {
+            windownIndex = layer.open({
+                type: 1,
+                title: '添加图书',
+                content: $('#addAndUpdateWindow'),
+                area: ['800px', '600px'],
+                zIndex: 1,
+                success: function(layero, index){
+                    $("#addAndUpdateForm")[0].reset() // 表单数据清空
+                    requestMethod = "POST";
+                }
+            });
+        }
+        // 打开修改窗口
+        function openUpdateWindow(data) {
+            windownIndex = layer.open({
+                type: 1,
+                title: '修改图书',
+                content: $('#addAndUpdateWindow'),
+                area: ['800px', '600px'],
+                zIndex: 1,
+                success: function(layero, index){
+                    // 设置PUT提交方式
+                    form.val("addAndUpdateForm",data) // 表单回显
+                    requestMethod = "PUT";
+                }
+            });
+        }
+
+        function openAddRoleWindow(data) {
+            let roleWindowIndex = layer.open({
+                type: 1,
+                title: '修改[' + data.userName + ']角色',
+                content: $('#updateRoleWindow'),
+                area: ['800px', '600px'],
+                zIndex: 1,
+                btn:["<i class='layui-icon layui-icon-ok'></i>确定","<i class='layui-icon layui-icon-close'></i>取消"],
+                yes:function () {
+                    var checkStatus = table.checkStatus('roleTable');
+                    let roleIds = [];
+                    for (let i = 0; i < checkStatus.data.length; i++) {
+                        roleIds[i] = checkStatus.data[i].roleId;
+                    }
+                    let ids = roleIds.join(',');
+                    fetch(baseUrl + "/admin/user/updateRoles", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: 'userId=' + data.userId + '&roleIds=' + ids
+                    }).then(res => res.json()).then(data => {
+                        if (data.code === 0) {
+                            layer.msg(data.msg,{"icon":"1"});
+                        } else{
+                            layer.msg(data.msg,{"icon":"2"});
+                        }
+                    });
+                    layer.close(roleWindowIndex)
+                },
+                btn2:function () {
+                    layer.close(roleWindowIndex);
+                },
+                success: function (layero, index) {
+                    //表格渲染
+                    table.render({
+                        elem: '#roleTable'
+                        , url: baseUrl + '/admin/role/loadRolesByUserId?userId=' + data.userId // 数据接口
+                        , cols: [[
+                            {type: "checkbox", width: 50},
+                            {field: 'roleId', title: '角色编号', width: 100},
+                            {field: 'roleName', title: '角色名称', width: 220},
+                            {field: 'roleKey', title: '角色权限字符串', width: 250},
+                            {field: 'status', title: '状态', width:115, templet: data => {
+                                return data.status == 0 ? "<span style='color: green'>正常</span>" : "<span style='color: red'>停用</span>"
+                            }}
+                        ]]
+                    });
+                }
+            })
+        }
+
+        // 添加与修改表单提交事件
+        form.on("submit(doSubmit)",function (data) {
+            fetch(baseUrl + "/admin/user", {
+                method: requestMethod,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data.field),
+            }).then((res) => res.json()).then((data) => {
+                if (data.code === 0) {
+                    layer.msg(data.msg,{"icon":"1"});
+                    // 表格重载
+                    table.reload('dataTable');
+                    layer.close(windownIndex)
+                } else{
+                    layer.msg(data.msg,{"icon":"2"});
+                    layer.close(windownIndex)
+                }
+            });
+        })
+
+        function deleteById(name, id) {
+            layer.confirm('确定要删除' + name + '吗？', {icon: 3, title:'提示'}, function(index){
+                fetch(baseUrl + "/admin/user/" + id, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                }).then(res => res.json()).then(data => {
+                    if (data.code === 0) {
+                       layer.msg(data.msg,{"icon":"1"});
+                        // 表格重载
+                        table.reload('dataTable');
+                        layer.close(windownIndex)
+                    } else{
+                        layer.msg(data.msg,{"icon":"2"});
+                    }
+                });
+                layer.close(index);
+            });
+        }
+
+    })
+</script>

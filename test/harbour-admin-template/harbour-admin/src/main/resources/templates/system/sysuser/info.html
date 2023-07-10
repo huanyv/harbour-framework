@@ -1,0 +1,178 @@
+<style>
+    .user_info_item {
+        border-bottom: 1px solid #E7EAEC;
+        border-top: 1px solid #E7EAEC;
+    }
+
+    .user_info_key {
+        line-height: 45px;
+        text-align: left;
+    }
+
+    .user_info_val {
+        line-height: 45px;
+        text-align: right;
+    }
+</style>
+<div class="layuimini-container layuimini-page-anim">
+
+    <div class="layuimini-main" style="padding: 30px; height: 560px;">
+        <div class="layui-row layui-col-space30">
+            <div class="layui-col-md3" style="box-shadow: 0 2px 12px 0 rgba(0,0,0,.1)">
+
+                <div class="layui-card">
+                    <div class="layui-card-header">个人信息</div>
+                    <div class="layui-card-body" style="text-align: center;">
+
+                        <img src="#(ctxPath)#(user.avatar)" alt="" width="80px" height="80px" style="border-radius: 10px; "
+                             id="head">
+
+                        <div class="layui-row user_info_item" style="margin-top: 20px;">
+                            <div class="layui-col-md6 user_info_key">
+                                <i class="layui-icon layui-icon-user"></i>
+                                用户名称
+                            </div>
+                            <div class="layui-col-md6 user_info_val">#(user.userName)</div>
+                        </div>
+                        <div class="layui-row user_info_item">
+                            <div class="layui-col-md6 user_info_key">
+                                <i class="layui-icon layui-icon-cellphone"></i>
+                                手机号码
+                            </div>
+                            <div class="layui-col-md6 user_info_val">#(user.phonenumber)</div>
+                        </div>
+                        <div class="layui-row user_info_item">
+                            <div class="layui-col-md6 user_info_key">
+                                <i class="layui-icon layui-icon-print"></i>
+                                用户邮箱
+                            </div>
+                            <div class="layui-col-md6 user_info_val">#(user.email)</div>
+                        </div>
+                        <div class="layui-row user_info_item">
+                            <div class="layui-col-md6 user_info_key">
+                                <i class="layui-icon layui-icon-flag"></i>
+                                所属部门
+                            </div>
+                            <div class="layui-col-md6 user_info_val">
+                                #if(user.dept != null)
+                                    #(user.dept.deptName)
+                                #else
+                                    暂无部门
+                                #end
+                            </div>
+                        </div>
+                        <div class="layui-row user_info_item">
+                            <div class="layui-col-md6 user_info_key">
+                                <i class="layui-icon layui-icon-auz"></i>
+                                所属角色
+                            </div>
+                            <div class="layui-col-md6 user_info_val">#(roles)</div>
+                        </div>
+                        <div class="layui-row user_info_item">
+                            <div class="layui-col-md6 user_info_key">
+                                <i class="layui-icon layui-icon-date"></i>
+                                注册日期
+                            </div>
+                            <div class="layui-col-md6 user_info_val" id="createTimeText">#(user.createTime)</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="layui-col-md9" style="box-shadow: 0 2px 12px 0 rgba(0,0,0,.1)">
+
+                <div class="layui-card">
+                    <div class="layui-card-header">信息修改</div>
+                    <div class="layui-card-body">
+
+                        <form class="layui-form layui-form-pane" action="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="nickName">用户昵称：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="nickName" id="nickName" lay-verify="required"
+                                           autocomplete="off" class="layui-input" value="#(user.nickName)">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="phonenumber">手机号码：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="phonenumber" id="phonenumber" lay-verify="required|phone"
+                                           autocomplete="off" class="layui-input" value="#(user.phonenumber)">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="email">邮箱：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="email" id="email" lay-verify="required|email"
+                                           autocomplete="off" class="layui-input" value="#(user.email)">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">性别：</label>
+                                <div class="layui-input-block">
+                                    #if(user.sex == '0')
+                                    <input type="radio" name="sex" value="0" title="男" checked>
+                                    <input type="radio" name="sex" value="1" title="女" >
+                                    #else
+                                    <input type="radio" name="sex" value="0" title="男">
+                                    <input type="radio" name="sex" value="1" title="女" checked>
+                                    #end
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveInfo">保存</button>
+                                    <a href="javascript:window.history.go(-1)" class="layui-btn layui-btn-primary">关闭</a>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['upload', 'form'], function () {
+        var upload = layui.upload;
+        var form = layui.form;
+
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#head' //绑定元素
+            , url: '/upload/' //上传接口
+            , done: function (res) {
+                //上传完毕回调
+            }
+            , error: function () {
+                //请求异常回调
+            }
+        });
+
+        form.on('submit(saveInfo)', function (data) {
+            fetch(`${baseUrl}/admin/user/updateInfo`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data.field),
+            }).then(res => res.json()).then(data => {
+                layer.msg(data.msg);
+            })
+            return false;
+        });
+
+        let createTimeText = document.querySelector("#createTimeText");
+        const date = new Date(createTimeText.innerText);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+
+        createTimeText.innerText = `${year}-${month}-${day}`;
+
+    });
+</script>

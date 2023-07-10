@@ -1,0 +1,220 @@
+<body>
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="layui-icon layui-icon-set"></i>&nbsp;CPU
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-skin="nob">
+                            <colgroup>
+                                <col width="150">
+                                <col width="200">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th style="font-weight: bold">属性</th>
+                                <th style="font-weight: bold">值</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>核心数</td>
+                                <td>#(server.cpu.cpuNum)</td>
+                            </tr>
+                            <tr>
+                                <td>用户使用率</td>
+                                <td>#(server.cpu.used)%</td>
+                            </tr>
+                            <tr>
+                                <td>系统使用率</td>
+                                <td>#(server.cpu.sys)%</td>
+                            </tr>
+                            <tr>
+                                <td>当前空闲率</td>
+                                <td>#(server.cpu.free)%</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="layui-icon layui-icon-list"></i>&nbsp;内存
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-skin="nob">
+                            <colgroup>
+                                <col width="200">
+                                <col width="200">
+                                <col width="200">
+                                <col>
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th style="font-weight: bold">属性</th>
+                                <th style="font-weight: bold">内存</th>
+                                <th style="font-weight: bold">JVM</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>总内存</td>
+                                <td>#(server.mem.total)G</td>
+                                <td>#(server.jvm.total)M</td>
+                            </tr>
+                            <tr>
+                                <td>已用内存</td>
+                                <td>#(server.mem.used)G</td>
+                                <td>#(server.jvm.used)M</td>
+                            </tr>
+                            <tr>
+                                <td>剩余内存</td>
+                                <td>#(server.mem.free)G</td>
+                                <td>#(server.jvm.free)M</td>
+                            </tr>
+                            <tr>
+                                <td>使用率</td>
+                                <td>#(server.mem.usage)%</td>
+                                <td>#(server.jvm.usage)%</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="layui-icon layui-icon-chart-screen"></i>&nbsp;服务器信息
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-skin="nob">
+                            <colgroup>
+                                <col width="200">
+                                <col width="200">
+                                <col width="200">
+                                <col width="200">
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td>服务器名称</td>
+                                <td>#(server.sys.computerName)</td>
+                                <td>操作系统</td>
+                                <td>#(server.sys.osName)</td>
+                            </tr>
+                            <tr>
+                                <td>服务器IP</td>
+                                <td>#(server.sys.computerIp)</td>
+                                <td>系统架构</td>
+                                <td>#(server.sys.osArch)</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="layui-icon layui-icon-component"></i>&nbsp;Java虚拟机信息
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-skin="nob">
+                            <colgroup>
+                                <col width="200">
+                                <col width="200">
+                                <col width="200">
+                                <col width="200">
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td>Java名称</td>
+                                <td>#(server.jvm.name)</td>
+                                <td>Java版本</td>
+                                <td>#(server.jvm.version)</td>
+                            </tr>
+                            <tr>
+                                <td>启动时间</td>
+                                <td>#(server.jvm.startTime)</td>
+                                <td>运行时长</td>
+                                <td>#(server.jvm.runTime)</td>
+                            </tr>
+                            <tr>
+                                <td>安装路径</td>
+                                <td colspan="3" style="word-break: break-word">#(server.jvm.home)</td>
+                            </tr>
+                            <tr>
+                                <td>项目路径</td>
+                                <td colspan="3" style="word-break: break-word">#(server.sys.userDir)</td>
+                            </tr>
+                            <tr>
+                                <td>运行参数</td>
+                                <td colspan="3" style="word-break: break-word">#(server.jvm.inputArgs)</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <i class="layui-icon layui-icon-export"></i>&nbsp;磁盘状态
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-table" lay-skin="nob">
+                            <colgroup>
+                                <col width="200">
+                                <col width="200">
+                                <col width="200">
+                                <col width="200">
+                                <col width="200">
+                                <col width="200">
+                                <col width="200">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th style="font-weight: bold">盘符路径</th>
+                                <th style="font-weight: bold">文件系统</th>
+                                <th style="font-weight: bold">盘符类型</th>
+                                <th style="font-weight: bold">总大小</th>
+                                <th style="font-weight: bold">可用大小</th>
+                                <th style="font-weight: bold">已用大小</th>
+                                <th style="font-weight: bold">已用百分比</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            #for(disk : server.sysFiles)
+                            <tr>
+                                <td>#(disk.dirName)</td>
+                                <td>#(disk.sysTypeName)</td>
+                                <td>#(disk.typeName)</td>
+                                <td>#(disk.total)</td>
+                                <td>#(disk.free)</td>
+                                <td>#(disk.used)</td>
+                                <td>#(disk.usage)%</td>
+                            </tr>
+                            #end
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- js部分 -->
+<script>
+    layui.use(['layer', 'table', 'notice'], function () {
+
+    });
+</script>
+</body>
