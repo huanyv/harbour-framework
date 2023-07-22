@@ -49,5 +49,5 @@ public class StartConstants {
             " /      |_______________________________________________|     \\ \n" +
             "/__________)                                        (__________\\";
 
-    public static final String DEFAULT_BANNER = "启动成功！！！";
+    public static final String DEFAULT_BANNER = LOGO_BANNER;
 }

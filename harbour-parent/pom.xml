@@ -47,6 +47,11 @@
                 <artifactId>harbour-start-enjoy</artifactId>
                 <version>${harbour.version}</version>
             </dependency>
+            <dependency>
+                <groupId>top.huanyv</groupId>
+                <artifactId>harbour-start-redis</artifactId>
+                <version>${harbour.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>top.huanyv</groupId>
