@@ -8,9 +8,13 @@ import org.apache.catalina.core.ApplicationFilterRegistration;
 import org.apache.catalina.core.ApplicationServletRegistration;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
+import top.huanyv.start.exception.WebServerException;
 import top.huanyv.start.server.WebServer;
 
 import javax.servlet.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EventListener;
@@ -20,8 +24,11 @@ import java.util.EventListener;
  * @date 2022/12/17 14:36
  */
 public class TomcatServer implements WebServer {
+    public TomcatServer() {
+    }
 
-    public TomcatServer(String contextPath) {
+    public TomcatServer(int port, String contextPath) {
+        setPort(port);
         setContextPath(contextPath);
     }
 
@@ -102,10 +109,24 @@ public class TomcatServer implements WebServer {
 
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
-        this.context = this.tomcat.addContext(contextPath, System.getProperty("java.io.tmpdir"));
+        String basedir = createTempDir("tomcat").getAbsolutePath();
+        this.tomcat.setBaseDir(basedir);
+        this.context = this.tomcat.addContext(contextPath, basedir);
     }
 
     public void setUriEncoding(String uriEncoding) {
         this.uriEncoding = uriEncoding;
     }
+
+    private File createTempDir(String prefix) {
+        try {
+            File tempDir = Files.createTempDirectory(prefix + "." + this.port + ".").toFile();
+            tempDir.deleteOnExit();
+            return tempDir;
+        } catch (IOException ex) {
+            throw new WebServerException(
+                    "Unable to create tempDir. java.io.tmpdir is set to " + System.getProperty("java.io.tmpdir"));
+        }
+    }
+
 }

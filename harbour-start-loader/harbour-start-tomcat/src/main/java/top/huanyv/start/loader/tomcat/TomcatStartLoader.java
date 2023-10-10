@@ -66,8 +66,7 @@ public class TomcatStartLoader implements ApplicationLoader {
     @Bean
     @Conditional(ConditionOnMissingBean.class)
     public WebServer webServer() {
-        TomcatServer tomcatServer = new TomcatServer(this.contextPath);
-        tomcatServer.setPort(this.port);
+        TomcatServer tomcatServer = new TomcatServer(this.port, this.contextPath);
         tomcatServer.setUriEncoding(this.uriEncoding);
 
         // 请求注册到tomcat容器中
