@@ -1,8 +1,5 @@
 package top.huanyv.bean.utils;
 
-import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.ProxyUtil;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;

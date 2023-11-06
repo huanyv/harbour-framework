@@ -10,10 +10,10 @@ import top.huanyv.start.exception.PortInUseException;
 import top.huanyv.start.server.NativeServletRegistry;
 import top.huanyv.start.server.WebServer;
 import top.huanyv.start.server.servlet.Registration;
-import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.ClassUtil;
-import top.huanyv.tools.utils.NetUtil;
-import top.huanyv.tools.utils.ResourceUtil;
+import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.ClassUtil;
+import top.huanyv.bean.utils.NetUtil;
+import top.huanyv.bean.utils.ResourceUtil;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -64,7 +64,7 @@ public class HarbourApplication {
 
         if (isWebApplication()) {
             int port = appArguments.getInt("server.port", DEFAULT_PORT);
-            if (!NetUtil.isAvailablePort(port)) {
+            if (NetUtil.isUsedPort(port)) {
                 // 端口被占用
                 throw new PortInUseException("Web server failed to start. Port " + port + " was already in use.");
             }

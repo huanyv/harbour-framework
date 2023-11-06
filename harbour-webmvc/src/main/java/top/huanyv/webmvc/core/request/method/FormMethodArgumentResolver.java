@@ -1,6 +1,6 @@
 package top.huanyv.webmvc.core.request.method;
 
-import top.huanyv.tools.utils.BeanUtil;
+import top.huanyv.bean.utils.BeanUtil;
 import top.huanyv.webmvc.annotation.argument.Form;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;

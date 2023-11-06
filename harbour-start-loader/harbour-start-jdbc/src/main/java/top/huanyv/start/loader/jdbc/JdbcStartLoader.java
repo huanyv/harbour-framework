@@ -11,7 +11,7 @@ import top.huanyv.start.anntation.Properties;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.start.loader.Condition;
-import top.huanyv.tools.utils.Assert;
+import top.huanyv.bean.utils.Assert;
 
 /**
  * @author huanyv

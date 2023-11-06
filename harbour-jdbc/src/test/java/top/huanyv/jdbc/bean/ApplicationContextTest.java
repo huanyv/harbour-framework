@@ -13,8 +13,8 @@ import top.huanyv.jdbc.core.pagination.PageHolder;
 import top.huanyv.jdbc.dao.UserDao;
 import top.huanyv.jdbc.entity.User;
 import top.huanyv.jdbc.service.UserService;
-import top.huanyv.tools.utils.ClassLoaderUtil;
-import top.huanyv.tools.utils.PropertiesUtil;
+import top.huanyv.bean.utils.ClassLoaderUtil;
+import top.huanyv.bean.utils.PropertiesUtil;
 
 import java.io.InputStream;
 import java.util.Properties;

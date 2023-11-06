@@ -6,8 +6,8 @@ import top.huanyv.bean.annotation.Configuration;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.ClassBeanDefinition;
 import top.huanyv.bean.ioc.definition.MethodBeanDefinition;
-import top.huanyv.tools.utils.ClassUtil;
-import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.bean.utils.ClassUtil;
+import top.huanyv.bean.utils.ReflectUtil;
 
 import java.lang.reflect.Method;
 import java.util.Set;

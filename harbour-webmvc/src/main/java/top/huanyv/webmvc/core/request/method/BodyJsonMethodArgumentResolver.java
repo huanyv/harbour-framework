@@ -1,6 +1,6 @@
 package top.huanyv.webmvc.core.request.method;
 
-import top.huanyv.tools.utils.JsonUtil;
+import top.huanyv.webmvc.utils.JsonUtil;
 import top.huanyv.webmvc.annotation.argument.Body;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;

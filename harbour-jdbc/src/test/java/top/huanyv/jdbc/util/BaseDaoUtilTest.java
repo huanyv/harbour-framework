@@ -3,7 +3,7 @@ package top.huanyv.jdbc.util;
 import org.junit.Test;
 import top.huanyv.jdbc.builder.BaseDao;
 import top.huanyv.jdbc.entity.User;
-import top.huanyv.tools.utils.Assert;
+import top.huanyv.bean.utils.Assert;
 
 import java.awt.print.Book;
 import java.io.Serializable;

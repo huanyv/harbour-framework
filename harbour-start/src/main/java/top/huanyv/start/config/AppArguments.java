@@ -1,7 +1,7 @@
 package top.huanyv.start.config;
 
 import top.huanyv.start.exception.ConfigFileNotFountException;
-import top.huanyv.tools.utils.*;
+import top.huanyv.bean.utils.*;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -85,31 +85,6 @@ public class AppArguments {
 
     public Set<String> getNames() {
         return Collections.unmodifiableSet(this.argumentMap.keySet());
-    }
-
-    /**
-     * 以指定前缀，把参数属性填充到一个对象中
-     *
-     * @param prefix 前缀
-     * @param o      o
-     */
-    public void populate(String prefix, Object o) {
-        Class<?> cls = o.getClass();
-        for (Field field : cls.getDeclaredFields()) {
-            field.setAccessible(true);
-            String stringValue = this.get(prefix + field.getName());
-            Object val = null;
-            if (StringUtil.hasText(stringValue)) {
-                val = NumberUtil.parse(field.getType(), stringValue);
-                try {
-                    if (val != null) {
-                        field.set(o, val);
-                    }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     @Override

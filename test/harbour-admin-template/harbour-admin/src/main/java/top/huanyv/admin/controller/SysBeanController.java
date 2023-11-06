@@ -9,7 +9,7 @@ import top.huanyv.bean.annotation.Component;
 import top.huanyv.bean.aop.AopContext;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.StringUtil;
 import top.huanyv.webmvc.annotation.Get;
 import top.huanyv.webmvc.annotation.Route;
 import top.huanyv.webmvc.annotation.argument.Body;

@@ -5,7 +5,7 @@ import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.config.CliArguments;
 import top.huanyv.start.core.HarbourApplication;
 import top.huanyv.start.web.servlet.ServletContextRegistry;
-import top.huanyv.tools.utils.FileUtil;
+import top.huanyv.bean.utils.FileUtil;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;
 import top.huanyv.webmvc.core.RouterServlet;
 

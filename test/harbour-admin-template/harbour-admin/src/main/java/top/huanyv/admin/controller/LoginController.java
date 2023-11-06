@@ -9,7 +9,7 @@ import top.huanyv.admin.service.SysMenuService;
 import top.huanyv.admin.utils.*;
 import top.huanyv.bean.annotation.Component;
 import top.huanyv.bean.annotation.Inject;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.StringUtil;
 import top.huanyv.webmvc.annotation.Get;
 import top.huanyv.webmvc.annotation.Post;
 import top.huanyv.webmvc.annotation.Route;

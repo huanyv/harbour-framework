@@ -1,6 +1,6 @@
 package top.huanyv.rpc.provider;
 
-import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.bean.utils.ReflectUtil;
 
 import java.util.HashMap;
 import java.util.Map;

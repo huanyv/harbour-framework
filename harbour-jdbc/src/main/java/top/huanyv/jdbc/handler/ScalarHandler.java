@@ -1,6 +1,6 @@
 package top.huanyv.jdbc.handler;
 
-import top.huanyv.tools.utils.Assert;
+import top.huanyv.bean.utils.Assert;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

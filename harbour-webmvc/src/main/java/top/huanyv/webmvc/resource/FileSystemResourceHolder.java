@@ -1,7 +1,7 @@
 package top.huanyv.webmvc.resource;
 
-import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

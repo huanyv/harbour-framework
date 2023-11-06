@@ -7,8 +7,8 @@ import top.huanyv.jdbc.dao.UserDao;
 import top.huanyv.jdbc.dao.impl.UserDaoImpl;
 import top.huanyv.jdbc.entity.User;
 import top.huanyv.jdbc.core.pagination.Page;
-import top.huanyv.tools.utils.ClassLoaderUtil;
-import top.huanyv.tools.utils.PropertiesUtil;
+import top.huanyv.bean.utils.ClassLoaderUtil;
+import top.huanyv.bean.utils.PropertiesUtil;
 
 import javax.sql.DataSource;
 import java.io.InputStream;

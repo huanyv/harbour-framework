@@ -1,7 +1,7 @@
 package top.huanyv.webmvc.core.request;
 
 import top.huanyv.bean.ioc.ApplicationContext;
-import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.bean.utils.ReflectUtil;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
 import top.huanyv.webmvc.core.request.method.*;

@@ -4,8 +4,8 @@ import com.alibaba.druid.pool.DruidDataSourceFactory;
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Configuration;
 import top.huanyv.jdbc.mybatis.MapperScanner;
-import top.huanyv.tools.utils.ClassLoaderUtil;
-import top.huanyv.tools.utils.PropertiesUtil;
+import top.huanyv.bean.utils.ClassLoaderUtil;
+import top.huanyv.bean.utils.PropertiesUtil;
 
 import javax.sql.DataSource;
 import java.io.InputStream;

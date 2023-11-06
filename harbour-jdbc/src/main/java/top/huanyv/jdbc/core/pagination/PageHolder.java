@@ -1,6 +1,6 @@
 package top.huanyv.jdbc.core.pagination;
 
-import top.huanyv.tools.utils.Assert;
+import top.huanyv.bean.utils.Assert;
 
 /**
  * @author huanyv

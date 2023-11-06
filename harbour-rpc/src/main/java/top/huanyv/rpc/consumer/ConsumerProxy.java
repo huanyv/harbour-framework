@@ -7,7 +7,7 @@ import top.huanyv.rpc.provider.RequestDTO;
 import top.huanyv.rpc.register.Registry;
 import top.huanyv.rpc.register.ZookeeperRegistry;
 import top.huanyv.rpc.util.RpcConfigurer;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

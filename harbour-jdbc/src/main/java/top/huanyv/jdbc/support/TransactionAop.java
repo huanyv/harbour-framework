@@ -4,8 +4,8 @@ import top.huanyv.bean.aop.AspectAdvice;
 import top.huanyv.bean.aop.JoinPoint;
 import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.SqlContextFactory;
-import top.huanyv.tools.utils.ClassUtil;
-import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.bean.utils.ClassUtil;
+import top.huanyv.bean.utils.ReflectUtil;
 
 import java.lang.reflect.InvocationTargetException;
 

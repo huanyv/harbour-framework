@@ -1,6 +1,6 @@
 package top.huanyv.start.web.initialize;
 
-import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.bean.utils.ReflectUtil;
 
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;

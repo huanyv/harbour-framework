@@ -9,7 +9,7 @@ import top.huanyv.jdbc.builder.SqlBuilder;
 import top.huanyv.jdbc.core.DefaultSqlContext;
 import top.huanyv.jdbc.core.SqlContext;
 import top.huanyv.jdbc.core.pagination.Page;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;

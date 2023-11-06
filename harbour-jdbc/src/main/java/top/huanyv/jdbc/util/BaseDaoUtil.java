@@ -5,9 +5,9 @@ import top.huanyv.jdbc.annotation.TableId;
 import top.huanyv.jdbc.annotation.TableName;
 import top.huanyv.jdbc.builder.BaseDao;
 import top.huanyv.jdbc.core.JdbcConfigurer;
-import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.ReflectUtil;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.ReflectUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;

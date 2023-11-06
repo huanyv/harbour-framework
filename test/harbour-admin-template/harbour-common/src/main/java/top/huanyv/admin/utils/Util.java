@@ -3,7 +3,7 @@ package top.huanyv.admin.utils;
 import top.huanyv.bean.annotation.Component;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.core.ApplicationRunner;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.util.Date;
 

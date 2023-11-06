@@ -4,8 +4,8 @@ import com.mysql.jdbc.Driver;
 import com.sun.media.sound.SoftTuning;
 import org.junit.Before;
 import org.junit.Test;
-import top.huanyv.tools.utils.ClassLoaderUtil;
-import top.huanyv.tools.utils.PropertiesUtil;
+import top.huanyv.bean.utils.ClassLoaderUtil;
+import top.huanyv.bean.utils.PropertiesUtil;
 
 import javax.sql.DataSource;
 import java.io.InputStream;

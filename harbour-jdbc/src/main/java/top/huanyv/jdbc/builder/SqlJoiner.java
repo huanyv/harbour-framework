@@ -1,6 +1,6 @@
 package top.huanyv.jdbc.builder;
 
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;

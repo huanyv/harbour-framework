@@ -11,8 +11,8 @@ import top.huanyv.rpc.annotation.Provider;
 import top.huanyv.rpc.register.Registry;
 import top.huanyv.rpc.util.Address;
 import top.huanyv.rpc.util.RpcConfigurer;
-import top.huanyv.tools.utils.ClassUtil;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.ClassUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;

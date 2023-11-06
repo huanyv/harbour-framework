@@ -10,7 +10,7 @@ import top.huanyv.jdbc.core.datasource.SimpleDataSource;
 import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.jdbc.core.pagination.PagingSqlFactory;
 import top.huanyv.jdbc.core.pagination.PagingSqlHandler;
-import top.huanyv.tools.utils.Assert;
+import top.huanyv.bean.utils.Assert;
 
 import javax.sql.DataSource;
 

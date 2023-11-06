@@ -1,0 +1,6 @@
+2023-11-06 15:20:24.024 INFO  [           main] rg.apache.juli.logging.DirectJDKLog : Initializing ProtocolHandler ["http-nio-2333"]
+2023-11-06 15:20:24.024 INFO  [           main] rg.apache.juli.logging.DirectJDKLog : Starting service [Tomcat]
+2023-11-06 15:20:24.024 INFO  [           main] rg.apache.juli.logging.DirectJDKLog : Starting Servlet engine: [Apache Tomcat/9.0.64]
+2023-11-06 15:20:24.024 INFO  [           main] rg.apache.juli.logging.DirectJDKLog : Starting ProtocolHandler ["http-nio-2333"]
+2023-11-06 15:20:24.024 INFO  [           main] t.h.start.core.HarbourApplication   : Running on http://localhost:2333/
+2023-11-06 15:20:28.028 INFO  [nio-2333-exec-2] .h.admin.controller.LoginController : 验证码不正确

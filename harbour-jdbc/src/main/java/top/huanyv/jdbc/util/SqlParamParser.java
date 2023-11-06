@@ -1,10 +1,10 @@
 package top.huanyv.jdbc.util;
 
 import top.huanyv.jdbc.annotation.Column;
-import top.huanyv.tools.utils.BeanUtil;
-import top.huanyv.tools.utils.ClassUtil;
-import top.huanyv.tools.utils.ReflectUtil;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.BeanUtil;
+import top.huanyv.bean.utils.ClassUtil;
+import top.huanyv.bean.utils.ReflectUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.lang.reflect.Field;
 import java.util.*;

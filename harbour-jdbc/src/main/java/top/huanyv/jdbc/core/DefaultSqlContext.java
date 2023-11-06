@@ -8,8 +8,8 @@ import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.jdbc.util.SqlAndArgs;
 import top.huanyv.jdbc.util.SqlHandler;
 import top.huanyv.jdbc.util.SqlParamParser;
-import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.ReflectUtil;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Modifier;

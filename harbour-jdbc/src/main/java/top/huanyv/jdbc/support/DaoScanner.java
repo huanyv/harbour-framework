@@ -6,8 +6,8 @@ import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.ClassBeanDefinition;
 import top.huanyv.jdbc.annotation.Dao;
 import top.huanyv.jdbc.core.JdbcConfigurer;
-import top.huanyv.tools.utils.ClassUtil;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.ClassUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.util.Set;
 

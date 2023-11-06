@@ -6,7 +6,7 @@ import top.huanyv.bean.exception.NoSuchBeanDefinitionException;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.rpc.provider.RequestDTO;
 import top.huanyv.rpc.provider.ServiceMapping;
-import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.bean.utils.ReflectUtil;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

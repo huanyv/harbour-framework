@@ -9,9 +9,9 @@ import top.huanyv.bean.ioc.BeanDefinitionRegistry;
 import top.huanyv.bean.ioc.BeanDefinitionRegistryPostProcessor;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.ClassBeanDefinition;
-import top.huanyv.tools.utils.ClassLoaderUtil;
-import top.huanyv.tools.utils.ClassUtil;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.ClassLoaderUtil;
+import top.huanyv.bean.utils.ClassUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import javax.sql.DataSource;
 import java.io.InputStream;

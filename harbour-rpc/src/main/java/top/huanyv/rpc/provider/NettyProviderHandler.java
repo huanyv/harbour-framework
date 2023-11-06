@@ -2,7 +2,7 @@ package top.huanyv.rpc.provider;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.bean.utils.ReflectUtil;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

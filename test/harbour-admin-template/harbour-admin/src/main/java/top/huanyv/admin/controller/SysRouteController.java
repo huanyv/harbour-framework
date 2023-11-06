@@ -5,7 +5,7 @@ import top.huanyv.admin.domain.vo.LayUIPageVo;
 import top.huanyv.admin.utils.PageDto;
 import top.huanyv.admin.utils.PageUtil;
 import top.huanyv.bean.annotation.Component;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.StringUtil;
 import top.huanyv.webmvc.annotation.Get;
 import top.huanyv.webmvc.annotation.Route;
 import top.huanyv.webmvc.annotation.argument.Form;

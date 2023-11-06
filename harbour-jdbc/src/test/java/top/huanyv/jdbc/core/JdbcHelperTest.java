@@ -7,10 +7,10 @@ import top.huanyv.bean.annotation.Bean;
 import top.huanyv.jdbc.core.datasource.SimpleDataSource;
 import top.huanyv.jdbc.entity.User;
 import top.huanyv.jdbc.handler.BeanHandler;
-import top.huanyv.tools.utils.ClassLoaderUtil;
-import top.huanyv.tools.utils.IoUtil;
-import top.huanyv.tools.utils.PropertiesUtil;
-import top.huanyv.tools.utils.ResourceUtil;
+import top.huanyv.bean.utils.ClassLoaderUtil;
+import top.huanyv.bean.utils.IoUtil;
+import top.huanyv.bean.utils.PropertiesUtil;
+import top.huanyv.bean.utils.ResourceUtil;
 
 import javax.sql.DataSource;
 

@@ -1,6 +1,6 @@
 package top.huanyv.webmvc.security.digest;
 
-import top.huanyv.tools.utils.BCrypt;
+import top.huanyv.bean.utils.BCrypt;
 
 /**
  * @author huanyv

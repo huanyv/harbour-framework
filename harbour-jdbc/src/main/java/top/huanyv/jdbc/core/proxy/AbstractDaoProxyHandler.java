@@ -8,9 +8,9 @@ import top.huanyv.jdbc.core.SqlContextFactory;
 import top.huanyv.jdbc.handler.type.SqlTypeHandler;
 import top.huanyv.jdbc.handler.type.SqlTypeHandlerComposite;
 import top.huanyv.jdbc.util.BaseDaoUtil;
-import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.ReflectUtil;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.ReflectUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

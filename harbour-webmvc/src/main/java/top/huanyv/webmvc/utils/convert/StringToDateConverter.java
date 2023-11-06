@@ -1,7 +1,7 @@
 package top.huanyv.webmvc.utils.convert;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.StringUtil;
 import top.huanyv.webmvc.utils.ClassDesc;
 
 import java.text.ParseException;

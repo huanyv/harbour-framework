@@ -1,7 +1,7 @@
 package top.huanyv.bean.aop;
 
-import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.ReflectUtil;
 
 import java.lang.reflect.Method;
 import java.util.*;

@@ -1,7 +1,7 @@
 package top.huanyv.jdbc.core;
 
 import top.huanyv.jdbc.handler.ResultSetHandler;
-import top.huanyv.tools.utils.Assert;
+import top.huanyv.bean.utils.Assert;
 
 import javax.sql.DataSource;
 import java.sql.*;

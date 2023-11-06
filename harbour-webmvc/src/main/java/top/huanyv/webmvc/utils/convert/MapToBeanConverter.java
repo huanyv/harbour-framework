@@ -1,7 +1,7 @@
 package top.huanyv.webmvc.utils.convert;
 
-import top.huanyv.tools.utils.BeanUtil;
-import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.bean.utils.BeanUtil;
+import top.huanyv.bean.utils.ReflectUtil;
 import top.huanyv.webmvc.utils.ClassDesc;
 
 import java.lang.reflect.Field;

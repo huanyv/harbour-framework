@@ -8,10 +8,10 @@ import top.huanyv.bean.ioc.definition.ClassBeanDefinition;
 import top.huanyv.bean.ioc.definition.FactoryBeanDefinition;
 import top.huanyv.bean.ioc.definition.MethodBeanDefinition;
 import top.huanyv.bean.exception.BeanTypeNonUniqueException;
-import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.ClassUtil;
-import top.huanyv.tools.utils.ReflectUtil;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.ClassUtil;
+import top.huanyv.bean.utils.ReflectUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.lang.reflect.Method;
 import java.util.Iterator;

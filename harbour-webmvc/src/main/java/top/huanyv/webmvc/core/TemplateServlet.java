@@ -3,7 +3,7 @@ package top.huanyv.webmvc.core;
 import top.huanyv.bean.exception.NoSuchBeanDefinitionException;
 import top.huanyv.bean.ioc.AnnotationConfigApplicationContext;
 import top.huanyv.bean.ioc.ApplicationContext;
-import top.huanyv.tools.utils.ReflectUtil;
+import top.huanyv.bean.utils.ReflectUtil;
 import top.huanyv.webmvc.config.DefaultWebConfigurer;
 import top.huanyv.webmvc.config.WebConfigurer;
 import top.huanyv.webmvc.config.WebMvcGlobalConfig;

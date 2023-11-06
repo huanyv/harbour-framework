@@ -10,8 +10,8 @@ import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.ClassBeanDefinition;
 import top.huanyv.rpc.annotation.Reference;
 import top.huanyv.rpc.provider.ProviderServer;
-import top.huanyv.tools.utils.ClassUtil;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.ClassUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.lang.reflect.Field;
 import java.util.Set;

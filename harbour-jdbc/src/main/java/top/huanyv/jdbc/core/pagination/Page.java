@@ -1,6 +1,6 @@
 package top.huanyv.jdbc.core.pagination;
 
-import top.huanyv.tools.annotation.JavaBean;
+import top.huanyv.bean.utils.JavaBean;
 
 import java.util.List;
 

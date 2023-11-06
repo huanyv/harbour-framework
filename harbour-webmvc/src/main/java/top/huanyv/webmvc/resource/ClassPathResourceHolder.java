@@ -1,8 +1,8 @@
 package top.huanyv.webmvc.resource;
 
-import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.ClassLoaderUtil;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.ClassLoaderUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.io.InputStream;
 

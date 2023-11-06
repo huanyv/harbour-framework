@@ -2,7 +2,7 @@ package top.huanyv.admin.domain.server;
 
 import lombok.ToString;
 import top.huanyv.admin.utils.Util;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.lang.management.ManagementFactory;
 import java.math.BigDecimal;

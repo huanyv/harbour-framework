@@ -2,8 +2,8 @@ package top.huanyv.bean.ioc.definition;
 
 import top.huanyv.bean.annotation.Lazy;
 import top.huanyv.bean.annotation.Prototype;
-import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

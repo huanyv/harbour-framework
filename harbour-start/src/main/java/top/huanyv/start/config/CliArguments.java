@@ -1,6 +1,6 @@
 package top.huanyv.start.config;
 
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.util.Collections;
 import java.util.Map;

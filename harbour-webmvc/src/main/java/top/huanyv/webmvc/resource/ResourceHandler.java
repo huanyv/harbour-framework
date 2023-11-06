@@ -1,7 +1,7 @@
 package top.huanyv.webmvc.resource;
 
-import top.huanyv.tools.utils.AntPathMatcher;
-import top.huanyv.tools.utils.WebUtil;
+import top.huanyv.bean.utils.AntPathMatcher;
+import top.huanyv.webmvc.utils.WebUtil;
 import top.huanyv.webmvc.config.ResourceMappingRegistry;
 
 import javax.servlet.http.HttpServletRequest;

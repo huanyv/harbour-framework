@@ -13,8 +13,8 @@ import top.huanyv.logging.util.LogbackUtil;
 import top.huanyv.start.anntation.Properties;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.loader.ApplicationLoader;
-import top.huanyv.tools.utils.StringUtil;
-import top.huanyv.tools.utils.SystemUtil;
+import top.huanyv.bean.utils.StringUtil;
+import top.huanyv.bean.utils.SystemUtil;
 
 @Properties(prefix = "harbour.log.")
 public class LoggingStartLoader implements ApplicationLoader {

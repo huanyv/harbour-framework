@@ -2,8 +2,8 @@ package top.huanyv.bean.ioc.definition;
 
 import top.huanyv.bean.annotation.Lazy;
 import top.huanyv.bean.ioc.FactoryBean;
-import top.huanyv.tools.utils.Assert;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.StringUtil;
 
 /**
  * @author huanyv

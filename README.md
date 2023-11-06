@@ -3,7 +3,7 @@
 <p align="center">您可以在 <b>短时间</b> 学会它做点有趣的项目</p>
 <p align="center">
     <a href="#开始" target="_self">快速开始</a> | 
-    <a href="https://huanyv.github.io/" target="_blank">官方文档</a> | 
+    <a href="https://huanyv.github.io/harbour" target="_blank">官方文档</a> | 
     <a href="https://github.com/huanyv/harbour-framework" target="_blank">支持我</a> 
 </p>
 
@@ -37,8 +37,6 @@
 ## 快速上手
 
 ### HelloWorld
-
-注意：本项目依赖了自己写的一个工具类 [java-utils](https://gitee.com/huanyv/java-utils) ，您需要先安装此工具类方可继续
 
 1. 安装依赖
 
@@ -213,6 +211,6 @@ server.maxFileSize=10240000L
 * 执行`package`后，使用`java -jar xxx.jar`启动运行
 
 
-### 更多功能请看[详细文档](https://huanyv.github.io/)
+### 更多功能请看[详细文档](https://huanyv.github.io/harbour)
 
 

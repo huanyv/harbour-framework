@@ -1,8 +1,8 @@
 package top.huanyv.jdbc.handler;
 
 import top.huanyv.jdbc.annotation.Column;
-import top.huanyv.tools.utils.ReflectUtil;
-import top.huanyv.tools.utils.StringUtil;
+import top.huanyv.bean.utils.ReflectUtil;
+import top.huanyv.bean.utils.StringUtil;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
