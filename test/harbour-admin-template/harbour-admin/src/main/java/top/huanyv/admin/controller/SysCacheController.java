@@ -5,7 +5,7 @@ import top.huanyv.admin.domain.vo.cache.CacheNode;
 import top.huanyv.admin.domain.vo.LayUIPageVo;
 import top.huanyv.admin.domain.vo.cache.RedisVo;
 import top.huanyv.admin.utils.RestResult;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.utils.StringUtil;
 import top.huanyv.webmvc.annotation.Get;
 import top.huanyv.webmvc.annotation.Route;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * @author huanyv
  * @date 2023/4/23 19:06
  */
-@Component
+@Bean
 @Route("/monitor/cache")
 public class SysCacheController {
 

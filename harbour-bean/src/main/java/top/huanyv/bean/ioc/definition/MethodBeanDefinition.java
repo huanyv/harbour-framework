@@ -1,9 +1,7 @@
 package top.huanyv.bean.ioc.definition;
 
-import top.huanyv.bean.annotation.Lazy;
-import top.huanyv.bean.annotation.Prototype;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.utils.Assert;
-import top.huanyv.bean.utils.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,9 +23,9 @@ public class MethodBeanDefinition extends AbstractBeanDefinition {
         this.method = method;
 
         setBeanClass(method.getReturnType());
-        setBeanName(StringUtil.firstLetterLower(getBeanClass().getSimpleName()));
-        setSingleton(!method.isAnnotationPresent(Prototype.class));
-        setLazy(method.isAnnotationPresent(Lazy.class));
+        setBeanName(method.getName());
+        setSingleton(method.isAnnotationPresent(Bean.class) && !method.getAnnotation(Bean.class).prototype());
+        setLazy(method.isAnnotationPresent(Bean.class) && method.getAnnotation(Bean.class).lazy());
     }
 
     @Override

@@ -4,7 +4,7 @@ import top.huanyv.admin.domain.entity.SysRoute;
 import top.huanyv.admin.domain.vo.LayUIPageVo;
 import top.huanyv.admin.utils.PageDto;
 import top.huanyv.admin.utils.PageUtil;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.utils.StringUtil;
 import top.huanyv.webmvc.annotation.Get;
 import top.huanyv.webmvc.annotation.Route;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author huanyv
  * @date 2023/5/7 20:24
  */
-@Component
+@Bean
 @Route("/admin/monitor/route")
 public class SysRouteController {
 

@@ -8,7 +8,7 @@ import top.huanyv.admin.dao.SysOperLogDao;
 import top.huanyv.admin.domain.entity.SysOperLog;
 import top.huanyv.admin.service.SysOperLogService;
 import top.huanyv.admin.utils.WebUtil;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.jdbc.core.DefaultSqlContext;
 import top.huanyv.jdbc.core.SqlContext;
@@ -25,7 +25,7 @@ import top.huanyv.webmvc.security.User;
  * @author huanyv
  * @date 2023/4/22 14:42
  */
-// @Component
+// @Bean
 @Guard(value = "/**", exclude = "/admin/logout")
 public class SysOperLogGuard implements NavigationGuard {
 

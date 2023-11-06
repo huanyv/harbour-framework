@@ -1,15 +1,14 @@
 package top.huanyv.rpc.test.config;
 
 import top.huanyv.bean.annotation.Bean;
-import top.huanyv.bean.annotation.Configuration;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.rpc.support.RpcInitializer;
 
 /**
  * @author huanyv
  * @date 2023/1/19 16:01
  */
-@Configuration
-public class Config {
+public class Config implements Configuration {
 
     @Bean
     public RpcInitializer rpcConfiguration() {

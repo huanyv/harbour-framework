@@ -5,7 +5,7 @@ import top.huanyv.admin.domain.vo.LayUIPageVo;
 import top.huanyv.admin.domain.vo.ioc.BeanVo;
 import top.huanyv.admin.utils.PageDto;
 import top.huanyv.admin.utils.PageUtil;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.aop.AopContext;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @author huanyv
  * @date 2023/4/21 20:49
  */
-@Component
+@Bean
 @Route("/admin/monitor/beans")
 public class SysBeanController {
 

@@ -4,7 +4,7 @@ import top.huanyv.admin.dao.SysLoginLogDao;
 import top.huanyv.admin.domain.dto.LoginLogPageDto;
 import top.huanyv.admin.domain.entity.SysLoginLog;
 import top.huanyv.admin.service.SysLoginLogService;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.jdbc.core.pagination.Page;
 
@@ -14,7 +14,7 @@ import java.text.ParseException;
  * @author huanyv
  * @date 2023/4/22 13:47
  */
-@Component
+@Bean
 public class SysLoginLogServiceImpl implements SysLoginLogService {
 
     @Inject

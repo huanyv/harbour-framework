@@ -8,7 +8,7 @@ import top.huanyv.admin.utils.Constants;
 import top.huanyv.admin.utils.PageDto;
 import top.huanyv.admin.utils.RestResult;
 import top.huanyv.admin.utils.Util;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.bean.utils.BeanUtil;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @author huanyv
  * @date 2023/3/15 20:27
  */
-@Component
+@Bean
 @Route("/admin/role")
 public class SysRoleController {
 

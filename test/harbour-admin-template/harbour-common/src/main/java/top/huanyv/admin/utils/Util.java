@@ -1,6 +1,6 @@
 package top.huanyv.admin.utils;
 
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.core.ApplicationRunner;
 import top.huanyv.bean.utils.StringUtil;
@@ -11,7 +11,7 @@ import java.util.Date;
  * @author huanyv
  * @date 2023/3/29 21:03
  */
-@Component
+@Bean
 public class Util implements ApplicationRunner {
 
     public static Long[] parseIds(String ids) {

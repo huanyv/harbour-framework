@@ -1,6 +1,6 @@
 package top.huanyv.rpc.support;
 
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.ioc.ApplicationContextAware;
@@ -36,7 +36,7 @@ public class RpcInitializer implements BeanDefinitionRegistryPostProcessor, Appl
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
         // Reference
-        Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(Component.class, scanPackages);
+        Set<Class<?>> classes = ClassUtil.getClassesByAnnotation(Bean.class, scanPackages);
         for (Class<?> cls : classes) {
             for (Field field : cls.getDeclaredFields()) {
                 Reference reference = field.getAnnotation(Reference.class);

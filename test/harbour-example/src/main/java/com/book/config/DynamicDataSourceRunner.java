@@ -1,6 +1,6 @@
 package com.book.config;
 
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.jdbc.core.datasource.DynamicDatasource;
 import top.huanyv.jdbc.core.datasource.SimpleDataSource;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @author huanyv
  * @date 2022/12/26 15:28
  */
-//@Component
+//@Bean
 public class DynamicDataSourceRunner implements ApplicationRunner {
 
     @Override

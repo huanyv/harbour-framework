@@ -9,7 +9,7 @@ import java.util.Date;
  * @author huanyv
  * @date 2022/12/26 15:26
  */
-//@Component
+//@Bean
 public class TimerTask implements Timer {
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

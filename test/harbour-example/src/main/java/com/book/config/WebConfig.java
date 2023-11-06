@@ -2,7 +2,7 @@ package com.book.config;
 
 import com.wf.captcha.servlet.CaptchaServlet;
 import top.huanyv.bean.annotation.Bean;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Configuration;
 import top.huanyv.start.server.servlet.ServletBean;
 import top.huanyv.start.web.WebConfiguration;
@@ -11,7 +11,7 @@ import top.huanyv.webmvc.config.ResourceMappingRegistry;
 import top.huanyv.webmvc.config.ViewControllerRegistry;
 
 
-@Component
+@Bean
 @Configuration
 public class WebConfig extends WebConfiguration {
 

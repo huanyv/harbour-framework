@@ -1,6 +1,6 @@
 package top.huanyv.bean.test.factory;
 
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.BeanDefinitionRegistry;
 import top.huanyv.bean.ioc.BeanDefinitionRegistryPostProcessor;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
@@ -11,7 +11,7 @@ import top.huanyv.bean.test.ioc.controller.UserController;
  * @author huanyv
  * @date 2023/5/10 15:41
  */
-@Component
+@Bean
 public class BeanDefProcess implements BeanDefinitionRegistryPostProcessor {
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {

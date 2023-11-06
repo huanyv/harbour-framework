@@ -1,6 +1,6 @@
 package top.huanyv.bean.test.ioc.controller;
 
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.bean.aop.Aop;
 import top.huanyv.bean.test.aop.LogAspect;
@@ -11,7 +11,7 @@ import top.huanyv.bean.test.ioc.service.UserService;
  * @author huanyv
  * @date 2022/11/18 14:26
  */
-@Component
+@Bean
 @Aop(LogAspect.class)
 public class UserController {
 

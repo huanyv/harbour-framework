@@ -4,7 +4,7 @@ import top.huanyv.admin.dao.MenuDao;
 import top.huanyv.admin.domain.entity.SysMenu;
 import top.huanyv.admin.service.SysMenuService;
 import top.huanyv.admin.utils.LoginUtil;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 
 import java.util.Date;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author huanyv
  * @date 2023/2/22 14:23
  */
-@Component
+@Bean
 public class SysMenuServiceImpl implements SysMenuService {
 
     @Inject

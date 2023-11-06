@@ -6,7 +6,7 @@ import top.huanyv.admin.domain.vo.LayUIPageVo;
 import top.huanyv.admin.domain.vo.user.UserPageVo;
 import top.huanyv.admin.service.SysUserService;
 import top.huanyv.admin.utils.*;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.bean.utils.BeanUtil;
@@ -31,7 +31,7 @@ import java.util.Objects;
  * @author huanyv
  * @date 2023/2/21 19:48
  */
-@Component
+@Bean
 @Route("/admin/user")
 @Slf4j
 public class SysUserController {

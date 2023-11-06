@@ -6,7 +6,7 @@ import top.huanyv.admin.service.SysMenuService;
 import top.huanyv.admin.service.SysRoleService;
 import top.huanyv.admin.utils.Constants;
 import top.huanyv.admin.utils.RestResult;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.webmvc.annotation.*;
 import top.huanyv.webmvc.annotation.argument.Body;
@@ -27,7 +27,7 @@ import static top.huanyv.admin.utils.Constants.*;
  * @author huanyv
  * @date 2023/2/22 14:23
  */
-@Component
+@Bean
 @Route("/admin/menu")
 public class SysMenuController {
 

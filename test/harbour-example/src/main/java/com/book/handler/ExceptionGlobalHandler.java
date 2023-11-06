@@ -1,7 +1,7 @@
 package com.book.handler;
 
 import com.book.pojo.ResponseResult;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.webmvc.annotation.ExceptionPoint;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author admin
  * @date 2022/8/4 17:19
  */
-@Component
+@Bean
 public class ExceptionGlobalHandler implements ExceptionHandler {
 
     @ExceptionPoint({IllegalArgumentException.class, NumberFormatException.class})

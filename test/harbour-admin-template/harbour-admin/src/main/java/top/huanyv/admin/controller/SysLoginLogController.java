@@ -7,7 +7,7 @@ import top.huanyv.admin.service.SysLoginLogService;
 import top.huanyv.admin.utils.PageDto;
 import top.huanyv.admin.utils.RestResult;
 import top.huanyv.admin.utils.Util;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.webmvc.annotation.Delete;
@@ -26,7 +26,7 @@ import java.util.Date;
  * @author huanyv
  * @date 2023/4/23 17:19
  */
-@Component
+@Bean
 @Route("/admin/monitor/login")
 public class SysLoginLogController {
 

@@ -7,7 +7,7 @@ import top.huanyv.admin.dao.UserDao;
 import top.huanyv.admin.domain.entity.SysUser;
 import top.huanyv.admin.utils.Constants;
 import top.huanyv.admin.utils.LoginUtil;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.webmvc.security.digest.BCryptPasswordDigester;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * @author huanyv
  * @date 2023/2/21 19:55
  */
-@Component
+@Bean
 public class SysUserServiceImpl implements SysUserService {
 
     @Inject

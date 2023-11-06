@@ -3,13 +3,13 @@ package com.book.service.impl;
 import com.book.dao.BookDao;
 import com.book.pojo.Book;
 import com.book.service.BookService;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.bean.aop.Aop;
 import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.jdbc.support.TransactionAop;
 
-@Component
+@Bean
 public class BookServiceImpl implements BookService {
 
     @Inject

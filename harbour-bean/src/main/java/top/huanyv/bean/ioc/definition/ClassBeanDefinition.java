@@ -1,7 +1,6 @@
 package top.huanyv.bean.ioc.definition;
 
-import top.huanyv.bean.annotation.Lazy;
-import top.huanyv.bean.annotation.Prototype;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.utils.Assert;
 import top.huanyv.bean.utils.StringUtil;
 
@@ -23,8 +22,8 @@ public class ClassBeanDefinition extends AbstractBeanDefinition {
         Assert.notNull(beanClass, "'beanClass' must not be null.");
         setBeanClass(beanClass);
         setBeanName(StringUtil.firstLetterLower(beanClass.getSimpleName()));
-        setSingleton(!beanClass.isAnnotationPresent(Prototype.class));
-        setLazy(beanClass.isAnnotationPresent(Lazy.class));
+        setSingleton(beanClass.isAnnotationPresent(Bean.class) && !beanClass.getAnnotation(Bean.class).prototype());
+        setLazy(beanClass.isAnnotationPresent(Bean.class) && beanClass.getAnnotation(Bean.class).lazy());
 
         if (constructorArgs != null) {
             this.constructorArgs = constructorArgs;

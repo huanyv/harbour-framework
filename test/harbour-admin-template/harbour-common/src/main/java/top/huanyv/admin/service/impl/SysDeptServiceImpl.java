@@ -4,7 +4,7 @@ import top.huanyv.admin.dao.DeptDao;
 import top.huanyv.admin.domain.entity.SysDept;
 import top.huanyv.admin.service.SysDeptService;
 import top.huanyv.admin.utils.LoginUtil;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.jdbc.core.pagination.Page;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * @author huanyv
  * @date 2023/3/27 21:20
  */
-@Component
+@Bean
 public class SysDeptServiceImpl implements SysDeptService {
 
     @Inject

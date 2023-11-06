@@ -1,6 +1,6 @@
 package top.huanyv.rpc.test.provider;
 
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.rpc.annotation.Provider;
 
 /**
@@ -8,7 +8,7 @@ import top.huanyv.rpc.annotation.Provider;
  * @date 2023/1/18 13:47
  */
 @Provider(interfaceClass = Service.class)
-//@Component
+//@Bean
 public class ServiceImpl implements Service{
     @Override
     public String say(String name) {

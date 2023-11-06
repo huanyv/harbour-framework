@@ -1,6 +1,6 @@
 package top.huanyv.bean.test.factory;
 
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.FactoryBean;
 
 import java.lang.reflect.InvocationHandler;

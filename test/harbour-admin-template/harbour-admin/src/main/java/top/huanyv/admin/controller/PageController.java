@@ -8,7 +8,7 @@ import top.huanyv.admin.service.SysNoticeService;
 import top.huanyv.admin.service.SysRoleService;
 import top.huanyv.admin.service.SysUserService;
 import top.huanyv.admin.utils.LoginUtil;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.webmvc.annotation.Get;
 import top.huanyv.webmvc.annotation.Route;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @author huanyv
  * @date 2023/3/27 21:09
  */
-@Component
+@Bean
 @Route
 public class PageController {
 

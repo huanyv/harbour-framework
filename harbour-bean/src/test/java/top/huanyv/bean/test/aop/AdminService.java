@@ -1,6 +1,6 @@
 package top.huanyv.bean.test.aop;
 
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.aop.Aop;
 import top.huanyv.bean.test.entity.User;
 
@@ -8,7 +8,7 @@ import top.huanyv.bean.test.entity.User;
  * @author huanyv
  * @date 2022/11/18 14:39
  */
-@Component
+@Bean
 @Aop({LogAspect.class, LogAspect2.class})
 public class AdminService {
 

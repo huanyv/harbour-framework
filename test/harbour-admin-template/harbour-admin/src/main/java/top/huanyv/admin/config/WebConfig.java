@@ -3,8 +3,8 @@ package top.huanyv.admin.config;
 import com.wf.captcha.servlet.CaptchaServlet;
 import top.huanyv.admin.guard.AuthenticationGuard;
 import top.huanyv.bean.annotation.Bean;
-import top.huanyv.bean.annotation.Component;
-import top.huanyv.bean.annotation.Configuration;
+import top.huanyv.bean.annotation.Bean;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.start.server.servlet.ServletBean;
 import top.huanyv.start.web.WebConfiguration;
 import top.huanyv.webmvc.config.CorsRegistry;
@@ -17,9 +17,8 @@ import top.huanyv.webmvc.security.*;
  * @author huanyv
  * @date 2023/2/21 19:59
  */
-@Component
-@Configuration
-public class WebConfig extends WebConfiguration {
+@Bean
+public class WebConfig extends WebConfiguration implements Configuration {
 
 
     @Override

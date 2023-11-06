@@ -1,6 +1,6 @@
 package top.huanyv.jdbc.service;
 
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.bean.aop.Aop;
 import top.huanyv.jdbc.dao.UserDao;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author huanyv
  * @date 2023/5/15 13:59
  */
-@Component
+@Bean
 @Aop(TransactionAop.class)
 public class UserService {
 

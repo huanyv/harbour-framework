@@ -1,6 +1,6 @@
 package top.huanyv.admin.config;
 
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.webmvc.annotation.ExceptionPoint;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
@@ -12,7 +12,7 @@ import java.io.IOException;
  * @author huanyv
  * @date 2023/5/18 23:54
  */
-@Component
+@Bean
 public class GlobalExceptionHandler implements ExceptionHandler {
 
     @ExceptionPoint({NullPointerException.class})

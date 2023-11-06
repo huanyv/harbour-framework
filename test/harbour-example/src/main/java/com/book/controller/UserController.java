@@ -2,7 +2,7 @@ package com.book.controller;
 
 import com.book.pojo.User;
 import com.book.service.UserService;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.webmvc.annotation.Post;
 import top.huanyv.webmvc.annotation.Route;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
  * @author huanyv
  * @date 2022/11/17 17:27
  */
-@Component
+@Bean
 @Route("/admin/user")
 public class UserController {
 

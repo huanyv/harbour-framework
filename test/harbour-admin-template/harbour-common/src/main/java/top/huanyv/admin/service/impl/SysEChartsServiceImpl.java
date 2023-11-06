@@ -4,7 +4,7 @@ import top.huanyv.admin.dao.SysOperLogDao;
 import top.huanyv.admin.domain.entity.SysOperLog;
 import top.huanyv.admin.service.SysEChartsService;
 import top.huanyv.admin.service.SysOperLogService;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 
 import java.time.DayOfWeek;
@@ -17,7 +17,7 @@ import java.util.*;
  * @author huanyv
  * @date 2023/5/7 21:36
  */
-@Component
+@Bean
 public class SysEChartsServiceImpl implements SysEChartsService {
 
     @Inject

@@ -1,6 +1,6 @@
 package com.book.guard;
 
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.webmvc.annotation.Guard;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.HttpResponse;
@@ -17,7 +17,7 @@ import java.util.Arrays;
  * @author huanyv
  * @date 2022/11/17 18:58
  */
-@Component
+@Bean
 @Guard(value = {"/**"}, exclude = {"/error/**", "/jquery/**", "/layui/**", "/login", "/admin/user/login"})
 public class LoginGuard implements NavigationGuard {
 

@@ -4,7 +4,7 @@ import top.huanyv.admin.dao.SysNoticeDao;
 import top.huanyv.admin.domain.entity.SysNotice;
 import top.huanyv.admin.service.SysNoticeService;
 import top.huanyv.admin.utils.LoginUtil;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.jdbc.core.pagination.Page;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * @author huanyv
  * @date 2023/3/30 21:14
  */
-@Component
+@Bean
 public class SysNoticeServiceImpl implements SysNoticeService {
 
     @Inject

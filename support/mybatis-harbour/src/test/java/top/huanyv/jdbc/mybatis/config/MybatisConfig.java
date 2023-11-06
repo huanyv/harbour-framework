@@ -2,7 +2,7 @@ package top.huanyv.jdbc.mybatis.config;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import top.huanyv.bean.annotation.Bean;
-import top.huanyv.bean.annotation.Configuration;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.jdbc.mybatis.MapperScanner;
 import top.huanyv.bean.utils.ClassLoaderUtil;
 import top.huanyv.bean.utils.PropertiesUtil;
@@ -15,8 +15,8 @@ import java.util.Properties;
  * @author huanyv
  * @date 2022/12/22 17:15
  */
-@Configuration
-public class MybatisConfig {
+@Bean
+public class MybatisConfig implements Configuration {
 
     @Bean
     public MapperScanner mapperScanner() throws Exception {

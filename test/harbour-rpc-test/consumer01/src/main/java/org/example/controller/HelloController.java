@@ -1,7 +1,7 @@
 package org.example.controller;
 
 import org.example.service.SayService;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.rpc.annotation.Reference;
 import top.huanyv.rpc.load.Balance;
@@ -14,7 +14,7 @@ import top.huanyv.webmvc.annotation.argument.Param;
  * @author huanyv
  * @date 2023/1/22 16:27
  */
-@Component
+@Bean
 @Route
 public class HelloController {
 

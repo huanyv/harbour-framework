@@ -7,7 +7,7 @@ import top.huanyv.admin.domain.vo.NavMenuVo;
 import top.huanyv.admin.service.SysLoginLogService;
 import top.huanyv.admin.service.SysMenuService;
 import top.huanyv.admin.utils.*;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.bean.utils.StringUtil;
 import top.huanyv.webmvc.annotation.Get;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @author huanyv
  * @date 2023/2/22 14:27
  */
-@Component
+@Bean
 @Route("/admin")
 @Slf4j
 public class LoginController {

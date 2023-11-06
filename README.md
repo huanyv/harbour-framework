@@ -103,12 +103,12 @@ src
 
 ### 组件托管
 
-* 组件就是一个类，声明一个组件非常简单，在类上使用`@Component`注解即可
+* 组件就是一个类，声明一个组件非常简单，在类上使用`@Bean`注解即可
 * 当在其它的类中依赖到此类时，直接使用`@Inject`就可以自动注入属性，不需要手动`new`
 * 组件被扫描到的前提是：**组件必需在启动类包或子包下**
 
 ```java
-@Component
+@Bean
 public class UserServiceImpl implements UserService {
 
 	// .....
@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
 }
 
 // 要想自动注入，此类也要是一个组件
-@Component
+@Bean
 public class UserController {
 
     // 不需要这样
@@ -136,7 +136,7 @@ public class UserController {
 * **此类需要是一个组件**
 
 ```java
-@Component
+@Bean
 public class UserController implements RouteRegistry {
     @Override
     public void run(Routing app) {

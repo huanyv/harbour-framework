@@ -2,7 +2,7 @@ package top.huanyv.admin.service.impl;
 
 import top.huanyv.admin.dao.UserDao;
 import top.huanyv.admin.domain.entity.SysUser;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.webmvc.security.LoginService;
 import top.huanyv.webmvc.security.LoginUser;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author huanyv
  * @date 2023/3/25 17:21
  */
-@Component
+@Bean
 public class LoginServiceImpl implements LoginService {
 
     @Inject

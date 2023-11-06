@@ -1,9 +1,7 @@
 package top.huanyv.bean.test;
 
 import org.junit.Test;
-import top.huanyv.bean.annotation.Prototype;
 import top.huanyv.bean.aop.AopContext;
-import top.huanyv.bean.exception.BeanCurrentlyInCreationException;
 import top.huanyv.bean.ioc.AnnotationConfigApplicationContext;
 import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.test.aop.AdminService;
@@ -45,7 +43,6 @@ public class ApplicationContextTest {
     @Test
     public void testFactoryBean() throws NoSuchMethodException {
         ApplicationContext app = new AnnotationConfigApplicationContext("top.huanyv.bean.test.factory");
-
         UserDao userDao = app.getBean(UserDao.class);
         System.out.println("userDao = " + userDao);
         System.out.println("userDao.getClass() = " + userDao.getClass());
@@ -85,7 +82,6 @@ public class ApplicationContextTest {
         System.out.println("BeanFactoryUtil.getBeanClasses(app) = " + BeanFactoryUtil.getBeanClasses(app));
         System.out.println("BeanFactoryUtil.getBeans(app) = " + BeanFactoryUtil.getBeans(app));
         System.out.println("BeanFactoryUtil.getBeanMap(app) = " + BeanFactoryUtil.getBeanMap(app));
-        System.out.println("BeanFactoryUtil.getBeansByAnnotation(app, Prototype.class) = " + BeanFactoryUtil.getBeansByAnnotation(app, Prototype.class));
     }
 
 }

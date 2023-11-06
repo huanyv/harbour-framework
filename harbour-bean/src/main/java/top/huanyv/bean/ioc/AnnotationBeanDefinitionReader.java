@@ -1,13 +1,10 @@
 package top.huanyv.bean.ioc;
 
 import top.huanyv.bean.annotation.Bean;
-import top.huanyv.bean.annotation.Component;
-import top.huanyv.bean.annotation.Configuration;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.ClassBeanDefinition;
 import top.huanyv.bean.ioc.definition.MethodBeanDefinition;
 import top.huanyv.bean.utils.ClassUtil;
-import top.huanyv.bean.utils.ReflectUtil;
 
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -31,24 +28,26 @@ public class AnnotationBeanDefinitionReader {
         Set<Class<?>> classes = ClassUtil.getClasses(scanPackages);
         for (Class<?> cls : classes) {
             // 加载组件 bean 定义
-            Component component = cls.getAnnotation(Component.class);
-            if (component != null) {
-                BeanDefinition beanDefinition = new ClassBeanDefinition(cls);
-                this.registry.register(component.value(), beanDefinition);
-            }
+            Bean classBean = cls.getAnnotation(Bean.class);
+            if (classBean != null) {
+                BeanDefinition classBeanDefinition = new ClassBeanDefinition(cls);
+                this.registry.register(classBean.value(), classBeanDefinition);
 
-            // 加载方法Bean
-            if (cls.isAnnotationPresent(Configuration.class)) {
-                Object configInstance = ReflectUtil.newInstance(cls);
-                for (Method method : cls.getDeclaredMethods()) {
-                    method.setAccessible(true);
-                    if (method.isAnnotationPresent(Bean.class)) {
-                        BeanDefinition beanDefinition = new MethodBeanDefinition(configInstance, method);
-                        // 注册
-                        this.registry.register(method.getName(), beanDefinition);
+                // 加载方法Bean
+                if (Configuration.class.isAssignableFrom(cls)) {
+                    Object configInstance = classBeanDefinition.newInstance();
+                    for (Method method : cls.getDeclaredMethods()) {
+                        Bean methodBean = method.getAnnotation(Bean.class);
+                        if (method.isAnnotationPresent(Bean.class)) {
+                            BeanDefinition methodBeanDefinition = new MethodBeanDefinition(configInstance, method);
+                            // 注册
+                            this.registry.register(methodBean.value(), methodBeanDefinition);
+                        }
                     }
                 }
+
             }
+
         }
     }
 

@@ -5,7 +5,7 @@ import top.huanyv.admin.domain.entity.SysRole;
 import top.huanyv.admin.domain.entity.SysUser;
 import top.huanyv.admin.service.SysRoleService;
 import top.huanyv.admin.utils.LoginUtil;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.jdbc.core.pagination.Page;
 
@@ -17,7 +17,7 @@ import java.util.Map;
  * @author huanyv
  * @date 2023/3/15 20:26
  */
-@Component
+@Bean
 public class SysRoleServiceImpl implements SysRoleService {
 
     @Inject

@@ -6,7 +6,7 @@ import top.huanyv.admin.domain.entity.SysLoginLog;
 import top.huanyv.admin.domain.entity.SysOperLog;
 import top.huanyv.admin.service.SysOperLogService;
 import top.huanyv.admin.utils.PageDto;
-import top.huanyv.bean.annotation.Component;
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
 import top.huanyv.jdbc.core.pagination.Page;
 
@@ -14,7 +14,7 @@ import top.huanyv.jdbc.core.pagination.Page;
  * @author huanyv
  * @date 2023/5/7 17:09
  */
-@Component
+@Bean
 public class SysOperLogServiceImpl implements SysOperLogService {
 
     @Inject
