@@ -7,6 +7,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.anntation.Conditional;
 import top.huanyv.start.anntation.Properties;
@@ -36,7 +37,7 @@ public class RedisStartLoader implements ApplicationLoader {
     private JedisPool jedisPool;
 
     @Override
-    public void load(ApplicationContext applicationContext, AppArguments appArguments) {
+    public void load(ApplicationContext applicationContext, Configuration configuration) {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxIdle(this.maxIdle);
         jedisPoolConfig.setMinIdle(this.minIdle);
@@ -67,7 +68,7 @@ public class RedisStartLoader implements ApplicationLoader {
 
     public static class ConditionOnMissingJedisBean implements Condition {
         @Override
-        public boolean matchers(ApplicationContext applicationContext, AppArguments appArguments) {
+        public boolean matchers(ApplicationContext applicationContext, Configuration configuration) {
             return BeanFactoryUtil.isNotPresent(applicationContext, Jedis.class);
         }
     }
@@ -76,7 +77,7 @@ public class RedisStartLoader implements ApplicationLoader {
     public static class ConditionOnMissingJedisPoolBean implements Condition {
 
         @Override
-        public boolean matchers(ApplicationContext applicationContext, AppArguments appArguments) {
+        public boolean matchers(ApplicationContext applicationContext, Configuration configuration) {
             return BeanFactoryUtil.isNotPresent(applicationContext, JedisPool.class);
         }
     }

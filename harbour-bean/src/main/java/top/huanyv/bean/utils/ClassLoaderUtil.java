@@ -3,7 +3,7 @@ package top.huanyv.bean.utils;
 import java.io.InputStream;
 
 /**
- * @author admin
+ * @author huanyv
  * @date 2022/7/27 15:01
  */
 public class ClassLoaderUtil {

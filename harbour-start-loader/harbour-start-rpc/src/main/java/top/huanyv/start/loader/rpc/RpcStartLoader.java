@@ -2,6 +2,7 @@ package top.huanyv.start.loader.rpc;
 
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.rpc.register.ZookeeperRegistry;
 import top.huanyv.rpc.support.RpcInitializer;
@@ -35,7 +36,7 @@ public class RpcStartLoader implements ApplicationLoader {
     private String scanPackages;
 
     @Override
-    public void load(ApplicationContext applicationContext, AppArguments appArguments) {
+    public void load(ApplicationContext applicationContext, Configuration configuration) {
         RpcConfigurer configurer = RpcConfigurer.create();
         configurer.setRegistry(new ZookeeperRegistry(this.registry));
     }
@@ -52,7 +53,7 @@ public class RpcStartLoader implements ApplicationLoader {
     public static class ConditionOnMissingBean implements Condition {
 
         @Override
-        public boolean matchers(ApplicationContext applicationContext, AppArguments appArguments) {
+        public boolean matchers(ApplicationContext applicationContext, Configuration configuration) {
             return BeanFactoryUtil.isNotPresent(applicationContext, RpcInitializer.class);
         }
     }

@@ -3,10 +3,10 @@ package top.huanyv.bean.ioc;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 
 /**
- * @author admin
+ * @author huanyv
  * @date 2022/7/24 15:06
  */
-public interface ApplicationContext extends BeanFactory {
+public interface ApplicationContext extends BeanFactory, Configurable {
 
     void refresh();
 

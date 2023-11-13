@@ -6,6 +6,7 @@ import top.huanyv.bean.utils.StringUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +68,18 @@ public class PropertiesUtil {
         }
         try {
             properties.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return properties;
+    }
+    public static Properties load(Reader reader) {
+        Properties properties = new Properties();
+        if (reader == null) {
+            return properties;
+        }
+        try {
+            properties.load(reader);
         } catch (IOException e) {
             e.printStackTrace();
         }

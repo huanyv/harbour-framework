@@ -1,6 +1,7 @@
 package top.huanyv.start.web.initialize;
 
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.config.CliArguments;
 import top.huanyv.start.core.HarbourApplication;
@@ -20,24 +21,21 @@ public abstract class HarbourApplicationInitializer implements WebStartupInitial
     @Override
     public void onStartup(ServletContext ctx) throws ServletException {
         Class<?> mainClass = run();
-        AppArguments appArguments = new AppArguments(new CliArguments());
 
         // 创建应用
         HarbourApplication application = new HarbourApplication(mainClass);
-        application.setAppArguments(appArguments);
 
         // 创建容器
-        ApplicationContext applicationContext = application.createApplicationContext();
+        ApplicationContext applicationContext = application.createApplicationContext(new String[0]);
+        Configuration configuration = applicationContext.getConfiguration();
 
         // 注册前端控制器
         RouterServlet routerServlet = new RouterServlet(applicationContext);
         ServletRegistration.Dynamic router = ctx.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, routerServlet);
         router.setLoadOnStartup(1);
         // 文件上传配置，默认最大单文件大小1MB，最大请求大小10MB
-        long maxFileSize = FileUtil.parseSize(appArguments.get("server.maxFileSize", "1MB"));
-        long maxRequestSize = FileUtil.parseSize(appArguments.get("server.maxRequestSize", "10MB"));
-        System.out.println("maxFileSize = " + maxFileSize);
-        System.out.println("maxRequestSize = " + maxRequestSize);
+        long maxFileSize = FileUtil.parseSize(configuration.get("server.maxFileSize", "1MB"));
+        long maxRequestSize = FileUtil.parseSize(configuration.get("server.maxRequestSize", "10MB"));
         router.setMultipartConfig(new MultipartConfigElement("", maxFileSize, maxRequestSize, 0));
         router.addMapping("/");
 

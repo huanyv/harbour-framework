@@ -1,7 +1,7 @@
 package top.huanyv.bean.ioc;
 
 /**
- * @author admin
+ * @author huanyv
  * @date 2022/7/19 17:49
  */
 public interface BeanFactory {

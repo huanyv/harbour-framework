@@ -10,6 +10,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <packaging>war</packaging>
+
     <artifactId>harbour-admin</artifactId>
 
     <properties>
@@ -49,15 +51,15 @@
     <build>
         <plugins>
             <!--打jar包-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-            </plugin>
-            <!--打war包-->
             <!--<plugin>-->
             <!--    <groupId>org.apache.maven.plugins</groupId>-->
-            <!--    <artifactId>maven-war-plugin</artifactId>-->
+            <!--    <artifactId>maven-shade-plugin</artifactId>-->
             <!--</plugin>-->
+            <!--打war包-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 

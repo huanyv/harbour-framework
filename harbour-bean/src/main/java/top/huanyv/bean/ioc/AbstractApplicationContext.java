@@ -1,26 +1,30 @@
 package top.huanyv.bean.ioc;
 
-
+import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
+import top.huanyv.bean.annotation.Value;
 import top.huanyv.bean.aop.AopContext;
 import top.huanyv.bean.aop.ProxyFactory;
 import top.huanyv.bean.exception.BeanCurrentlyInCreationException;
 import top.huanyv.bean.exception.NoSuchBeanDefinitionException;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.ClassBeanDefinition;
-import top.huanyv.bean.utils.Assert;
-import top.huanyv.bean.utils.StringUtil;
+import top.huanyv.bean.ioc.definition.FactoryBeanDefinition;
+import top.huanyv.bean.ioc.definition.MethodBeanDefinition;
+import top.huanyv.bean.utils.*;
 
 import java.lang.reflect.Field;
-import java.util.HashSet;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractApplicationContext implements ApplicationContext {
 
+    // AOP上下文
     private final AopContext aopContext;
 
+    // BeanDefinition注册器
     protected final BeanDefinitionRegistry beanDefinitionRegistry;
 
     // 一级缓存，单例池
@@ -30,10 +34,13 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     private final Map<String, Object> earlySingletonObjects;
 
     // 三级缓存，对象工厂，加工后的Bean
-    private final Map<String, ObjectFactory> objectsFactories;
+    private final Map<String, ObjectFactory<?>> objectsFactories;
 
     // 当前正在加载的 Bean ，避免循环依赖
     private final Set<String> currentBeans;
+
+    // 配置类组合
+    private final DefaultConfiguration configuration;
 
     public AbstractApplicationContext() {
         aopContext = new AopContext();
@@ -41,36 +48,55 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         singletonObjects = new ConcurrentHashMap<>();
         earlySingletonObjects = new ConcurrentHashMap<>();
         objectsFactories = new ConcurrentHashMap<>();
-        currentBeans = new HashSet<>();
+        currentBeans = new ConcurrentHashSet<>();
+        configuration = new DefaultConfiguration();
     }
 
     @Override
     public void refresh() {
-        initialization();
-        loadHungryBean();
+        // 加载配置类配置
+        initConfig();
+
+        // 加载方法和工厂BeanDefinition
+        refreshBeanDefinition();
+        // 执行BeanDefinition后置处理器
+        invokeBeanDefinitionRegistryPostProcessor();
+        // 重新 加载方法和工厂BeanDefinition
+        refreshBeanDefinition();
+
+        // 空方法，由子类实现，回调
+        onRefresh();
+
+        // 执行应用上下文回调
+        invokeAwareCallback();
+        // 加载非懒Bean
+        finishRefresh();
+    }
+
+    public void onRefresh() {
+
     }
 
     /**
-     * 加载饿Bean
+     * 初始化配置类配置参数
      */
-    private void loadHungryBean() {
+    protected void initConfig() {
+        // 配置类配置
         for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames()) {
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
-            if (!beanDefinition.isLazy()) {
-                getBean(beanName);
-            }
-            if (ApplicationContextAware.class.isAssignableFrom(beanDefinition.getBeanClass())) {
-                ApplicationContextAware aware = getBean(beanName, ApplicationContextAware.class);
-                aware.setApplicationContext(this);
+            if (Configuration.class.isAssignableFrom(beanDefinition.getBeanClass())) {
+                this.configuration.put((Configuration) beanDefinition.newInstance());
             }
         }
     }
 
-    public void initialization() {
+    /**
+     * 执行BeanDefinitionRegistry后置处理器
+     */
+    protected void invokeBeanDefinitionRegistryPostProcessor() {
         // BeanDefinition后置处理器
         for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames()) {
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
-            // ApplicationContextAware
             if (BeanDefinitionRegistryPostProcessor.class.isAssignableFrom(beanDefinition.getBeanClass())) {
                 BeanDefinitionRegistryPostProcessor postProcessor = getBean(beanName, BeanDefinitionRegistryPostProcessor.class);
                 postProcessor.postProcessBeanDefinitionRegistry(this.beanDefinitionRegistry);
@@ -79,12 +105,84 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     }
 
     /**
-     * 注入一个bean
+     * 注入方法Bean和FactoryBean
+     */
+    protected void refreshBeanDefinition() {
+        // 配置类注入方法Bean
+        for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+            if (Configuration.class.isAssignableFrom(beanDefinition.getBeanClass())) {
+                ObjectFactory<Object> objectFactory = () -> getBean(beanName);
+                for (Method method : beanDefinition.getBeanClass().getDeclaredMethods()) {
+                    Bean methodBean = method.getAnnotation(Bean.class);
+                    if (method.isAnnotationPresent(Bean.class)) {
+                        BeanDefinition methodBeanDefinition = new MethodBeanDefinition(objectFactory, method);
+                        this.beanDefinitionRegistry.register(methodBean.value(), methodBeanDefinition);
+                    }
+                }
+            }
+        }
+        // 加载FactoryBean
+        for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+            if (FactoryBean.class.isAssignableFrom(beanDefinition.getBeanClass()) && beanName.startsWith("&")) {
+                BeanDefinition factoryBeanDefinition = new FactoryBeanDefinition(
+                        () -> (FactoryBean<?>) getBean(beanName),
+                        beanDefinition.getBeanClass(),
+                        (FactoryBean<?>) beanDefinition.newInstance()
+                );
+                this.beanDefinitionRegistry.register(beanName.substring(1), factoryBeanDefinition);
+            }
+        }
+    }
+
+    /**
+     * 执行ApplicationContextAware回调
+     */
+    protected void invokeAwareCallback() {
+        for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+            if (ApplicationContextAware.class.isAssignableFrom(beanDefinition.getBeanClass())) {
+                ApplicationContextAware aware = getBean(beanName, ApplicationContextAware.class);
+                aware.setApplicationContext(this);
+            }
+        }
+    }
+
+    /**
+     * 实例所有的非Lazy的单例Bean
+     */
+    protected void finishRefresh() {
+        for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+            if (!beanDefinition.isLazy()) {
+                getBean(beanName);
+            }
+        }
+    }
+
+    /**
+     * 给Bean属性注入，依赖注入和配置注入
      *
      * @param bean Bean实例
      */
     private void populateBean(Object bean) {
         Class<?> beanClass = bean.getClass();
+        // 配置注入
+        for (Field field : beanClass.getDeclaredFields()) {
+            field.setAccessible(true);
+            Value valueAnnotation = field.getAnnotation(Value.class);
+            if (valueAnnotation != null) {
+                String s = getConfiguration().get(valueAnnotation.value());
+                if (s != null) {
+                    Object val = NumberUtil.parse(field.getType(), s);
+                    if (val != null) {
+                        ReflectUtil.setField(field, bean, val);
+                    }
+                }
+            }
+        }
+        // 属性注入
         for (Field field : beanClass.getDeclaredFields()) {
             field.setAccessible(true);
             Inject inject = field.getAnnotation(Inject.class);
@@ -98,10 +196,8 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
                     // 类型注入
                     val = getBean(field.getType());
                 }
-                try {
-                    field.set(bean, val);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                if (val != null) {
+                    ReflectUtil.setField(field, bean, val);
                 }
             }
         }
@@ -201,8 +297,8 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
             // 一级缓存没有，从二级缓存找
             bean = this.earlySingletonObjects.get(beanName);
             if (bean == null) {
-                // 二级缓存没有，从三级缓存获取 ObjectFactory对象工厂
-                ObjectFactory objectFactory = this.objectsFactories.get(beanName);
+                // 二级缓存没有，从三级缓存获取ObjectFactory对象工厂
+                ObjectFactory<?> objectFactory = this.objectsFactories.get(beanName);
                 if (objectFactory != null) {
                     // 得到对象工厂
                     bean = objectFactory.getObject();
@@ -248,6 +344,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
             // 放入单例池
             registerSingleton(beanName, earlyBean);
         }
+        // TODO BeanPostProcessor init-bean
         return earlyBean;
     }
 
@@ -271,7 +368,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
      * @param beanName      bean名字
      * @param objectFactory 对象工厂
      */
-    private void addSingletonFactory(String beanName, ObjectFactory objectFactory) {
+    private void addSingletonFactory(String beanName, ObjectFactory<?> objectFactory) {
         if (!this.singletonObjects.containsKey(beanName)) {
             this.objectsFactories.put(beanName, objectFactory);
             this.earlySingletonObjects.remove(beanName);
@@ -314,5 +411,9 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         return beanDefinitionRegistry.containsBeanDefinition(beanName);
     }
 
+    @Override
+    public Configuration getConfiguration() {
+        return this.configuration;
+    }
 }
 

@@ -2,6 +2,7 @@ package top.huanyv.start.loader.jdbc;
 
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.jdbc.core.datasource.SimpleDataSource;
@@ -36,7 +37,7 @@ public class JdbcStartLoader implements ApplicationLoader {
     private boolean u2c = true;
 
     @Override
-    public void load(ApplicationContext applicationContext, AppArguments appArguments) {
+    public void load(ApplicationContext applicationContext, Configuration configuration) {
         Assert.notNull(driverClassName, "database 'driverClassName' property not configured!");
         Assert.notNull(url, "database 'url' property not configured!");
         Assert.notNull(username, "database 'username' property not configured!");
@@ -64,7 +65,7 @@ public class JdbcStartLoader implements ApplicationLoader {
 
     public static class ConditionOnMissingBean implements Condition {
         @Override
-        public boolean matchers(ApplicationContext applicationContext, AppArguments appArguments) {
+        public boolean matchers(ApplicationContext applicationContext, Configuration configuration) {
             return BeanFactoryUtil.isNotPresent(applicationContext, DaoScanner.class);
         }
     }

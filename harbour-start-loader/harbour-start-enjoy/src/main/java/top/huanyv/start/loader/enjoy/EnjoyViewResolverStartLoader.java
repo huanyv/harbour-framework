@@ -2,6 +2,7 @@ package top.huanyv.start.loader.enjoy;
 
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.anntation.Conditional;
 import top.huanyv.start.anntation.Properties;
@@ -45,7 +46,7 @@ public class EnjoyViewResolverStartLoader implements ApplicationLoader {
     public static class ConditionOnMissingBean implements Condition {
 
         @Override
-        public boolean matchers(ApplicationContext applicationContext, AppArguments appArguments) {
+        public boolean matchers(ApplicationContext applicationContext, Configuration configuration) {
             return BeanFactoryUtil.isNotPresent(applicationContext, ViewResolver.class);
         }
     }

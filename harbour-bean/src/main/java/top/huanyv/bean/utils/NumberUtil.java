@@ -1,7 +1,5 @@
 package top.huanyv.bean.utils;
 
-import top.huanyv.bean.utils.StringUtil;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -22,6 +20,13 @@ public class NumberUtil {
         return defaultValue;
     }
 
+    /**
+     * 字符串类型转成{@link java.lang.Number Number}类型，
+     *
+     * @param type  目标类型
+     * @param value 转换值，目标类型是非字符串时，不可为空串
+     * @return {@link T}
+     */
     public static <T> T parse(Class<T> type, String value) {
         if (!String.class.equals(type) && !StringUtil.hasText(value)) {
             throw new IllegalArgumentException("string convert '" + type.getName() + "' fail, string 'value' must not be empty!");

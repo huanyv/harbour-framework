@@ -1,6 +1,7 @@
 package top.huanyv.bean.aop;
 
 import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.ConcurrentHashSet;
 import top.huanyv.bean.utils.ReflectUtil;
 
 import java.lang.reflect.Method;
@@ -16,11 +17,10 @@ public class AopContext {
     /**
      * aop映射
      */
-    private Map<Method, List<AspectAdvice>> aopMapping = new ConcurrentHashMap<>();
+    private final Map<Method, List<AspectAdvice>> aopMapping = new ConcurrentHashMap<>();
 
     // 已经添加过代理映射的缓存，防止重复添加
-    private static final Object OBJECT = new Object();
-    private Map<String, Object> adviceCache = new ConcurrentHashMap<>();
+    private final Set<String> adviceCache = new ConcurrentHashSet<>();
 
     /**
      * 获取切面通知
@@ -49,6 +49,12 @@ public class AopContext {
         return false;
     }
 
+    /**
+     * 判断某个方法是否需要代理
+     *
+     * @param method 方法
+     * @return boolean 布尔
+     */
     public boolean hasProxy(Method method) {
         return aopMapping.containsKey(method);
     }
@@ -56,7 +62,7 @@ public class AopContext {
     /**
      * 判断类是否需要代理
      *
-     * @param cls cls
+     * @param cls 类
      * @return boolean
      */
     public boolean hasProxy(Class<?> cls) {
@@ -91,9 +97,14 @@ public class AopContext {
         return this;
     }
 
+    /**
+     * 根据类添加AOP映射，映射为【切入点，执行链】
+     *
+     * @param cls 类
+     */
     public void add(Class<?> cls) {
         Assert.notNull(cls);
-        if (this.adviceCache.containsKey(cls.getName())) {
+        if (this.adviceCache.contains(cls.getName())) {
             return;
         }
         List<Class<? extends AspectAdvice>> baseAdvices = null;
@@ -119,7 +130,7 @@ public class AopContext {
                 this.addMapping(method, advices.toArray(new Class[0]));
             }
         }
-        this.adviceCache.put(cls.getName(), OBJECT);
+        this.adviceCache.add(cls.getName());
     }
 
     /**

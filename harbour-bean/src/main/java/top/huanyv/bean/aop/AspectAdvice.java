@@ -3,7 +3,7 @@ package top.huanyv.bean.aop;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * @author admin
+ * @author huanyv
  * @date 2022/8/5 8:44
  */
 public interface AspectAdvice {

@@ -2,6 +2,7 @@ package top.huanyv.start.loader.tomcat;
 
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.anntation.Conditional;
 import top.huanyv.start.anntation.Properties;
@@ -58,7 +59,7 @@ public class TomcatStartLoader implements ApplicationLoader {
 
 
     @Override
-    public void load(ApplicationContext applicationContext, AppArguments appArguments) {
+    public void load(ApplicationContext applicationContext, Configuration configuration) {
         // 创建前端控制器
         this.servlet = new RouterServlet(applicationContext);
     }
@@ -81,7 +82,7 @@ public class TomcatStartLoader implements ApplicationLoader {
     public static class ConditionOnMissingBean implements Condition {
 
         @Override
-        public boolean matchers(ApplicationContext applicationContext, AppArguments appArguments) {
+        public boolean matchers(ApplicationContext applicationContext, Configuration configuration) {
             return BeanFactoryUtil.isNotPresent(applicationContext, WebServer.class);
         }
     }

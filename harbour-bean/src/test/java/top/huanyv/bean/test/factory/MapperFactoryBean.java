@@ -1,6 +1,7 @@
 package top.huanyv.bean.test.factory;
 
 import top.huanyv.bean.annotation.Bean;
+import top.huanyv.bean.annotation.Value;
 import top.huanyv.bean.ioc.FactoryBean;
 
 import java.lang.reflect.InvocationHandler;
@@ -15,8 +16,12 @@ public class MapperFactoryBean implements FactoryBean {
 
     private Class<?> mapperInterface;
 
+    @Value("server.port")
+    private int port;
+
     @Override
     public Object getObject() throws Exception {
+        System.out.println(this.getClass() + "-port = " + port);
         return Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

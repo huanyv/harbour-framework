@@ -43,16 +43,10 @@ public class BeanDefinitionRegistry implements Iterable<BeanDefinition>{
             return;
         }
         Class<?> cls = beanDefinition.getBeanClass();
-        // 判断BeanNe是否可用
+        // 判断BeanName是否可用
         beanName = StringUtil.hasText(beanName) ? beanName : beanDefinition.getBeanName();
         // FactoryBean
-        if (FactoryBean.class.isAssignableFrom(cls)) {
-            // 工厂Bean注册
-            BeanDefinition factoryBeanDefinition = new FactoryBeanDefinition((FactoryBean<?>) beanDefinition.newInstance());
-            this.beanDefinitionMap.put(beanName, factoryBeanDefinition);
-
-            beanName = "&" + beanName;
-        }
+        if (FactoryBean.class.isAssignableFrom(cls)) beanName = "&" + beanName;
         beanDefinitionMap.put(beanName, beanDefinition);
     }
 

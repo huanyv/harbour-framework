@@ -1,7 +1,7 @@
 package top.huanyv.bean.utils;
 
 /**
- * @author admin
+ * @author huanyv
  * @date 2022/7/30 16:26
  */
 public interface StringConstants {

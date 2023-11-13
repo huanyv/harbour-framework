@@ -7,7 +7,7 @@ package top.huanyv.bean.exception;
 public class BeanCurrentlyInCreationException extends BeansException {
 
     public BeanCurrentlyInCreationException(String beanName) {
-        super(" Error creating bean with name '" + beanName + "': " +
-                "Requested bean is currently in creation: Is there an unresolvable circular reference?");
+        super("Error creating bean with name '" + beanName + "': " +
+                "Bean is currently in creation: Is there an unresolvable circular reference?");
     }
 }

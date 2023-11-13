@@ -6,7 +6,7 @@ import net.sf.cglib.proxy.MethodProxy;
 import java.lang.reflect.Method;
 
 /**
- * @author admin
+ * @author huanyv
  * @date 2022/8/5 9:29
  */
 public class CglibInvocationHandler<T> extends AbstractInvocationHandler<T> implements MethodInterceptor {

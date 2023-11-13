@@ -5,7 +5,7 @@ import net.sf.cglib.proxy.Enhancer;
 import java.lang.reflect.Proxy;
 
 /**
- * @author admin
+ * @author huanyv
  * @date 2022/8/5 9:14
  */
 public class ProxyFactory {

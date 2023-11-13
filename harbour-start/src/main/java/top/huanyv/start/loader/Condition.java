@@ -1,7 +1,7 @@
 package top.huanyv.start.loader;
 
 import top.huanyv.bean.ioc.ApplicationContext;
-import top.huanyv.start.config.AppArguments;
+import top.huanyv.bean.ioc.Configuration;
 
 /**
  * @author huanyv
@@ -9,6 +9,6 @@ import top.huanyv.start.config.AppArguments;
  */
 public interface Condition {
 
-    boolean matchers(ApplicationContext applicationContext, AppArguments appArguments);
+    boolean matchers(ApplicationContext applicationContext, Configuration configuration);
 
 }

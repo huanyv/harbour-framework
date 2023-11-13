@@ -32,20 +32,6 @@ public class AnnotationBeanDefinitionReader {
             if (classBean != null) {
                 BeanDefinition classBeanDefinition = new ClassBeanDefinition(cls);
                 this.registry.register(classBean.value(), classBeanDefinition);
-
-                // 加载方法Bean
-                if (Configuration.class.isAssignableFrom(cls)) {
-                    Object configInstance = classBeanDefinition.newInstance();
-                    for (Method method : cls.getDeclaredMethods()) {
-                        Bean methodBean = method.getAnnotation(Bean.class);
-                        if (method.isAnnotationPresent(Bean.class)) {
-                            BeanDefinition methodBeanDefinition = new MethodBeanDefinition(configInstance, method);
-                            // 注册
-                            this.registry.register(methodBean.value(), methodBeanDefinition);
-                        }
-                    }
-                }
-
             }
 
         }

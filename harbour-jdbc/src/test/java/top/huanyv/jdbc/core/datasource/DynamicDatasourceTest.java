@@ -1,7 +1,6 @@
 package top.huanyv.jdbc.core.datasource;
 
 import com.mysql.jdbc.Driver;
-import com.sun.media.sound.SoftTuning;
 import org.junit.Before;
 import org.junit.Test;
 import top.huanyv.bean.utils.ClassLoaderUtil;

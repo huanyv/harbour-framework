@@ -1,8 +1,8 @@
 package top.huanyv.start.loader;
 
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.bean.utils.Ordered;
-import top.huanyv.start.config.AppArguments;
 
 /**
  * 应用程序加载器
@@ -13,7 +13,7 @@ import top.huanyv.start.config.AppArguments;
  */
 public interface ApplicationLoader extends Ordered {
 
-    default void load(ApplicationContext applicationContext, AppArguments appArguments) {
+    default void load(ApplicationContext applicationContext, Configuration configuration) {
 
     }
 

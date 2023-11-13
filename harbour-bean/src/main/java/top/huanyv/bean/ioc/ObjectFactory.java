@@ -1,11 +1,13 @@
 package top.huanyv.bean.ioc;
 
+import top.huanyv.bean.exception.BeansException;
+
 /**
  * @author huanyv
  * @date 2022/12/19 14:41
  */
-public interface ObjectFactory {
+public interface ObjectFactory<T> {
 
-    Object getObject();
+    T getObject() throws BeansException;
 
 }

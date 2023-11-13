@@ -1,7 +1,10 @@
 package top.huanyv.bean.ioc;
 
+import java.util.*;
+
 /**
- * 配置类
+ * 配置类，实现这个类，并声明到IOC容器中 <br />
+ * 配置类中使用{@link top.huanyv.bean.annotation.Bean @Bean}注解标识的方法，将以返回值作为实例，注入到IOC容器当中
  *
  * @author huanyv
  * @date 2023/11/6 15:46
@@ -16,6 +19,7 @@ public interface Configuration {
      * @return {@link Configuration}
      */
     default Configuration add(String k, String v) {
+        getProperties().put(k, v);
         return this;
     }
 
@@ -26,7 +30,7 @@ public interface Configuration {
      * @return {@link String}
      */
     default String get(String k) {
-        return null;
+        return getProperties().get(k);
     }
 
     /**
@@ -36,9 +40,22 @@ public interface Configuration {
      * @param defaultVal 默认值
      * @return {@link Object}
      */
-    default Object get(String k, String defaultVal) {
+    default String get(String k, String defaultVal) {
         String val = get(k);
         return val == null ? defaultVal : val;
+    }
+
+    default Map<String, String> getProperties() {
+        return Collections.emptyMap();
+    }
+
+    /**
+     * 返回所有配置名的Set集合，用于遍历
+     *
+     * @return {@link Set}<{@link String}>
+     */
+    default Set<String> getNames() {
+        return Collections.unmodifiableSet(getProperties().keySet());
     }
 
 }

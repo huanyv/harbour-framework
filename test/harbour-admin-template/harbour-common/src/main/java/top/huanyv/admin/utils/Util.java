@@ -1,6 +1,7 @@
 package top.huanyv.admin.utils;
 
 import top.huanyv.bean.annotation.Bean;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.core.ApplicationRunner;
 import top.huanyv.bean.utils.StringUtil;
@@ -32,7 +33,7 @@ public class Util implements ApplicationRunner {
     private static long startTime;
 
     @Override
-    public void run(AppArguments appArguments) {
+    public void run(Configuration configuration) {
         startTime = new Date().getTime();
     }
 

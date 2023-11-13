@@ -6,12 +6,12 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.logging.appender.AppenderFactory;
 import top.huanyv.logging.appender.ErrorRollingFileAppenderFactory;
 import top.huanyv.logging.appender.InfoRollingFileAppenderFactory;
 import top.huanyv.logging.util.LogbackUtil;
 import top.huanyv.start.anntation.Properties;
-import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.bean.utils.StringUtil;
 import top.huanyv.bean.utils.SystemUtil;
@@ -28,14 +28,14 @@ public class LoggingStartLoader implements ApplicationLoader {
     private String path;
 
     @Override
-    public void load(ApplicationContext applicationContext, AppArguments appArguments) {
+    public void load(ApplicationContext applicationContext, Configuration configuration) {
         LoggerContext loggerContext = LogbackUtil.getContext();
         if (loggerContext != null) {
             // 设置日志级别
-            String levelConfigName = getLevelConfigName(appArguments);
+            String levelConfigName = getLevelConfigName(configuration);
             if (StringUtil.hasText(levelConfigName)) {
                 String loggerName = StringUtil.removePrefix(levelConfigName, LEVEL_PREFIX);
-                String levelValue = appArguments.get(levelConfigName);
+                String levelValue = configuration.get(levelConfigName);
                 Logger logger = loggerContext.getLogger(loggerName);
                 logger.setLevel(Level.toLevel(levelValue));
             }
@@ -55,8 +55,8 @@ public class LoggingStartLoader implements ApplicationLoader {
 
     }
 
-    private String getLevelConfigName(AppArguments appArguments) {
-        for (String name : appArguments.getNames()) {
+    private String getLevelConfigName(Configuration configuration) {
+        for (String name : configuration.getNames()) {
             if (name.startsWith(LEVEL_PREFIX)) {
                 return name;
             }

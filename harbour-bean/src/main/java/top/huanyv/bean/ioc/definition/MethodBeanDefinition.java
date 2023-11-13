@@ -1,6 +1,7 @@
 package top.huanyv.bean.ioc.definition;
 
 import top.huanyv.bean.annotation.Bean;
+import top.huanyv.bean.ioc.ObjectFactory;
 import top.huanyv.bean.utils.Assert;
 
 import java.lang.reflect.InvocationTargetException;
@@ -12,27 +13,28 @@ import java.lang.reflect.Method;
  */
 public class MethodBeanDefinition extends AbstractBeanDefinition {
 
-    private Object methodClassInstance;
-
     private Method method;
 
-    public MethodBeanDefinition(Object methodClassInstance, Method method) {
-        Assert.notNull(methodClassInstance, "'methodClassInstance' must not be null.");
+    private ObjectFactory<?> objectFactory;
+
+    public MethodBeanDefinition(ObjectFactory<?> objectFactory, Method method) {
+        Assert.notNull(objectFactory, "'objectFactory' must not be null.");
         Assert.notNull(method, "'method' must not be null.");
-        this.methodClassInstance = methodClassInstance;
+        this.objectFactory = objectFactory;
         this.method = method;
 
+        Bean beanAnnotation = method.getAnnotation(Bean.class);
         setBeanClass(method.getReturnType());
         setBeanName(method.getName());
-        setSingleton(method.isAnnotationPresent(Bean.class) && !method.getAnnotation(Bean.class).prototype());
-        setLazy(method.isAnnotationPresent(Bean.class) && method.getAnnotation(Bean.class).lazy());
+        setSingleton(beanAnnotation != null && !beanAnnotation.prototype());
+        setLazy(beanAnnotation != null && beanAnnotation.lazy());
     }
 
     @Override
     public Object newInstance() {
         try {
             method.setAccessible(true);
-            return method.invoke(methodClassInstance);
+            return method.invoke(this.objectFactory.getObject());
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }

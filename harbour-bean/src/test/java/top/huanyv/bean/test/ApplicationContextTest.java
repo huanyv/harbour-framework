@@ -53,6 +53,9 @@ public class ApplicationContextTest {
         AopContext aopContext = new AopContext();
         System.out.println("aopContext.hasProxy(UserDao.class) = " + aopContext.hasProxy(UserDao.class));
         System.out.println(aopContext.hasProxy(UserDao.class, UserDao.class.getMethod("getUserById", Integer.class)));
+
+
+        System.out.println("app.getConfiguration() = " + app.getConfiguration());
     }
 
     @Test
@@ -85,7 +88,6 @@ public class ApplicationContextTest {
     }
 
 }
-
 
 class Bean {
     private String name;

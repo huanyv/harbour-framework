@@ -4,11 +4,11 @@ import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.AbstractApplicationContext;
 import top.huanyv.bean.ioc.AnnotationBeanDefinitionReader;
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
 import top.huanyv.bean.ioc.definition.MethodBeanDefinition;
 import top.huanyv.start.anntation.Conditional;
 import top.huanyv.start.anntation.Properties;
-import top.huanyv.start.config.AppArguments;
 import top.huanyv.start.loader.ApplicationLoader;
 import top.huanyv.start.loader.Condition;
 import top.huanyv.bean.utils.NumberUtil;
@@ -33,16 +33,23 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
         super();
         reader = new AnnotationBeanDefinitionReader(this.beanDefinitionRegistry);
         reader.read(scanPackages);
-        initialization();
+    }
+
+    @Override
+    public void onRefresh() {
+        callLoaders();
+        // 加载方法和工厂BeanDefinition
+        refreshBeanDefinition();
+        // 执行BeanDefinition后置处理器
+        invokeBeanDefinitionRegistryPostProcessor();
+        // 重新 加载方法和工厂BeanDefinition
+        refreshBeanDefinition();
     }
 
     /**
-     * 调用加载器
      * 调用加载器，并加载所有条件Bean
-     *
-     * @param appArguments 应用参数
      */
-    public void callLoaders(AppArguments appArguments) {
+    public void callLoaders() {
         List<ApplicationLoader> loaders = new ArrayList<>();
         // 获取SPI，应用启动加载器
         ServiceLoader<ApplicationLoader> applicationLoaders = ServiceLoader.load(ApplicationLoader.class);
@@ -57,22 +64,22 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
             Class<? extends ApplicationLoader> cls = applicationLoader.getClass();
 
             // 填充属性
-            populateLoader(applicationLoader, appArguments);
+            populateLoader(applicationLoader, this.getConfiguration());
 
             // 执行加载方法
-            applicationLoader.load(this, appArguments);
+            applicationLoader.load(this, this.getConfiguration());
 
             // 方法Bean注入
             for (Method method : cls.getDeclaredMethods()) {
-                if (conditionBeanMatch(method, this, appArguments)) {
-                    BeanDefinition beanDefinition = new MethodBeanDefinition(applicationLoader, method);
+                if (conditionBeanMatch(method, this, this.getConfiguration())) {
+                    BeanDefinition beanDefinition = new MethodBeanDefinition(() -> applicationLoader, method);
                     registerBeanDefinition(beanDefinition.getBeanName(), beanDefinition);
                 }
             }
         }
     }
 
-    public void populateLoader(ApplicationLoader loader, AppArguments arguments) {
+    public void populateLoader(ApplicationLoader loader, Configuration configuration) {
         Class<? extends ApplicationLoader> cls = loader.getClass();
         String basePrefix = "";
         // 加载类上的配置
@@ -92,7 +99,7 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
                     configName = fieldAnnotation.name().trim();
                 }
             }
-            String strVal = arguments.get(prefixName + configName);
+            String strVal = configuration.get(prefixName + configName);
             if (String.class.equals(field.getType()) && strVal != null) {
                 ReflectUtil.setField(field, loader, strVal);
             } else if (StringUtil.hasText(strVal)) {
@@ -111,7 +118,7 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
      * @param applicationContext 应用程序上下文
      * @return boolean
      */
-    public boolean conditionBeanMatch(Method method, ApplicationContext applicationContext, AppArguments appArguments) {
+    public boolean conditionBeanMatch(Method method, ApplicationContext applicationContext, Configuration configuration) {
         // 如果没有@Bean注解，不注入
         if (!method.isAnnotationPresent(Bean.class)) {
             return false;
@@ -120,7 +127,7 @@ public class ConditionConfigApplicationContext extends AbstractApplicationContex
         if (conditional != null) {
             // 有条件，条件通过注入
             Condition condition = ReflectUtil.newInstance(conditional.value());
-            return condition.matchers(applicationContext, appArguments);
+            return condition.matchers(applicationContext, configuration);
         }
         // 如果没有条件注解，直接注入
         return true;

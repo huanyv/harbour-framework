@@ -2,6 +2,7 @@ package top.huanyv.start.loader.web;
 
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.bean.utils.BeanFactoryUtil;
 import top.huanyv.start.anntation.Conditional;
 import top.huanyv.start.config.AppArguments;
@@ -38,14 +39,14 @@ public class WebSecurityStartLoader implements ApplicationLoader {
 
     public static class ConditionOnMissingStorageStrategyBean implements Condition {
         @Override
-        public boolean matchers(ApplicationContext applicationContext, AppArguments appArguments) {
+        public boolean matchers(ApplicationContext applicationContext, Configuration configuration) {
             return BeanFactoryUtil.isNotPresent(applicationContext, StorageStrategy.class);
         }
     }
 
     public static class ConditionOnMissingPasswordDigesterBean implements Condition {
         @Override
-        public boolean matchers(ApplicationContext applicationContext, AppArguments appArguments) {
+        public boolean matchers(ApplicationContext applicationContext, Configuration configuration) {
             return BeanFactoryUtil.isNotPresent(applicationContext, PasswordDigester.class);
         }
     }

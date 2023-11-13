@@ -1,13 +1,10 @@
 package top.huanyv.bean.utils;
 
-import top.huanyv.bean.utils.ClassLoaderUtil;
-import top.huanyv.bean.utils.IoUtil;
-
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author admin
+ * @author huanyv
  * @date 2022/7/9 14:37
  */
 public class ResourceUtil {

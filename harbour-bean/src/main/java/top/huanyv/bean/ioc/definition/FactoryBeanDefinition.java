@@ -2,7 +2,9 @@ package top.huanyv.bean.ioc.definition;
 
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.ioc.FactoryBean;
+import top.huanyv.bean.ioc.ObjectFactory;
 import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.ReflectUtil;
 import top.huanyv.bean.utils.StringUtil;
 
 /**
@@ -11,22 +13,23 @@ import top.huanyv.bean.utils.StringUtil;
  */
 public class FactoryBeanDefinition extends AbstractBeanDefinition {
 
-    private FactoryBean<?> factoryInstance;
+    private ObjectFactory<? extends FactoryBean<?>> objectFactory;
 
-    public FactoryBeanDefinition(FactoryBean<?> factoryBeanInstance) {
-        Assert.notNull(factoryBeanInstance, "'factoryBeanInstance' must not be null.");
-        this.factoryInstance = factoryBeanInstance;
-        Class<? extends FactoryBean> factoryInstanceClass = this.factoryInstance.getClass();
-        setBeanName(StringUtil.firstLetterLower(factoryInstanceClass.getSimpleName()));
-        setBeanClass(this.factoryInstance.getObjectType());
-        setSingleton(this.factoryInstance.isSingleton());
-        setLazy(factoryInstanceClass.isAnnotationPresent(Bean.class) && factoryInstanceClass.getAnnotation(Bean.class).lazy());
+    public FactoryBeanDefinition(ObjectFactory<? extends FactoryBean<?>> objectFactory, Class<?> factoryBeanClass, FactoryBean<?> tempFactoryBean) {
+        Assert.notNull(objectFactory, "'objectFactory' must not be null.");
+        Assert.notNull(factoryBeanClass, "'factoryBeanClass' must not be null.");
+        Assert.notNull(tempFactoryBean, "'tempFactoryBean' must not be null.");
+        this.objectFactory = objectFactory;
+        setBeanName(StringUtil.firstLetterLower(factoryBeanClass.getSimpleName()));
+        setBeanClass(tempFactoryBean.getObjectType());
+        setSingleton(tempFactoryBean.isSingleton());
+        setLazy(factoryBeanClass.isAnnotationPresent(Bean.class) && factoryBeanClass.getAnnotation(Bean.class).lazy());
     }
 
     @Override
     public Object newInstance() {
         try {
-            return this.factoryInstance.getObject();
+            return this.objectFactory.getObject().getObject();
         } catch (Exception e) {
             e.printStackTrace();
         }

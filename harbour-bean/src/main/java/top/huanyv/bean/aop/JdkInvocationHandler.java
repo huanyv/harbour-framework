@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
- * @author admin
+ * @author huanyv
  * @date 2022/8/5 9:29
  */
 public class JdkInvocationHandler<T> extends AbstractInvocationHandler<T> implements InvocationHandler {

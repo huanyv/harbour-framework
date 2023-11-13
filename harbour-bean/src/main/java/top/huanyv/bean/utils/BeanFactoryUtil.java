@@ -1,13 +1,15 @@
 package top.huanyv.bean.utils;
 
+import top.huanyv.bean.exception.BeanTypeNonUniqueException;
 import top.huanyv.bean.exception.NoSuchBeanDefinitionException;
 import top.huanyv.bean.ioc.ApplicationContext;
+import top.huanyv.bean.ioc.definition.BeanDefinition;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
 
 /**
- * @author admin
+ * @author huanyv
  * @date 2022/7/28 14:50
  */
 public final class BeanFactoryUtil {
@@ -64,23 +66,24 @@ public final class BeanFactoryUtil {
     }
 
     /**
-     * bean存在
+     * 某个类型的Bean是否存在
      *
      * @param applicationContext 应用程序上下文
      * @param type               类型
      * @return boolean
      */
     public static boolean isPresent(ApplicationContext applicationContext, Class<?> type) {
-        try {
-            applicationContext.getBean(type);
-            return true;
-        } catch (NoSuchBeanDefinitionException e) {
-            return false;
+        for (String beanName : applicationContext.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = applicationContext.getBeanDefinition(beanName);
+            if (type.isAssignableFrom(beanDefinition.getBeanClass())) {
+                return true;
+            }
         }
+        return false;
     }
 
     /**
-     * bean不存在
+     * 某个类型的Bean是否不存在
      *
      * @param applicationContext 应用程序上下文
      * @param type               类型

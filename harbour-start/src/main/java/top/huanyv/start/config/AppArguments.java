@@ -1,21 +1,21 @@
 package top.huanyv.start.config;
 
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.start.exception.ConfigFileNotFountException;
 import top.huanyv.bean.utils.*;
 
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.util.Collections;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author huanyv
  * @date 2022/12/17 14:41
  */
-public class AppArguments {
+public class AppArguments implements Configuration {
 
     private final Map<String, String> argumentMap = new ConcurrentHashMap<>();
 
@@ -30,7 +30,8 @@ public class AppArguments {
         }
 
         // 加载配置文件
-        Properties properties = PropertiesUtil.load(inputStream);
+        InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        Properties properties = PropertiesUtil.load(streamReader);
         for (String propertyName : properties.stringPropertyNames()) {
             this.argumentMap.put(propertyName, properties.getProperty(propertyName));
         }
@@ -39,23 +40,6 @@ public class AppArguments {
         for (String key : cliArguments.getNames()) {
             this.argumentMap.put(key, cliArguments.get(key));
         }
-    }
-
-    public AppArguments add(String name, String value) {
-        this.argumentMap.put(name, value);
-        return this;
-    }
-
-    public String get(String name) {
-        return argumentMap.get(name);
-    }
-
-    public String get(String name, String defaultValue) {
-        String value = this.argumentMap.get(name);
-        if (value == null) {
-            return defaultValue;
-        }
-        return value;
     }
 
     public int getInt(String name) {
@@ -82,9 +66,9 @@ public class AppArguments {
         }
     }
 
-
-    public Set<String> getNames() {
-        return Collections.unmodifiableSet(this.argumentMap.keySet());
+    @Override
+    public Map<String, String> getProperties() {
+        return this.argumentMap;
     }
 
     @Override

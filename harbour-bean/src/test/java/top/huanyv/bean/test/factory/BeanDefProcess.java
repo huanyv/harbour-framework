@@ -1,6 +1,7 @@
 package top.huanyv.bean.test.factory;
 
 import top.huanyv.bean.annotation.Bean;
+import top.huanyv.bean.annotation.Value;
 import top.huanyv.bean.ioc.BeanDefinitionRegistry;
 import top.huanyv.bean.ioc.BeanDefinitionRegistryPostProcessor;
 import top.huanyv.bean.ioc.definition.BeanDefinition;
@@ -13,6 +14,10 @@ import top.huanyv.bean.test.ioc.controller.UserController;
  */
 @Bean
 public class BeanDefProcess implements BeanDefinitionRegistryPostProcessor {
+
+    @Value("server.port")
+    private int port;
+
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
         System.out.println("registry = " + registry);
@@ -26,5 +31,7 @@ public class BeanDefProcess implements BeanDefinitionRegistryPostProcessor {
         for (BeanDefinition definition : registry) {
             System.out.println("definition = " + definition);
         }
+
+        System.out.println("port = " + port);
     }
 }

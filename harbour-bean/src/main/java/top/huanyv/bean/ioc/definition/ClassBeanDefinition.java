@@ -20,10 +20,12 @@ public class ClassBeanDefinition extends AbstractBeanDefinition {
 
     public ClassBeanDefinition(Class<?> beanClass, Object... constructorArgs) {
         Assert.notNull(beanClass, "'beanClass' must not be null.");
+
+        Bean beanAnnotation = beanClass.getAnnotation(Bean.class);
         setBeanClass(beanClass);
         setBeanName(StringUtil.firstLetterLower(beanClass.getSimpleName()));
-        setSingleton(beanClass.isAnnotationPresent(Bean.class) && !beanClass.getAnnotation(Bean.class).prototype());
-        setLazy(beanClass.isAnnotationPresent(Bean.class) && beanClass.getAnnotation(Bean.class).lazy());
+        setSingleton(beanAnnotation == null || beanAnnotation.prototype() == false);
+        setLazy(beanAnnotation != null && beanAnnotation.lazy());
 
         if (constructorArgs != null) {
             this.constructorArgs = constructorArgs;
