@@ -148,10 +148,8 @@ public final class BeanUtil {
     /**
      * 是否是一个java bean <br />
      * 1. 是否有public的属性 <br />
-     * 2. 是否有非get(is)和set开头的方法（除去Object的方法） <br />
-     * 3. get(is)和set方法的参数数量是否正确，get(is)方法没有入参，set方法只有一个入参 <br />
-     * 4. isXxx的方法是否为获取boolean值的方法 <br />
-     * 5. 当特殊情况下，可以使用{@link JavaBean @JavaBean}注解
+     * 2. 是否有set方法<br />
+     * 3. 当特殊情况下，可以使用{@link JavaBean @JavaBean}注解
      *
      * @param bean Class<?>
      * @return boolean
@@ -169,18 +167,14 @@ public final class BeanUtil {
                 return false;
             }
         }
-        Method[] methods = bean.getDeclaredMethods();
-        for (Method method : methods) {
-            String methodName = method.getName();
-            if (ReflectUtil.isObjectMethod(method) || "canEqual".equals(methodName) || "$jacocoInit".equals(methodName)) {
-                continue;
-            }
-            if (!ReflectUtil.isGetter(method) && !ReflectUtil.isSetter(method)) {
-                return false;
+        for (Method method : bean.getMethods()) {
+            if (ReflectUtil.isSetter(method)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
+
 
 
 }

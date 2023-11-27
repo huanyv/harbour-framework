@@ -31,6 +31,11 @@ public class HarbourApplication {
      */
     private Class<?> mainClass;
 
+    /**
+     * 命令行参数
+     */
+    private String[] args;
+
     public HarbourApplication(Class<?> mainClass) {
         Assert.notNull(mainClass, "'mainClass' must not be null.");
         this.mainClass = mainClass;
@@ -44,9 +49,10 @@ public class HarbourApplication {
         if (args == null) {
             args = new String[0];
         }
+        this.args = args;
 
         // IOC
-        ApplicationContext applicationContext = createApplicationContext(args);
+        ApplicationContext applicationContext = createApplicationContext();
         Configuration configuration = applicationContext.getConfiguration();
 
         // 打印banner
@@ -77,10 +83,10 @@ public class HarbourApplication {
      *
      * @return {@link ApplicationContext}
      */
-    public ApplicationContext createApplicationContext(String[] args) {
+    public ApplicationContext createApplicationContext() {
         // 创建IOC容器
         ConditionConfigApplicationContext context = new ConditionConfigApplicationContext(mainClass.getPackage().getName());
-        context.registerBean(AppArguments.class, new CliArguments(args));
+        context.registerBean(AppArguments.class, new CliArguments(this.args));
         // 刷新容器
         context.refresh();
         return context;

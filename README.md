@@ -30,10 +30,6 @@
 * 内置多种常用功能
 * Jdk8 + Servlet4
 
-## 项目结构
-
-* harbour
-
 ## 快速上手
 
 ### HelloWorld
@@ -153,11 +149,11 @@ public class UserController implements RouteRegistry {
 * 在`resources`下创建名为`application.properties`的文件
 * 那么这个文件中应该写什么呢？
     * 你要的配置应该是`ApplicationLoader`接口实现类，对应的属性
-    * 由`@ConfigurationProperties`注解的`prefix`属性值+`.`+属性名为配置项
+    * 由`@Properties`注解的`prefix`属性值+属性名为配置项
     * 比如下面这个类，这个是内嵌`Tomcat`的自动加载类
 
 ```java
-@ConfigurationProperties(prefix = "server")
+@Properties(prefix = "server.")
 public class TomcatStartLoader implements ApplicationLoader {
 
     private long maxFileSize = 1048576;
@@ -204,13 +200,13 @@ server.maxFileSize=10240000L
 
 ```xml
 <properties>
-    <main.class>xxx.xxx.MainApplication</main.class>
+    <main.class>com.book.MainApplication</main.class>
 </properties>
 ```
 
 * 执行`package`后，使用`java -jar xxx.jar`启动运行
 
 
-### 更多功能请看[详细文档](https://huanyv.github.io/harbour)
+### 更多功能请看<a href="https://huanyv.github.io/harbour" target="_self">详细文档</a>
 
 

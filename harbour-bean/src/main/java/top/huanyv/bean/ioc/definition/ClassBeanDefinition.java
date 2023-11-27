@@ -44,6 +44,7 @@ public class ClassBeanDefinition extends AbstractBeanDefinition {
             for (Constructor<?> constructor : beanClass.getConstructors()) {
                 if (isConstructor(constructor, constructorArgs)) {
                     this.constructor = constructor;
+                    return;
                 }
             }
             if (this.constructor == null) {

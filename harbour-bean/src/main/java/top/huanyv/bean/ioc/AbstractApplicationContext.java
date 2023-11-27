@@ -15,6 +15,8 @@ import top.huanyv.bean.utils.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,7 +42,10 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     private final Set<String> currentBeans;
 
     // 配置类组合
-    private final DefaultConfiguration configuration;
+    private final ConfigurationComposite configuration;
+
+    // bean构建后置处理器，工厂集合
+    private final List<BeanPostProcessor> beanPostProcessorList;
 
     public AbstractApplicationContext() {
         aopContext = new AopContext();
@@ -49,7 +54,8 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         earlySingletonObjects = new ConcurrentHashMap<>();
         objectsFactories = new ConcurrentHashMap<>();
         currentBeans = new ConcurrentHashSet<>();
-        configuration = new DefaultConfiguration();
+        configuration = new ConfigurationComposite();
+        beanPostProcessorList = new ArrayList<>();
     }
 
     @Override
@@ -67,15 +73,19 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         // 空方法，由子类实现，回调
         onRefresh();
 
+        // 组装Bean后置处理器集合
+        loadBeanPostProcessor();
+
         // 执行应用上下文回调
         invokeAwareCallback();
         // 加载非懒Bean
         finishRefresh();
     }
 
-    public void onRefresh() {
+    protected void onRefresh() {
 
     }
+
 
     /**
      * 初始化配置类配置参数
@@ -137,6 +147,18 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     }
 
     /**
+     * 组装Bean后置处理器
+     */
+    protected void loadBeanPostProcessor() {
+        for (String beanName : beanDefinitionRegistry.getBeanDefinitionNames()) {
+            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+            if (BeanPostProcessor.class.isAssignableFrom(beanDefinition.getBeanClass())) {
+                this.beanPostProcessorList.add((BeanPostProcessor) getBean(beanName));
+            }
+        }
+    }
+
+    /**
      * 执行ApplicationContextAware回调
      */
     protected void invokeAwareCallback() {
@@ -173,12 +195,10 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
             field.setAccessible(true);
             Value valueAnnotation = field.getAnnotation(Value.class);
             if (valueAnnotation != null) {
-                String s = getConfiguration().get(valueAnnotation.value());
-                if (s != null) {
-                    Object val = NumberUtil.parse(field.getType(), s);
-                    if (val != null) {
-                        ReflectUtil.setField(field, bean, val);
-                    }
+                String key = getConfiguration().get(valueAnnotation.value());
+                Object val = NumberUtil.parse(field.getType(), key);
+                if (val != null) {
+                    ReflectUtil.setField(field, bean, val);
                 }
             }
         }
@@ -285,6 +305,57 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     }
 
     /**
+     * 创建新的Bean实例
+     *
+     * @param beanName       bean名字
+     * @param beanDefinition bean定义
+     * @return {@link Object}
+     */
+    private Object createBean(String beanName, BeanDefinition beanDefinition) throws RuntimeException {
+        Object bean = beanDefinition.newInstance();
+
+        if (beanDefinition.isSingleton()) {
+            // 放入三级缓存
+            addSingletonFactory(beanName, () -> getBeanProxy(beanDefinition, bean));
+        }
+
+        this.currentBeans.add(beanName);
+
+        // 填充属性
+        populateBean(bean);
+
+        this.currentBeans.remove(beanName);
+
+        Object earlyBean = bean;
+        if (beanDefinition.isSingleton()) {
+            // 从三缓获取对象工厂，获取代理对象，并放入二缓、从三缓删除
+            earlyBean = getSingleton(beanName);
+            if (earlyBean == null) {
+                earlyBean = bean;
+            }
+        }
+
+        // 初始化前置处理
+        for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
+            earlyBean = beanPostProcessor.postProcessBeforeInitialization(earlyBean, beanName);
+        }
+        // 属性注入后，初始化Bean
+        if (earlyBean instanceof InitializingBean) {
+            ((InitializingBean) earlyBean).afterPropertiesSet();
+        }
+        // 初始化后置处理
+        for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
+            earlyBean = beanPostProcessor.postProcessAfterInitialization(earlyBean, beanName);
+        }
+
+        if (beanDefinition.isSingleton()) {
+            // 放入单例池一缓，并从二缓删除
+            registerSingleton(beanName, earlyBean);
+        }
+        return earlyBean;
+    }
+
+    /**
      * 获取单例，依次从缓存中找，如果从三级缓存中找到返回Bean，并放入二级缓存中
      *
      * @param beanName bean名字
@@ -309,43 +380,6 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
             }
         }
         return bean;
-    }
-
-    /**
-     * 创建新的Bean实例
-     *
-     * @param beanName       bean名字
-     * @param beanDefinition bean定义
-     * @return {@link Object}
-     */
-    private Object createBean(String beanName, BeanDefinition beanDefinition) {
-        Object bean = beanDefinition.newInstance();
-
-        if (beanDefinition.isSingleton()) {
-            // 放入三级缓存
-            addSingletonFactory(beanName, () -> getBeanProxy(beanDefinition, bean));
-        }
-
-        this.currentBeans.add(beanName);
-
-        // 填充属性
-        populateBean(bean);
-
-        this.currentBeans.remove(beanName);
-
-        Object earlyBean = bean;
-        if (beanDefinition.isSingleton()) {
-            // 获取代理对象
-            earlyBean = getSingleton(beanName);
-            if (earlyBean == null) {
-                earlyBean = bean;
-            }
-
-            // 放入单例池
-            registerSingleton(beanName, earlyBean);
-        }
-        // TODO BeanPostProcessor init-bean
-        return earlyBean;
     }
 
     /**

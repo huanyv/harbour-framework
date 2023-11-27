@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author huanyv
  * @date 2023/11/7 10:02
  */
-public class DefaultConfiguration implements Configuration {
+public class ConfigurationComposite implements Configuration {
 
     private final Map<String, String> map = new ConcurrentHashMap<>();
 

@@ -3,6 +3,7 @@ package top.huanyv.bean.utils;
 import top.huanyv.bean.utils.ClassScanner;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -97,5 +98,22 @@ public class ClassUtil {
         return  Number.class.isAssignableFrom(cls)
                 || short.class.equals(cls) || int.class.equals(cls) || byte.class.equals(cls)
                 || long.class.equals(cls) || float.class.equals(cls) || double.class.equals(cls);
+    }
+
+    /**
+     * 是否是一个普通定义的类
+     *
+     * @param cls
+     * @return boolean
+     */
+    public static boolean isNormalClass(Class<?> cls) {
+        return null != cls // 空
+                && !cls.isInterface() // 接口
+                && !Modifier.isAbstract(cls.getModifiers()) // 抽象类
+                && !cls.isEnum() // 枚举
+                && !cls.isArray() // 数组
+                && !cls.isAnnotation() // 注解
+                && !cls.isSynthetic() // 合成的
+                && !cls.isPrimitive();// 基本数据类型
     }
 }
