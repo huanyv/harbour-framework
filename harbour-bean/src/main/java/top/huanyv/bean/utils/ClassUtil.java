@@ -1,15 +1,11 @@
 package top.huanyv.bean.utils;
 
-import top.huanyv.bean.utils.ClassScanner;
-
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Modifier;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author huanyv
+ * @author admin
  * @date 2022/7/15 15:59
  */
 public class ClassUtil {
@@ -35,7 +31,7 @@ public class ClassUtil {
      * 从包下获取所有，指定注解的class对象
      *
      * @param scanPackages 包名
-     * @param annotation 注解class
+     * @param annotation   注解class
      * @return class对象集合
      */
     public static Set<Class<?>> getClassesByAnnotation(Class<? extends Annotation> annotation, String... scanPackages) {
@@ -47,7 +43,7 @@ public class ClassUtil {
     /**
      * 从指定包下，获取指定类型的class对象列表
      *
-     * @param type        类型
+     * @param type         类型
      * @param scanPackages 扫描包
      * @return {@link Set}<{@link Class}<{@link ?}>>
      */
@@ -95,25 +91,34 @@ public class ClassUtil {
      * @return boolean
      */
     public static boolean isNumberType(Class<?> cls) {
-        return  Number.class.isAssignableFrom(cls)
+        return Number.class.isAssignableFrom(cls)
                 || short.class.equals(cls) || int.class.equals(cls) || byte.class.equals(cls)
                 || long.class.equals(cls) || float.class.equals(cls) || double.class.equals(cls);
     }
 
     /**
-     * 是否是一个普通定义的类
+     * 基本数据类型或者基本数据类型的包装类，返回true
      *
-     * @param cls
-     * @return boolean
+     * @param cls 类型
+     * @return boolean true/false
      */
-    public static boolean isNormalClass(Class<?> cls) {
-        return null != cls // 空
-                && !cls.isInterface() // 接口
-                && !Modifier.isAbstract(cls.getModifiers()) // 抽象类
-                && !cls.isEnum() // 枚举
-                && !cls.isArray() // 数组
-                && !cls.isAnnotation() // 注解
-                && !cls.isSynthetic() // 合成的
-                && !cls.isPrimitive();// 基本数据类型
+    public static boolean isBasicType(Class<?> cls) {
+        if (cls == null) {
+            return false;
+        }
+        return cls.isPrimitive() || isPrimitiveWrapper(cls);
+    }
+
+    /**
+     * 基本数据类型包装类，返回true
+     *
+     * @param cls 类型
+     * @return boolean 布尔
+     */
+    public static boolean isPrimitiveWrapper(Class<?> cls) {
+        if (null == cls) {
+            return false;
+        }
+        return BasicType.WRAPPER_MAP.containsKey(cls);
     }
 }

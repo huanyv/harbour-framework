@@ -1,7 +1,9 @@
 package top.huanyv.bean.ioc.definition;
 
 import top.huanyv.bean.annotation.Bean;
+import top.huanyv.bean.utils.ArrayUtil;
 import top.huanyv.bean.utils.Assert;
+import top.huanyv.bean.utils.ReflectUtil;
 import top.huanyv.bean.utils.StringUtil;
 
 import java.lang.reflect.Constructor;
@@ -29,7 +31,13 @@ public class ClassBeanDefinition extends AbstractBeanDefinition {
 
         if (constructorArgs != null) {
             this.constructorArgs = constructorArgs;
-            handleConstructor();
+            // handleConstructor();
+            Class<?>[] types = ArrayUtil.map(constructorArgs, Class.class, arg -> arg.getClass());
+            try {
+                this.constructor = ReflectUtil.getConstructor(beanClass, types);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         }
     }
 

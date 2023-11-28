@@ -1,9 +1,7 @@
 package top.huanyv.bean.utils;
 
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -174,6 +172,48 @@ public final class ReflectUtil {
         throw new IllegalStateException("'" + method.getName() + "' method execution failed.");
     }
 
+    public static <T> Constructor<T> getConstructor(Class<T> cls, Class<?>... parameterTypes) throws NoSuchMethodException {
+        if (cls == null) {
+            return null;
+        }
+        for (Constructor<?> constructor : cls.getConstructors()) {
+            if (isAllAssignableFrom(constructor.getParameterTypes(), parameterTypes)) {
+                return (Constructor<T>) constructor;
+            }
+        }
+        return cls.getConstructor(parameterTypes);
+    }
+
+    public static boolean isAllAssignableFrom(Class<?>[] type1, Class<?>[] type2) {
+        if (type1 == null && type2 == null) {
+            return true;
+        }
+        if (type1 == null || type2 == null) {
+            return false;
+        }
+        if (type1.length != type2.length) {
+            return false;
+        }
+        for (int i = 0; i < type1.length; i++) {
+            if (!isAssignableFrom(type1[i], type2[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isAssignableFrom(Class<?> type1, Class<?> type2) {
+        // 基本数据类型，拆箱对比
+        if (ClassUtil.isBasicType(type1) && ClassUtil.isBasicType(type2)) {
+            if (BasicType.getPrimitive(type1) == BasicType.getPrimitive(type2)) {
+                return true;
+            }
+        } else if (type1.isAssignableFrom(type2)) {
+            return true;
+        }
+        return false;
+    }
+
     public static boolean isGetter(Method method) {
         if (method.getParameterCount() != 0) {
             return false;
@@ -256,6 +296,7 @@ public final class ReflectUtil {
                 && method.getParameterCount() == 0
                 && void.class.equals(method.getReturnType());
     }
+
 
     public static boolean isStatic(Member member) {
         return Modifier.isStatic(member.getModifiers());
