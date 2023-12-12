@@ -1,6 +1,5 @@
 package top.huanyv.webmvc.core.request;
 
-import top.huanyv.bean.utils.AntPathMatcher;
 import top.huanyv.bean.utils.Assert;
 import top.huanyv.bean.utils.StringUtil;
 import top.huanyv.webmvc.core.action.ActionResult;
@@ -15,8 +14,6 @@ import java.util.List;
  * 注册请求，单例
  */
 public class RequestHandlerRegistry {
-
-    private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     // 单例
     private RequestHandlerRegistry() {
@@ -84,10 +81,7 @@ public class RequestHandlerRegistry {
             }
         }
         for (RequestMapping mapping : this.mappings) {
-            // if (mapping.compareUrl(urlPattern)) {
-            //     return mapping;
-            // }
-            if (antPathMatcher.match(mapping.getUrlPattern(), urlPattern)) {
+            if (mapping.compareUrl(urlPattern)) {
                 return mapping;
             }
         }

@@ -29,10 +29,10 @@ public class MethodRequestHandler implements RequestHandler {
     private Method method;
 
     // 请求参数解析器
-    private MethodArgumentResolverComposite argumentResolver;
+    private static MethodArgumentResolverComposite argumentResolver;
 
     // 控制器方法返回值解析器
-    private MethodReturnResolverComposite returnResolver;
+    // private MethodReturnResolverComposite returnResolver;
 
     public MethodRequestHandler(ApplicationContext context, Class<?> controller, Method method) {
         this.context = context;
@@ -70,18 +70,19 @@ public class MethodRequestHandler implements RequestHandler {
             ((ActionResult) returnValue).execute(req, resp);
             return;
         }
-        if (returnResolver.support(method)) {
-            returnResolver.resolve(req, resp, returnValue, method);
-        }
+        // if (returnResolver.support(method)) {
+        //     returnResolver.resolve(req, resp, returnValue, method);
+        // }
+        resp.write(returnValue.toString(), "text/html");
     }
 
     private void initResolver() {
         if (argumentResolver == null) {
             argumentResolver = new MethodArgumentResolverComposite().addResolvers(getMethodArgumentResolvers());
         }
-        if (returnResolver == null) {
-            returnResolver = new MethodReturnResolverComposite();
-        }
+        // if (returnResolver == null) {
+        //     returnResolver = new MethodReturnResolverComposite();
+        // }
     }
 
     private List<MethodArgumentResolver> getMethodArgumentResolvers() {
@@ -96,10 +97,6 @@ public class MethodRequestHandler implements RequestHandler {
         result.add(new HeaderMethodArgumentResolver());
         result.add(new ServletMethodArgumentResolver());
         return result;
-    }
-
-    public Class<?> getController() {
-        return controller;
     }
 
     public Method getMethod() {

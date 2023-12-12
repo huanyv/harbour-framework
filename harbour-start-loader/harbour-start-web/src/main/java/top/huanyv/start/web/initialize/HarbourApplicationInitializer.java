@@ -7,7 +7,7 @@ import top.huanyv.start.config.CliArguments;
 import top.huanyv.start.core.HarbourApplication;
 import top.huanyv.start.web.servlet.ServletContextRegistry;
 import top.huanyv.bean.utils.FileUtil;
-import top.huanyv.webmvc.config.WebMvcGlobalConfig;
+import top.huanyv.webmvc.config.WebMvcConstants;
 import top.huanyv.webmvc.core.RouterServlet;
 
 import javax.servlet.*;
@@ -26,12 +26,12 @@ public abstract class HarbourApplicationInitializer implements WebStartupInitial
         HarbourApplication application = new HarbourApplication(mainClass);
 
         // 创建容器
-        ApplicationContext applicationContext = application.createApplicationContext(new String[0]);
+        ApplicationContext applicationContext = application.createApplicationContext();
         Configuration configuration = applicationContext.getConfiguration();
 
         // 注册前端控制器
         RouterServlet routerServlet = new RouterServlet(applicationContext);
-        ServletRegistration.Dynamic router = ctx.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, routerServlet);
+        ServletRegistration.Dynamic router = ctx.addServlet(WebMvcConstants.ROUTER_SERVLET_NAME, routerServlet);
         router.setLoadOnStartup(1);
         // 文件上传配置，默认最大单文件大小1MB，最大请求大小10MB
         long maxFileSize = FileUtil.parseSize(configuration.get("server.maxFileSize", "1MB"));

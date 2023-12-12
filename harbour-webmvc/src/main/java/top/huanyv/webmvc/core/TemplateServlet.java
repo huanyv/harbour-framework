@@ -6,7 +6,7 @@ import top.huanyv.bean.ioc.ApplicationContext;
 import top.huanyv.bean.utils.ReflectUtil;
 import top.huanyv.webmvc.config.DefaultWebConfigurer;
 import top.huanyv.webmvc.config.WebConfigurer;
-import top.huanyv.webmvc.config.WebMvcGlobalConfig;
+import top.huanyv.webmvc.config.WebMvcConstants;
 import top.huanyv.webmvc.core.request.RequestHandlerRegistry;
 import top.huanyv.webmvc.exception.ExceptionHandler;
 import top.huanyv.webmvc.guard.NavigationGuardMapping;
@@ -73,12 +73,12 @@ public abstract class TemplateServlet extends HttpServlet {
         ServletHolder.setServletContext(servletContext);
 
         if (this.applicationContext == null) {
-            String scanPackages = getServletConfig().getInitParameter(WebMvcGlobalConfig.WEB_BEAN_SCAN_PACKAGES);
+            String scanPackages = getServletConfig().getInitParameter(WebMvcConstants.WEB_BEAN_SCAN_PACKAGES);
             this.applicationContext = new AnnotationConfigApplicationContext(scanPackages.split(","));
         }
 
         // IOC容器存到上下文中
-        servletContext.setAttribute(WebMvcGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME, applicationContext);
+        servletContext.setAttribute(WebMvcConstants.WEB_APPLICATION_CONTEXT_ATTR_NAME, applicationContext);
 
         // 获取配置类
         try {

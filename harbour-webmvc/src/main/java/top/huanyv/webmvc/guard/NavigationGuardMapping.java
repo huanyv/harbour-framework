@@ -1,8 +1,7 @@
 package top.huanyv.webmvc.guard;
 
 import top.huanyv.bean.utils.Ordered;
-import top.huanyv.bean.utils.AntPathMatcher;
-import top.huanyv.webmvc.config.WebMvcGlobalConfig;
+import top.huanyv.webmvc.config.WebMvcConstants;
 
 /**
  * @author admin
@@ -22,8 +21,6 @@ public class NavigationGuardMapping implements Ordered {
     // 顺序
     private int order;
 
-    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
-
     /**
      * 是否是这个地址
      * @param path 地址
@@ -34,10 +31,10 @@ public class NavigationGuardMapping implements Ordered {
             return false;
         }
         for (String pattern : this.urlPatterns) {
-            if (WebMvcGlobalConfig.PATH_SEPARATOR.equals(path) && "/**".equals(pattern)) {
+            if (WebMvcConstants.PATH_SEPARATOR.equals(path) && "/**".equals(pattern)) {
                 return true;
             }
-            if (antPathMatcher.match(pattern, path)) {
+            if (WebMvcConstants.ANT_PATH_MATCHER.match(pattern, path)) {
                 return true;
             }
         }
@@ -54,7 +51,7 @@ public class NavigationGuardMapping implements Ordered {
             return false;
         }
         for (String pattern : this.excludeUrl) {
-            if (antPathMatcher.match(pattern, path)) {
+            if (WebMvcConstants.ANT_PATH_MATCHER.match(pattern, path)) {
                 return true;
             }
         }

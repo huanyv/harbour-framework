@@ -1,6 +1,6 @@
 package top.huanyv.webmvc.resource;
 
-import top.huanyv.bean.utils.AntPathMatcher;
+import top.huanyv.webmvc.config.WebMvcConstants;
 import top.huanyv.webmvc.utils.WebUtil;
 import top.huanyv.webmvc.config.ResourceMappingRegistry;
 
@@ -13,8 +13,6 @@ import java.util.*;
  * @date 2022/7/27 8:34
  */
 public class ResourceHandler {
-
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     private ResourceMappingRegistry resourceMappingRegistry;
 
@@ -50,9 +48,9 @@ public class ResourceHandler {
         for (ResourceMapping mapping : resourceMappings) {
             String urlPattern = mapping.getUrlPattern();
             // 请求地址与pattern是否匹配
-            if (pathMatcher.match(urlPattern, uri)) {
+            if (WebMvcConstants.ANT_PATH_MATCHER.match(urlPattern, uri)) {
                 // 获取通配符处的path
-                String relativePath = pathMatcher.extractPathWithinPattern(urlPattern, uri);
+                String relativePath = WebMvcConstants.ANT_PATH_MATCHER.extractPathWithinPattern(urlPattern, uri);
                 for (String location : mapping.getLocations()) {
                     inputStream = resourceHolder.getInputStream(location + relativePath);
                     if (inputStream != null) {

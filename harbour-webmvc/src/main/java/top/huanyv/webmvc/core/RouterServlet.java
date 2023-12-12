@@ -52,6 +52,12 @@ public class RouterServlet extends InitRouterServlet {
         navigationGuardChain.handleAfter(request, response);
     }
 
+    /**
+     * 获取请求处理器
+     *
+     * @param request 请求对象
+     * @return 请求处理器
+     */
     private RequestHandler getHandler(HttpRequest request) throws Exception {
         RequestMethod requestMethod = RequestMethod.valueOf(request.method().toUpperCase());
         // 非用户定义请求
@@ -82,6 +88,13 @@ public class RouterServlet extends InitRouterServlet {
         return new ResourceRequestHandler(this.resourceHandler);
     }
 
+    /**
+     * 处理异常
+     *
+     * @param req  请求对象
+     * @param resp 响应对象
+     * @param ex   具体异常
+     */
     @Override
     void doException(HttpRequest req, HttpResponse resp, Exception ex) {
         Method exceptionMethod = null;
@@ -112,6 +125,13 @@ public class RouterServlet extends InitRouterServlet {
         }
     }
 
+    /**
+     * 获取导航守卫拦截器执行链
+     *
+     * @param uri     请求地址
+     * @param handler 请求处理器
+     * @return 执行链对象
+     */
     private NavigationGuardChain getNavigationGuardChain(String uri, RequestHandler handler) {
         NavigationGuardChain navigationGuardChain = new NavigationGuardChain(handler);
 

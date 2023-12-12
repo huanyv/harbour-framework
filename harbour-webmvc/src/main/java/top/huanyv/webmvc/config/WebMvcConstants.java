@@ -1,10 +1,12 @@
 package top.huanyv.webmvc.config;
 
+import top.huanyv.bean.utils.AntPathMatcher;
+
 /**
  * @author admin
  * @date 2022/7/6 9:05
  */
-public class WebMvcGlobalConfig {
+public class WebMvcConstants {
 
     public static final String WEB_BEAN_SCAN_PACKAGES = "ScanPackages";
 
@@ -14,5 +16,6 @@ public class WebMvcGlobalConfig {
 
     public static final String WEB_APPLICATION_CONTEXT_ATTR_NAME = "webApplicationContext";
 
+    public static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
 }

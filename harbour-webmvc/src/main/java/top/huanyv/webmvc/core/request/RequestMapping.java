@@ -1,6 +1,6 @@
 package top.huanyv.webmvc.core.request;
 
-import top.huanyv.webmvc.config.WebMvcGlobalConfig;
+import top.huanyv.webmvc.config.WebMvcConstants;
 import top.huanyv.webmvc.enums.RequestMethod;
 
 import java.util.Collections;
@@ -23,16 +23,17 @@ public class RequestMapping {
      * 请求与处理器映射
      * 格式为：
      * {
-     *     GET: handler1
-     *     POST: handler2
-     *     PUT: handler3
-     *     DELETE: handler4
+     * GET: handler1
+     * POST: handler2
+     * PUT: handler3
+     * DELETE: handler4
      * }
      */
     private final Map<RequestMethod, RequestHandler> handlerMapping = new ConcurrentHashMap<>();
 
     /**
      * 通过请求方法，获取具体的处理器，如果不存在返回null
+     *
      * @param method 请求方式
      * @return 具体处理器
      */
@@ -42,6 +43,7 @@ public class RequestMapping {
 
     /**
      * 模糊比较地址
+     *
      * @param url 精确地址
      * @return 是否相同
      */
@@ -49,10 +51,14 @@ public class RequestMapping {
         if (Objects.equals(this.urlPattern, url)) {
             return true;
         }
+        if (true) {
+            return WebMvcConstants.ANT_PATH_MATCHER.match(this.urlPattern, url);
+        }
+        // TODO 以下弃用
         // 模糊地址
-        String[] arr1 = this.urlPattern.split(WebMvcGlobalConfig.PATH_SEPARATOR);
+        String[] arr1 = this.urlPattern.split(WebMvcConstants.PATH_SEPARATOR);
         // 精确地址
-        String[] arr2 = url.split(WebMvcGlobalConfig.PATH_SEPARATOR);
+        String[] arr2 = url.split(WebMvcConstants.PATH_SEPARATOR);
         if (arr1.length != arr2.length) {
             return false;
         }
@@ -79,6 +85,7 @@ public class RequestMapping {
 
     /**
      * 从精确地址中解析出变量值来
+     *
      * @param url 精确地址
      */
     public Map<String, String> parsePathVars(String url) {
@@ -86,10 +93,14 @@ public class RequestMapping {
         if (url == null) {
             return pathVariables;
         }
+        if (true) {
+            return WebMvcConstants.ANT_PATH_MATCHER.extractUriTemplateVariables(this.urlPattern, url);
+        }
+        // TODO 以下弃用
         // 模糊地址
-        String[] arr1 = this.urlPattern.split(WebMvcGlobalConfig.PATH_SEPARATOR);
+        String[] arr1 = this.urlPattern.split(WebMvcConstants.PATH_SEPARATOR);
         // 精确地址
-        String[] arr2 = url.split(WebMvcGlobalConfig.PATH_SEPARATOR);
+        String[] arr2 = url.split(WebMvcConstants.PATH_SEPARATOR);
         for (int i = 0; i < arr1.length; i++) {
             if (arr1[i].matches(REQUEST_URI_REGULAR)) {
                 pathVariables.put(arr1[i].substring(1, arr1[i].length() - 1), arr2[i]);

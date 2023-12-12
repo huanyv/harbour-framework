@@ -11,7 +11,7 @@ import top.huanyv.start.loader.Condition;
 import top.huanyv.start.server.WebServer;
 import top.huanyv.start.undertow.UndertowServer;
 import top.huanyv.bean.utils.FileUtil;
-import top.huanyv.webmvc.config.WebMvcGlobalConfig;
+import top.huanyv.webmvc.config.WebMvcConstants;
 import top.huanyv.webmvc.core.RouterServlet;
 
 import javax.servlet.MultipartConfigElement;
@@ -70,7 +70,7 @@ public class UndertowStartLoader implements ApplicationLoader {
     public WebServer webServer() {
         UndertowServer server = new UndertowServer(this.contextPath);
         server.setPort(this.port);
-        ServletRegistration.Dynamic servletRegistration = server.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, servlet);
+        ServletRegistration.Dynamic servletRegistration = server.addServlet(WebMvcConstants.ROUTER_SERVLET_NAME, servlet);
         servletRegistration.addMapping("/");
         servletRegistration.setLoadOnStartup(1);
         servletRegistration.setMultipartConfig(new MultipartConfigElement("",

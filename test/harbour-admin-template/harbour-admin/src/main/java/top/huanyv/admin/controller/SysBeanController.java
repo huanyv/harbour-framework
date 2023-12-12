@@ -14,7 +14,7 @@ import top.huanyv.webmvc.annotation.Get;
 import top.huanyv.webmvc.annotation.Route;
 import top.huanyv.webmvc.annotation.argument.Body;
 import top.huanyv.webmvc.annotation.argument.Form;
-import top.huanyv.webmvc.config.WebMvcGlobalConfig;
+import top.huanyv.webmvc.config.WebMvcConstants;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.action.ActionResult;
 import top.huanyv.webmvc.core.request.Model;
@@ -41,7 +41,7 @@ public class SysBeanController {
     public ActionResult ioc(HttpRequest request, Model model, @Form PageDto pageDto, @Form BeanVo beanDto) {
         if (beans == null) {
             beans = new ArrayList<>();
-            ApplicationContext context = (ApplicationContext) request.ctx().getAttribute(WebMvcGlobalConfig.WEB_APPLICATION_CONTEXT_ATTR_NAME);
+            ApplicationContext context = (ApplicationContext) request.ctx().getAttribute(WebMvcConstants.WEB_APPLICATION_CONTEXT_ATTR_NAME);
             String[] beanDefinitionNames = context.getBeanDefinitionNames();
             for (String beanDefinitionName : beanDefinitionNames) {
                 BeanDefinition beanDefinition = context.getBeanDefinition(beanDefinitionName);

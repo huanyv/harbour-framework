@@ -12,7 +12,7 @@ import top.huanyv.start.loader.Condition;
 import top.huanyv.start.server.WebServer;
 import top.huanyv.start.tomcat.TomcatServer;
 import top.huanyv.bean.utils.FileUtil;
-import top.huanyv.webmvc.config.WebMvcGlobalConfig;
+import top.huanyv.webmvc.config.WebMvcConstants;
 import top.huanyv.webmvc.core.RouterServlet;
 
 import javax.servlet.MultipartConfigElement;
@@ -71,7 +71,7 @@ public class TomcatStartLoader implements ApplicationLoader {
         tomcatServer.setUriEncoding(this.uriEncoding);
 
         // 请求注册到tomcat容器中
-        ServletRegistration.Dynamic servletRegistration = tomcatServer.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, servlet);
+        ServletRegistration.Dynamic servletRegistration = tomcatServer.addServlet(WebMvcConstants.ROUTER_SERVLET_NAME, servlet);
         servletRegistration.addMapping("/");
         servletRegistration.setLoadOnStartup(1);
         servletRegistration.setMultipartConfig(new MultipartConfigElement("",

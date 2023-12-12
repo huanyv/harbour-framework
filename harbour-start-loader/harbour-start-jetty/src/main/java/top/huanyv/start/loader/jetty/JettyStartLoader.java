@@ -12,7 +12,7 @@ import top.huanyv.start.loader.Condition;
 import top.huanyv.start.server.WebServer;
 import top.huanyv.start.jetty.JettyServer;
 import top.huanyv.bean.utils.FileUtil;
-import top.huanyv.webmvc.config.WebMvcGlobalConfig;
+import top.huanyv.webmvc.config.WebMvcConstants;
 import top.huanyv.webmvc.core.RouterServlet;
 
 import javax.servlet.MultipartConfigElement;
@@ -71,7 +71,7 @@ public class JettyStartLoader implements ApplicationLoader {
         JettyServer jettyServer = new JettyServer();
         jettyServer.setPort(this.port);
         jettyServer.setContextPath(this.contextPath);
-        ServletRegistration.Dynamic servletRegistration = jettyServer.addServlet(WebMvcGlobalConfig.ROUTER_SERVLET_NAME, servlet);
+        ServletRegistration.Dynamic servletRegistration = jettyServer.addServlet(WebMvcConstants.ROUTER_SERVLET_NAME, servlet);
         servletRegistration.addMapping("/");
         servletRegistration.setLoadOnStartup(1);
         servletRegistration.setMultipartConfig(new MultipartConfigElement("",
