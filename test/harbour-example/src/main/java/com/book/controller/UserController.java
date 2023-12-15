@@ -9,6 +9,9 @@ import top.huanyv.webmvc.annotation.Route;
 import top.huanyv.webmvc.annotation.argument.Body;
 import top.huanyv.webmvc.annotation.argument.Form;
 import top.huanyv.webmvc.annotation.argument.Param;
+import top.huanyv.webmvc.core.action.ActionResult;
+import top.huanyv.webmvc.core.action.Forward;
+import top.huanyv.webmvc.core.action.Redirect;
 import top.huanyv.webmvc.core.request.Model;
 
 import javax.servlet.http.HttpSession;
@@ -27,7 +30,7 @@ public class UserController {
     private UserService userService;
 
     @Post("/login")
-    public String login(@Form User user, HttpSession session, Model model, @Param("captcha") String captcha) {
+    public ActionResult login(@Form User user, HttpSession session, Model model, @Param("captcha") String captcha) {
         Object sessionCaptcha = session.getAttribute(CAPTCHA_SESSION_KEY);
         if (captcha.equals(sessionCaptcha)) {
             System.out.println("验证码正确！");
@@ -37,10 +40,10 @@ public class UserController {
         boolean b = userService.login(user.getUsername(), user.getPassword());
         if (b) {
             session.setAttribute("username", user.getUsername());
-            return "redirect:/";
+            return new Redirect("/");
         }
         model.add("msg", "登陆失败！");
-        return "forward:/login";
+        return new Forward("/login");
     }
 
 }

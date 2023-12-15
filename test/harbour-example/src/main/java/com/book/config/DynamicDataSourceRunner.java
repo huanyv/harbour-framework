@@ -1,6 +1,7 @@
 package com.book.config;
 
 import top.huanyv.bean.annotation.Bean;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.jdbc.core.JdbcConfigurer;
 import top.huanyv.jdbc.core.datasource.DynamicDatasource;
 import top.huanyv.jdbc.core.datasource.SimpleDataSource;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public class DynamicDataSourceRunner implements ApplicationRunner {
 
     @Override
-    public void run(AppArguments appArguments) {
+    public void run(Configuration configuration) {
         JdbcConfigurer jdbcConfigurer = JdbcConfigurer.create();
 
         SimpleDataSource ds1 = new SimpleDataSource();
@@ -63,4 +64,5 @@ public class DynamicDataSourceRunner implements ApplicationRunner {
         System.out.println("args = " + args);
         System.out.println("args.length = " + args.length);
     }
+
 }

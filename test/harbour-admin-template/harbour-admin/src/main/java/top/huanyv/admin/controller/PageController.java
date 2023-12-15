@@ -13,6 +13,8 @@ import top.huanyv.bean.annotation.Inject;
 import top.huanyv.webmvc.annotation.Get;
 import top.huanyv.webmvc.annotation.Route;
 import top.huanyv.webmvc.core.HttpRequest;
+import top.huanyv.webmvc.core.action.ActionResult;
+import top.huanyv.webmvc.core.action.View;
 import top.huanyv.webmvc.core.request.Model;
 import top.huanyv.webmvc.core.request.RequestHandlerRegistry;
 import top.huanyv.webmvc.security.LoginService;
@@ -40,14 +42,14 @@ public class PageController {
     private SysRoleService sysRoleService;
 
     @Route("/welcome")
-    public String welcome(Model model) {
+    public ActionResult welcome(Model model) {
         List<SysNotice> notices = sysNoticeService.getNewNotice();
         model.add("notices", notices);
-        return "welcome/welcome";
+        return new View("welcome/welcome");
     }
 
     @Route("/user/info")
-    public String userInfo(Model model) {
+    public ActionResult userInfo(Model model) {
         String loginUserId = LoginUtil.getLoginUserId();
         SysUser user = sysUserService.getUserById(Long.valueOf(loginUserId));
         model.add("user", user);
@@ -57,14 +59,14 @@ public class PageController {
         String roles = String.join("/", roleNames);
         model.add("roles", roles);
 
-        return "system/sysuser/info";
+        return new View("system/sysuser/info");
     }
 
     @Route("/monitor/server")
-    public String server(Model model) throws Exception {
+    public ActionResult server(Model model) throws Exception {
         Server server = new Server();
         server.copyTo();
         model.add("server", server);
-        return "monitor/server";
+        return new View("monitor/server");
     }
 }

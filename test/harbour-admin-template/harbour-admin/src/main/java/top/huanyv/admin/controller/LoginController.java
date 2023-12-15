@@ -17,6 +17,7 @@ import top.huanyv.webmvc.annotation.argument.Param;
 import top.huanyv.webmvc.core.HttpRequest;
 import top.huanyv.webmvc.core.action.ActionResult;
 import top.huanyv.webmvc.core.action.Json;
+import top.huanyv.webmvc.core.action.Redirect;
 import top.huanyv.webmvc.security.*;
 import top.huanyv.webmvc.security.digest.PasswordDigester;
 
@@ -95,9 +96,9 @@ public class LoginController {
     }
 
     @Get("/logout")
-    public String logout() {
+    public ActionResult logout() {
         SubjectHolder.getStrategy().clear();
-        return "redirect:/login";
+        return new Redirect("/login");
     }
 
 

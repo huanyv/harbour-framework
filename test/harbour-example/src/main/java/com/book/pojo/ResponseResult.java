@@ -1,9 +1,12 @@
 package com.book.pojo;
 
 import lombok.Data;
+import top.huanyv.webmvc.core.HttpRequest;
+import top.huanyv.webmvc.core.HttpResponse;
+import top.huanyv.webmvc.core.action.ActionResult;
 
 @Data
-public class ResponseResult {
+public class ResponseResult implements ActionResult {
 
     public static final Integer OK = 0;
     public static final Integer SERVER_ERROR = 500;
@@ -36,5 +39,10 @@ public class ResponseResult {
             return success(trueMsg);
         }
         return fail(falseMsg);
+    }
+
+    @Override
+    public void execute(HttpRequest req, HttpResponse resp) throws Exception {
+        resp.json(this);
     }
 }

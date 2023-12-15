@@ -3,7 +3,7 @@ package com.book.config;
 import com.wf.captcha.servlet.CaptchaServlet;
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Bean;
-import top.huanyv.bean.annotation.Configuration;
+import top.huanyv.bean.ioc.Configuration;
 import top.huanyv.start.server.servlet.ServletBean;
 import top.huanyv.start.web.WebConfiguration;
 import top.huanyv.webmvc.config.CorsRegistry;
@@ -12,8 +12,7 @@ import top.huanyv.webmvc.config.ViewControllerRegistry;
 
 
 @Bean
-@Configuration
-public class WebConfig extends WebConfiguration {
+public class WebConfig extends WebConfiguration implements Configuration {
 
     @Override
     public void addViewController(ViewControllerRegistry registry) {

@@ -7,7 +7,6 @@ import com.book.service.BookService;
 
 import top.huanyv.bean.annotation.Bean;
 import top.huanyv.bean.annotation.Inject;
-import top.huanyv.bean.annotation.Prototype;
 import top.huanyv.bean.aop.Aop;
 import top.huanyv.jdbc.core.pagination.Page;
 import top.huanyv.webmvc.annotation.*;
@@ -18,8 +17,6 @@ import top.huanyv.webmvc.annotation.argument.Path;
 @Bean
 @Route("/admin/book")
 @Aop(LogAop.class)
-// @Prototype
-@Body
 public class BookController {
 
     @Inject

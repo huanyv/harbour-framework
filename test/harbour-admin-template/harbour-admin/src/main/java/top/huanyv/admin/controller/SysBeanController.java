@@ -37,7 +37,6 @@ public class SysBeanController {
     private List<BeanVo> beans;
 
     @Get
-    @Body
     public ActionResult ioc(HttpRequest request, Model model, @Form PageDto pageDto, @Form BeanVo beanDto) {
         if (beans == null) {
             beans = new ArrayList<>();
