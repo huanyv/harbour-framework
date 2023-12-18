@@ -30,8 +30,7 @@ public class AppArguments implements Configuration {
         }
 
         // 加载配置文件
-        InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-        Properties properties = PropertiesUtil.load(streamReader);
+        Properties properties = PropertiesUtil.load(inputStream);
         for (String propertyName : properties.stringPropertyNames()) {
             this.argumentMap.put(propertyName, properties.getProperty(propertyName));
         }

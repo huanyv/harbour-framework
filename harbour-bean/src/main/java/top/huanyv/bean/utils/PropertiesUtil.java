@@ -4,10 +4,13 @@ import top.huanyv.bean.utils.ClassLoaderUtil;
 import top.huanyv.bean.utils.NumberUtil;
 import top.huanyv.bean.utils.StringUtil;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -63,19 +66,10 @@ public class PropertiesUtil {
 
     public static Properties load(InputStream inputStream) {
         Properties properties = new Properties();
-        if (inputStream == null) {
-            return properties;
-        }
+        InputStreamReader reader = null;
         try {
-            properties.load(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return properties;
-    }
-    public static Properties load(Reader reader) {
-        Properties properties = new Properties();
-        if (reader == null) {
+            reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        } catch (Exception e) {
             return properties;
         }
         try {

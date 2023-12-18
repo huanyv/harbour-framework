@@ -65,14 +65,23 @@ public class MethodRequestHandler implements RequestHandler {
 
         Object returnValue = method.invoke(controllerInstance, args);
 
+
         // 控制器方法返回值解析
-        if (returnValue instanceof ActionResult) {
-            ((ActionResult) returnValue).execute(req, resp);
+        if (ActionResult.class.isAssignableFrom(method.getReturnType())) {
+            if (returnValue == null) {
+                resp.error(500, "ActionResult must not be null.");
+            } else {
+                ((ActionResult) returnValue).execute(req, resp);
+            }
             return;
         }
         // if (returnResolver.support(method)) {
         //     returnResolver.resolve(req, resp, returnValue, method);
         // }
+        if (returnValue == null) {
+            resp.html("");
+            return;
+        }
         resp.write(returnValue.toString(), "text/html");
     }
 
